@@ -59,6 +59,31 @@ const router = createRouter({
           name: 'member-dating',
           component: () => import('../views/Member/Dating/DatingView.vue')
         },
+           {
+          path: 'dating/likes', // 網址: /member/dating
+          name: 'member-likes',
+          component: () => import('../views/Member/Dating/DatingLikes.vue')
+        },
+                        {
+          path: 'dating/favorites', // 網址: /member/dating
+          name: 'member-favorites',
+          component: () => import('../views/Member/Dating/DatingFavorites.vue')
+        },
+                                {
+          path: 'dating/messages', // 網址: /member/dating
+          name: 'member-messages',
+          component: () => import('../views/Member/Dating/DatingMessages.vue')
+        },
+                                {
+          path: 'dating/bookpremium', // 網址: /member/dating
+          name: 'member-bookpremium',
+          component: () => import('../views/Member/Dating/DatingBookpremium.vue')
+        },
+             {
+          path: 'dating/info', // 網址: /member/dating
+          name: 'member-info',
+          component: () => import('../views/Member/Dating/DatingInfo.vue')
+        },
         {
           path: 'rent',   // 網址: /member/rent
           name: 'member-rent',
