@@ -102,7 +102,9 @@ const plans = [
 
 
 h1 {
-  color: #ffdd56;
+background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
 
@@ -177,7 +179,7 @@ h1 {
   position: absolute;
   top: -10px;
   right: -10px;
-  background: linear-gradient(135deg, #ffdd56, #ffe88c);
+  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
   color: #333;
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
@@ -191,7 +193,7 @@ h1 {
 
 
 .upgrade-btn {
-  background: linear-gradient(135deg, #ffdd56, #ffe88c);
+  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
   color: #333;
   border: none;
   border-radius: 6px;

@@ -32,7 +32,7 @@ const person = ref({
           </div>
         </div>
 
-        <!-- 改成兩個小卡片 -->
+
         <div class="stats-section">
           <div class="stat-card">
             <i class="bi bi-person-check"></i>

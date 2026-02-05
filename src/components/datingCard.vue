@@ -65,7 +65,7 @@ const handleLike = () => {
       class="like"
       @click="handleLike"
     >
-      <i class="bi bi-heart-fill"></i>
+      <i class="bi bi-heart-fill" style="padding-top: 5px"></i>
     </button>
   </div>
 </template>

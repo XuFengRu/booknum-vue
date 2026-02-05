@@ -224,13 +224,17 @@ function openProfile(index) {
 
 .diamond {
   font-size: 2rem;
-  color: #ffdd56;
+  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
   margin-top: 2.5rem;
 }
 .locked-text {
   font-weight: bold;
   margin-top: 0.5rem;
-  color: #ffdd56;
+  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
   font-size: 1.2rem;
 }
 .locked-sub {
@@ -243,7 +247,7 @@ function openProfile(index) {
   padding: 0.4rem 1rem;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #ffdd56;
+  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
 }
 .upgrade-btn:hover {
   background: linear-gradient(135deg, #fed11b, #ffde69);
@@ -278,7 +282,6 @@ function openProfile(index) {
   display: flex;
   justify-content: center;
   align-items: flex-start; /* 卡片靠上顯示 */
-  padding-top: 2rem;
 }
 
 
