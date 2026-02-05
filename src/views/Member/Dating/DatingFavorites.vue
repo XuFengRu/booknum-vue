@@ -73,7 +73,7 @@ function openProfile(index) {
           <i class="bi-x"></i> 返回
         </button>
         <div class="profile-page">
-          <DatingCard :person="users[selectedUser]" />
+          <DatingCard :person="users[selectedUser]" :is-action="false" />
         </div>
       </template>
     </main>

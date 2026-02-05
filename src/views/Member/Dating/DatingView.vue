@@ -37,12 +37,7 @@ function backToStart() {
 
     <!-- 配對卡片 -->
     <div v-else class="card-wrapper">
-      <!-- 卡片 + 按鈕左右並排 -->
-      <div class="card-actions">
-        <button class="reject"><i class="bi-x-lg"></i></button>
         <ProfileCard :person="person" />
-        <button class="like"><i class="bi-heart-fill"></i></button>
-      </div>
     </div>
   </div>
 </template>
@@ -107,53 +102,5 @@ function backToStart() {
 .start-btn:hover {
   background-color: #ff4081;
   transform: scale(1.05);
-}
-
-/* 卡片區域 */
-.card-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-/* 卡片 + 按鈕並排 */
-.card-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.reject,
-.like {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.reject {
-  background-color: #ff4d4d;
-  color: #fff;
-}
-
-.like {
-  background-color: #ff4081;
-  color: #fff;
-}
-.reject:hover {
-  background: var(--gradient-hover);
-  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
-}
-.like:hover {
-  background: var(--gradient-main);
-  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
 }
 </style>

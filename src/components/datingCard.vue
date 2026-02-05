@@ -1,17 +1,38 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
   person: {
     type: Object,
     required: true,
   },
- 
+  isAction: {
+    type: Boolean,
+    default: true, // 預設顯示按鈕
+  },
 });
+
+const emit = defineEmits(["reject", "like"]);
+
+const handleReject = () => {
+  emit("reject", props.person);
+};
+
+const handleLike = () => {
+  emit("like", props.person);
+};
 </script>
 
 <template>
-  <div class="content">
+  <div class="card-content">
+    <!-- 左邊按鈕 -->
+    <button
+      v-if="isAction"
+      class="reject"
+      @click="handleReject"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
 
     <!-- 卡片 -->
     <div class="card">
@@ -38,17 +59,26 @@ const props = defineProps({
       </div>
     </div>
 
-
+    <!-- 右邊按鈕 -->
+    <button
+      v-if="isAction"
+      class="like"
+      @click="handleLike"
+    >
+      <i class="bi bi-heart-fill"></i>
+    </button>
   </div>
 </template>
 
 <style scoped>
-.content {
+.card-content {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4rem;
+  gap: 1.5rem; /* 按鈕和卡片之間的間距 */
+  flex-direction: row; /* 強制水平排列 */
+
 }
 .card {
   width: 375px;
@@ -86,7 +116,6 @@ p {
   line-height: 1.5;
   color: #444;
 }
-
 .image-wrapper {
   height: 500px;
   width: 375px;
@@ -112,11 +141,42 @@ p {
   margin-top: 0.5rem;
 }
 .tag {
-  background: linear-gradient(135deg, #ff1a53 0%, #ff7b1a 100%);;
+  background: linear-gradient(135deg, #ff1a53 0%, #ff7b1a 100%);
   color: white;
   padding: 0.3rem 0.8rem;
   border-radius: 6px;
   font-size: 0.9rem;
   display: inline-block;
+}
+
+/* 按鈕樣式 */
+.reject:hover {
+  background: var(--gradient-hover);
+  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
+}
+.like:hover {
+  background: var(--gradient-main);
+  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
+}
+.reject,
+.like {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.reject {
+  background-color: #ff4d4d;
+  color: #fff;
+}
+.like {
+  background-color: #ff4081;
+  color: #fff;
 }
 </style>

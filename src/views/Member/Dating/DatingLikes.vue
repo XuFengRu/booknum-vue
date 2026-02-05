@@ -55,7 +55,7 @@ function openProfile(index) {
               :key="index"
               class="preview-card"
             >
-              <img :src="user.avatar" class="avatar" />
+              <img :src="user.avatar" class="preview-avatar" />
               <h4 class="name-age">{{ user.name }} {{ user.age }}</h4>
 
               <!-- 底部資訊區塊 -->
@@ -93,9 +93,7 @@ function openProfile(index) {
       <template v-else>
        <button @click="selectedUser = null" class="back btn-outline-primary"><i class="bi-x"></i>返回</button>
         <div class="profile-page">
-           <button class="reject"><i class="bi-x-lg"></i></button>
           <DatingCard :person="users[selectedUser]" />
-          <button class="like"><i class="bi-heart-fill"></i></button>
         </div>
       </template>
     </main>
@@ -179,13 +177,15 @@ function openProfile(index) {
   text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
 }
 
-.avatar {
+.preview-avatar {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
+
+
 .view-btn {
   border: none;
   padding: 0.2rem 0.6rem;
@@ -257,34 +257,7 @@ function openProfile(index) {
   gap: 2rem;
 }
 
-.reject,
-.like {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
 
-.reject {
-  background-color: #ff4d4d;
-  color: #fff;
-  left: 25%;
-}
-
-.like {
-  background-color: #ff4081;
-  color: #fff;
-  right: 25%;
-}
 
 /* 右上角查看按鈕 */
 .view-btn-top {
@@ -301,24 +274,17 @@ function openProfile(index) {
 
 
 .profile-page {
-  position: relative;
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* 卡片靠上顯示 */
+  padding-top: 2rem;
 }
+
 
 .back {
   margin-bottom: 1rem;
   border-radius: 6px;
 }
-.reject:hover{
-    background: var(--gradient-hover);
 
-    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
-
-}
- .like:hover{
-    background: var(--gradient-main);
-    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
-    }
 </style>
