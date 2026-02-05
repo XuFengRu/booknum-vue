@@ -19,7 +19,8 @@ const sidebarMenus = {
     ],
     rent: [
         { name: '尋找出租', icon: 'bi-search', link: '/member/rent' }, // Rent 首頁
-        { name: '付款資訊', icon: 'bi-credit-card', link: '/member/rent/payments' },
+        { name: '購物車', icon: 'bi-cart', link: '/member/rent/Cart', badge: 3 },
+        { name: '付款資訊', icon: 'bi-credit-card', link: '/member/rent/Payment' },
         { name: '我的預約', icon: 'bi-calendar-check', link: '/member/rent/bookings' },
     ],
     group: [
