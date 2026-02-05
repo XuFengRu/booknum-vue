@@ -87,7 +87,9 @@ function isFull(a) {
   <div class="container py-4 activity-page">
     <div class="activity-panel p-4 rounded-4 border shadow-sm">
       <!-- 標題 -->
-      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+      <div
+        class="d-flex justify-content-between align-items-start gap-3 flex-wrap"
+      >
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <div class="title-pill">
@@ -101,9 +103,7 @@ function isFull(a) {
           </div>
         </div>
 
-        <button class="btn btn-gradient px-4 rounded-pill btn-lgish" @click="goCreate">
-          <i class="fa-solid fa-plus me-2"></i>建立活動
-        </button>
+        <!-- ✅ 這裡原本的「建立活動」按鈕已移除 -->
       </div>
 
       <!-- 搜尋 -->
@@ -118,7 +118,9 @@ function isFull(a) {
       <!-- 列表 -->
       <div class="row g-3 mt-2">
         <div v-for="a in filtered" :key="a.id" class="col-12">
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden activity-card">
+          <div
+            class="card border-0 shadow-sm rounded-4 overflow-hidden activity-card"
+          >
             <div class="row g-0">
               <!-- 圖片 -->
               <div class="col-12 col-md-4">
@@ -130,7 +132,9 @@ function isFull(a) {
               <!-- 內容 -->
               <div class="col-12 col-md-8">
                 <div class="card-body p-3 p-md-4">
-                  <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div
+                    class="d-flex justify-content-between align-items-start gap-3"
+                  >
                     <div class="flex-grow-1">
                       <h5 class="fw-bold mb-2 text-dark title-text">
                         {{ a.title }}
@@ -173,7 +177,9 @@ function isFull(a) {
                     </div>
 
                     <!-- 按鈕 -->
-                    <div class="d-flex flex-column flex-sm-row gap-2 align-items-start">
+                    <div
+                      class="d-flex flex-column flex-sm-row gap-2 align-items-start"
+                    >
                       <button
                         class="btn btn-outline-primary rounded-pill px-3 btn-lgish"
                         @click="goDetail(a.id)"
@@ -190,15 +196,15 @@ function isFull(a) {
                               ? 'btn-full'
                               : 'btn-gradient'
                         "
-                        :disabled="(!a.isJoinedByMe && isFull(a))"
+                        :disabled="!a.isJoinedByMe && isFull(a)"
                         @click="toggleJoin(a)"
                       >
                         {{
                           a.isJoinedByMe
-                            ? '取消報名'
+                            ? "取消報名"
                             : isFull(a)
-                              ? '已額滿'
-                              : '報名'
+                              ? "已額滿"
+                              : "報名"
                         }}
                       </button>
                     </div>
@@ -217,6 +223,12 @@ function isFull(a) {
         </div>
       </div>
     </div>
+
+    <!-- ✅ 右下角浮動建立活動按鈕 -->
+    <button class="fab-create" @click="goCreate" aria-label="建立活動">
+  +
+</button>
+
   </div>
 </template>
 
@@ -275,10 +287,18 @@ function isFull(a) {
 }
 
 /* 內容字 */
-.title-text { font-size: 20px; }
-.meta-text { font-size: 15px; }
-.info-text { font-size: 15px; }
-.empty-text { font-size: 16px; }
+.title-text {
+  font-size: 20px;
+}
+.meta-text {
+  font-size: 15px;
+}
+.info-text {
+  font-size: 15px;
+}
+.empty-text {
+  font-size: 16px;
+}
 
 /* 按鈕 */
 .btn-lgish {
@@ -291,7 +311,9 @@ function isFull(a) {
   color: #fff;
   border: none;
 }
-.btn-gradient:hover { opacity: 0.92; }
+.btn-gradient:hover {
+  opacity: 0.92;
+}
 
 .btn-full {
   background: #eef0f3;
@@ -323,4 +345,41 @@ function isFull(a) {
   color: #5f6772;
   background: #e9ecef;
 }
+
+/* ✅ 右下角浮動 + 按鈕 (FAB) */
+.fab-create {
+  position: fixed;
+  right: 112px;
+  bottom: 32px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+
+  background: linear-gradient(135deg, #ff4d6d, #ff914d);
+  box-shadow: 0 12px 28px rgba(255, 77, 109, 0.35);
+
+  z-index: 9999;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fab-create:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 16px 36px rgba(255, 77, 109, 0.45);
+}
+
+.fab-create:active {
+  transform: scale(0.95);
+}
+
 </style>
