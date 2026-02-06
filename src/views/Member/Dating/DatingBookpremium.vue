@@ -32,7 +32,7 @@ const plans = [
 </script>
 
 <template>
-  <div class="container">
+  <div class="innercontainer">
 
     <!-- 右邊內容置中 -->
     <div class="content">
@@ -74,7 +74,7 @@ const plans = [
 </template>
 
 <style scoped>
-.container {
+.innercontainer {
   display: flex;
   height: 100vh;
 }
@@ -86,7 +86,7 @@ const plans = [
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem;
+  padding: 0.5rem;
   background: linear-gradient(180deg, #fffdf7, #fff8e1);
 
   min-height: 100vh; /* 保證至少跟視窗一樣高 */

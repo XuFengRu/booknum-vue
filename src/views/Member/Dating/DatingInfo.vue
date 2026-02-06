@@ -6,9 +6,9 @@ const person = ref({
   age: 28,
   location: "台南市",
   job: "老師",
-  avatar: "https://th.bing.com/th/id/R.a5ca9094a303b292dbefaaf1775c44a5?rik=66PcQh%2blUcFtuA&riu=http%3a%2f%2fmimgnews1.naver.net%2fimage%2f433%2f2018%2f06%2f15%2f0000045940_001_20180615091140923.jpg&ehk=CULPOpQBQsoOvXD97lNay%2f7f%2bOIXESVxpwv4ZRyubWM%3d&risl=&pid=ImgRaw&r=0",
+  avatar: "https://media.vogue.com.tw/photos/685a91da9afad780315cf5ee/2:3/w_2560%2Cc_limit/%25E9%2587%2591%25E6%25B3%25B0%25E4%25BA%25A86.jpg",
   hobbies: ["旅行", "攝影", "咖啡", "爬山", "閱讀"],
-  intro: "喜歡旅行和攝影，熱愛探索世界的每個角落。週末喜歡去郊外走走，享受陽光和咖啡。",
+  intro: "喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。無論是巍峨山巒、靜謐海岸，或是街頭巷尾的日常片刻，都能成為靈感來源。喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。喜歡旅行和攝影，熱愛探索世界的每個角落。喜歡旅行和攝影，熱愛探索世界的每個角落。喜歡旅行和攝影。",
   matches: 24,
   likes: 156,
   preference: {
@@ -20,68 +20,66 @@ const person = ref({
 </script>
 
 <template>
-  <div class="container">
+  <div class="innercontainer">
     <div class="content">
-      <div class="card">
-        <div class="image-wrapper">
-          <img class="avatar" :src="person.avatar" :alt="person.name" />
-          <div class="info-overlay">
-            <h1>{{ person.name }} {{ person.age }}</h1>
-            <p><i class="bi bi-geo-alt"></i>&nbsp;&nbsp;{{ person.location }}</p>
-            <p><i class="bi bi-bag-heart"></i>&nbsp;&nbsp;{{ person.job }}</p>
-          </div>
-        </div>
+    <div class="card">
+  <!-- 左邊照片 -->
+  <div class="image-wrapper">
+    <img class="avatar" :src="person.avatar" :alt="person.name" />
+    <div class="info-overlay">
+      <h1>{{ person.name }} {{ person.age }}</h1>
+      <p><i class="bi bi-geo-alt"></i>&nbsp;&nbsp;{{ person.location }}</p>
+      <p><i class="bi bi-bag-heart"></i>&nbsp;&nbsp;{{ person.job }}</p>
+    </div>
+  </div>
 
+  <!-- 右邊資訊 -->
+  <div class="info">
+    <div class="stats-section">
+      <div class="stat-card">
+        <i class="bi bi-person-check"></i>
+        <div class="stat-number">{{ person.matches }}</div>
+        <div class="stat-label">配對數</div>
+      </div>
+      <div class="stat-card">
+        <i class="bi bi-heart"></i>
+        <div class="stat-number">{{ person.likes }}</div>
+        <div class="stat-label">喜歡數</div>
+      </div>
+    </div>
 
-        <div class="stats-section">
-          <div class="stat-card">
-            <i class="bi bi-person-check"></i>
-            <div class="stat-number">{{ person.matches }}</div>
-            <div class="stat-label">配對數</div>
-          </div>
-          <div class="stat-card">
-            <i class="bi bi-heart"></i>
-            <div class="stat-number">{{ person.likes }}</div>
-            <div class="stat-label">喜歡數</div>
-          </div>
-        </div>
+    <div class="section">
+      <h4>興趣愛好</h4>
+      <div class="hobbies">
+        <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
+      </div>
+    </div>
 
-        <div class="section">
-          <h4>興趣愛好</h4>
-          <div class="hobbies">
-            <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
-          </div>
-        </div>
+    <div class="section">
+      <h4>自我介紹</h4>
+      <p>{{ person.intro }}</p>
+    </div>
 
-        <div class="section">
-          <h4>自我介紹</h4>
-          <p>{{ person.intro }}</p>
-        </div>
+    <div class="section" id="preference">
+      <h4>偏好設定</h4>
+      <p><strong>性別</strong> <span class="pref-tag">{{ person.preference.gender }}</span></p>
+      <p><strong>年齡</strong> <span class="pref-tag">{{ person.preference.ageRange[0]}} ~ {{ person.preference.ageRange[1] }} 歲</span></p>
+      <p><strong>城市</strong> <span class="pref-tag" v-for="city in person.preference.cities" :key="city">{{ city }}</span>
+      </p>
+    </div>
 
-      <div class="section" id="preference">
-  <h4>偏好設定</h4>
-  <p><strong>性別&nbsp;&nbsp;&nbsp;</strong>
-    <span class="pref-tag">{{ person.preference.gender }}</span>
-  </p>
-  <p><strong>年齡&nbsp;&nbsp;&nbsp;</strong>
-    <span class="pref-tag">{{ person.preference.ageRange[0]}} ~ {{ person.preference.ageRange[1] }} 歲</span>
-  </p>
-  <p><strong>城市&nbsp;&nbsp;&nbsp;</strong>
-    <span class="pref-tag" v-for="city in person.preference.cities" :key="city">{{ city }}</span>
-  </p>
+    <div class="edit-section">
+      <button class="edit-btn btn-outline-primary"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料</button>
+    </div>
+  </div>
 </div>
 
-        <!-- 新增編輯按鈕 -->
-        <div class="edit-section">
-          <button class="edit-btn btn-outline-primary"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料</button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container {
+.innercontainer {
   display: flex;
   min-height: 100vh;
 }
@@ -90,7 +88,7 @@ const person = ref({
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  padding: 0.5rem;
   gap: 4rem;
 }
 .card {
@@ -130,8 +128,8 @@ p {
   color: #444;
 }
 #preference {
-  border-bottom: 1px solid #ff4d94;
-  border-top: 1px solid #ff4d94;
+  border-bottom: 2px solid var(--color-secondary);
+  border-top: 2px solid var(--color-primary);
 }
 
 .pref-tag {
@@ -207,23 +205,109 @@ p {
 }
 .stat-card {
   flex: 1;
-  border: 1px solid #ff0f0f;
-  border-radius: 8px;
   padding: 0.4rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 2px solid transparent; /* 先設透明邊框 */
+  border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-image-slice: 1; /* 必須設定，否則不會顯示 */
 }
+
 .stat-card i {
   font-size: 1.3rem;
-  color: #ff4d94;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 .stat-number {
   font-size: 1.4rem;
-  color: #ff0f0f;
-  
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
+
 .stat-label {
   font-size: 0.8rem;
-  color: #ff4d94;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@media (min-width: 1200px) {
+  .card {
+    display: flex;
+    flex-direction: row;
+    width: 1100px;
+    height: 825px;
+    max-width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .image-wrapper {
+    flex: 1;
+    max-width: 50%;
+    height: auto;
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px 0 0 12px;
+    margin-bottom: 0;
+  }
+
+  .info {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: space-evenly;
+  }
+
+  .stats-section {
+    display: flex;
+    gap: 2rem;
+    justify-content: flex-start;
+  }
+
+  .stat-card {
+    flex: none;
+    width: 120px;
+    text-align: center;
+  }
+
+  .section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  .section p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+  }
+
+  .hobbies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .edit-section {
+    text-align: left;
+  }
+
+  #preference {
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 2px solid transparent; /* 先設透明邊框 */
+  border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  border-image-slice: 1; /* 必須設定，否則不會顯示 */
+}
 }
 </style>

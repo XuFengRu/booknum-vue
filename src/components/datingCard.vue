@@ -46,17 +46,19 @@ const handleLike = () => {
         </div>
       </div>
 
-      <div class="section">
-        <h4>興趣愛好</h4>
-        <div class="hobbies">
-          <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
-        </div>
-      </div>
+<div class="text-content">
+  <div class="section">
+    <h4>興趣愛好</h4>
+    <div class="hobbies">
+      <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
+    </div>
+  </div>
 
-      <div class="section">
-        <h4>自我介紹</h4>
-        <p>{{ person.intro }}</p>
-      </div>
+  <div class="section">
+    <h4>自我介紹</h4>
+    <p class="bio">{{ person.intro }}</p>
+  </div>
+</div>
     </div>
 
     <!-- 右邊按鈕 -->
@@ -87,6 +89,8 @@ const handleLike = () => {
   box-shadow: 0 1px 5px #6e6b6b;
   text-align: center;
   margin: 1rem;
+  display: flex;
+  flex-direction: column; /* 手機版維持直式 */
 }
 .avatar {
   height: 500px;
@@ -178,5 +182,52 @@ p {
 .like {
   background-color: #ff4081;
   color: #fff;
+}
+
+.bio{
+  white-space: pre-wrap; /* 最佳的保留格式+自動換行 */
+}
+
+
+/* 桌面版：橫式排版 */
+@media (min-width: 1200px) {
+  .card {
+    flex-direction: row; /* 改成橫式：左圖右文 */
+    width: 800px;
+    height: 600px;
+    text-align: left;
+  }
+
+  .image-wrapper {
+    width: 50%; /* 左半邊放圖片 */
+    height: auto;
+  }
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px 0 0 12px; /* 左邊圓角 */
+    margin-bottom: 0;
+    object-fit: cover;
+  }
+
+  /* 右邊文字區塊：上下排列 */
+  .card .text-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* 強制上下排列 */
+    justify-content:space-evenly;
+    padding: 1rem;
+    
+  }
+
+  .card .section {
+    margin-bottom: 1rem; /* 區塊之間留間距 */
+  }
+
+  .info-overlay {
+    bottom: 25px;
+    left: 10px;
+  }
 }
 </style>

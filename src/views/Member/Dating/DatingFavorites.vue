@@ -33,7 +33,7 @@ function openProfile(index) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="innercontainer">
 
 
     <main class="likes-page">
@@ -81,14 +81,14 @@ function openProfile(index) {
 </template>
 
 <style scoped>
-.container {
+.innercontainer {
   display: flex;
   height: 100vh;
 }
 .likes-page {
   flex: 1;
-  padding: 2rem;
   text-align: center;
+    padding: 0.5rem;
 }
 .summary {
   margin-bottom: 1rem;

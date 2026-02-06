@@ -10,7 +10,7 @@ const person = ref({
   job: '平面設計師',
   avatar: 'https://pic4.zhimg.com/v2-37bd36f3e158683ecb875e124cff305f_r.jpg',
   hobbies: ['旅行', '攝影', '咖啡', '爬山', '閱讀'],
-  intro: '喜歡旅行和攝影，熱愛探索世界的每個角落。週末喜歡去郊外走走，享受陽光和咖啡。',
+  intro: '喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。'
 })
 
 // 控制是否顯示卡片
@@ -26,7 +26,7 @@ function backToStart() {
 </script>
 
 <template>
-  <div class="container">
+  <div class="innercontainer">
     <!-- 初始畫面 -->
     <div class="content" v-if="!showCard">
       <div class="flame"><i class="bi-fire"></i></div>
@@ -43,11 +43,10 @@ function backToStart() {
 </template>
 
 <style scoped>
-.container {
+.innercontainer {
   display: flex;
   height: 100vh;
   justify-content: center;
-  align-items: center;
 }
 
 /* 初始畫面 */
@@ -55,12 +54,13 @@ function backToStart() {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-top: 12%;
   border-radius: 12px;
   text-align: center;
   height: 100%;
   width: 100%;
   flex-direction: column;
+  padding: 0.5rem;
 }
 
 .content .flame {
@@ -102,5 +102,11 @@ function backToStart() {
 .start-btn:hover {
   background-color: #ff4081;
   transform: scale(1.05);
+}
+
+@media (min-width: 1200px) {
+.card-wrapper {  
+  margin-top: 6%
+}
 }
 </style>

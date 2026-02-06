@@ -23,28 +23,38 @@ const conversations = [
   },
 ];
 const selectedChat = ref(null);
+const isMobile = ref(false);
+
+// 判斷螢幕寬度
+function checkMobile() {
+  isMobile.value = window.innerWidth <= 768;
+}
+window.addEventListener("resize", checkMobile);
+checkMobile();
 
 function openChat(chat) {
   selectedChat.value = chat;
 }
+function backToList() {
+  selectedChat.value = null;
+}
 
-// 取得最後一則訊息文字
 function getLastMessage(chat) {
   if (!chat.messages || chat.messages.length === 0) return "";
   let text = chat.messages[chat.messages.length - 1].text;
   return text.length > 10 ? text.slice(0, 10) + "..." : text;
 }
+
 </script>
 
 <template>
-  <div class="container">
-
-    <!-- 中間訊息列表 -->
-    <div class="content">
-      <br />
-      <h2  class="text-gradient">&nbsp;&nbsp;我的訊息</h2>
-      <p> <span class="text-primary">&nbsp;&nbsp;&nbsp;&nbsp;{{ conversations.length }}</span>&nbsp;個對話</p>
-      <br />
+  <div class="innercontainer" :class="{ mobile: isMobile }">
+    <!-- 訊息列表 -->
+    <div class="content" v-if="!isMobile || !selectedChat">
+      <h2 class="text-gradient">&nbsp;&nbsp;我的訊息</h2>
+      <p>
+        <span class="text-primary">&nbsp;&nbsp;&nbsp;&nbsp;{{ conversations.length }}</span>&nbsp;個對話
+      </p>
       <div class="chat-list">
         <div
           v-for="chat in conversations"
@@ -64,24 +74,39 @@ function getLastMessage(chat) {
       </div>
     </div>
 
-    <!-- 右邊聊天內容 -->
-    <div class="chat">
+    <!-- 聊天內容 -->
+    <div class="chat" v-if="!isMobile || selectedChat">
+      <button v-if="isMobile" class="back-btn" @click="backToList">← 返回</button>
       <ChatBox v-if="selectedChat" :chat="selectedChat" />
       <div v-else class="empty-chat">選擇一個對話開始聊天</div>
     </div>
   </div>
 </template>
-
 <style scoped>
-.container {
+.innercontainer {
   display: flex;
   height: 100vh;
+    flex-direction: row; /* 桌面版預設橫向 */
 }
+.innercontainer.mobile {
+  flex-direction: column; /* 手機版改成縱向 */
+}
+
+/* 右邊聊天 */
+.chat{
+  flex: 1;
+  background-color: #fff;
+  padding: 1rem;
+  overflow-y: auto; /* 列表可滾動 */
+
+}
+
 .content {
   width: 300px;
-  overflow-y: auto;
   border-right: 1px solid #ddd;
   background: #fff;
+
+
 }
 .chat-item {
   display: flex;
@@ -115,15 +140,32 @@ function getLastMessage(chat) {
   font-size: 0.8rem;
   color: #aaa;
 }
-.chat {
-  flex: 1;
-  background-color: #fff;
-  padding: 1rem;
-}
+
 .empty-chat {
   color: #999;
   text-align: center;
   margin-top: 25%;
   font-size: 1.2rem;
 }
+.back-btn {
+  margin-bottom: 1rem;
+  background: none;
+  border: none;
+  color: #FF3366;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .content {
+    width: 100%;
+    border-right: none;
+  }
+  .chat {
+    width: 100%;
+
+  }
+  
+}
+
 </style>

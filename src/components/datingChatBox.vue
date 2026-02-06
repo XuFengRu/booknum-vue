@@ -64,7 +64,7 @@ watch(
 .chat-box {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 93%;
 }
 
 .chat-bar{
@@ -85,12 +85,12 @@ watch(
 .message-row {
   display: flex;
   flex-direction: column;
-  max-width: 60%;
+  max-width: 40%;
 }
 
 .me-row {
   align-self: flex-end;
-  text-align: right;
+  text-align: left;
 }
 
 .other-row {
@@ -131,7 +131,7 @@ watch(
 .input-area {
   display: flex;
   border-top: 1px solid #ddd;
-  padding: 0.5rem;
+  padding-top: 0.5rem;
   gap: 0.5rem;
 }
 .input-area input {
@@ -145,5 +145,7 @@ watch(
   border-radius: 6px;
   padding: 0.5rem 1rem;
 }
+
+
 
 </style>
