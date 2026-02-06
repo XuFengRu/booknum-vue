@@ -105,7 +105,7 @@ function getLastMessage(chat) {
   width: 300px;
   border-right: 1px solid #ddd;
   background: #fff;
-
+  min-height: 100vh; /* 改成 min-height */
 
 }
 .chat-item {

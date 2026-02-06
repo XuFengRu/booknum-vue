@@ -80,7 +80,7 @@ const handleLike = () => {
   align-items: center;
   gap: 1.5rem; /* 按鈕和卡片之間的間距 */
   flex-direction: row; /* 強制水平排列 */
-
+  height: 93%;
 }
 .card {
   width: 375px;
@@ -131,10 +131,10 @@ p {
   position: absolute;
   bottom: 35px;
   left: 10px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #fff;
   text-align: left;
-  padding: 0.3rem 0.6rem;
+  padding: 0.6rem 0.6rem;
   border-radius: 3px;
   text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
 }
@@ -228,6 +228,7 @@ p {
   .info-overlay {
     bottom: 25px;
     left: 10px;
+    padding: 0rem 0.6rem;
   }
 }
 </style>

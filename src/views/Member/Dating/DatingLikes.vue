@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import DatingCard from '@/components/datingCard.vue'
 
 const isPremium = ref(false)
@@ -83,7 +84,7 @@ function openProfile(index) {
               <div class="diamond"><i class="bi bi-gem"></i></div>
               <p class="locked-text">升級至 BookPremium</p>
               <p class="locked-sub">查看誰喜歡你</p>
-              <button class="upgrade-btn">立即升級</button>
+              <RouterLink :to="{ name: 'member-bookpremium' }" class="upgrade-btn">立即升級</RouterLink>
             </div>
           </template>
         </div>
@@ -243,16 +244,23 @@ function openProfile(index) {
   margin-bottom: 1.5rem;
 }
 .upgrade-btn {
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
+  display: inline-block;          /* 讓 RouterLink 看起來像按鈕 */
+  text-decoration: none;          /* 移除超連結底線 */
+  color: #333;                  
+  border: none;                  
+  padding: 0.5rem 1.2rem;        
+  border-radius: 6px;     
   background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15); 
+  transition: all 0.3s ease;      /* 動畫過渡 */
 }
+
 .upgrade-btn:hover {
   background: linear-gradient(135deg, #fed11b, #ffde69);
-  transform: translateY(-2px); 
+  transform: translateY(-2px);    
+  text-decoration: none;     
 }
+
 
 .card-actions {
   display: flex;

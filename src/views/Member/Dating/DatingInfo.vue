@@ -1,5 +1,10 @@
 <script setup>
 import { ref } from "vue";
+import EditProfile from "@/components/datingEdit.vue";
+import DatingEdit from "@/components/datingEdit.vue";
+
+const isEditing = ref(false);
+
 
 const person = ref({
   name: "小J",
@@ -17,12 +22,40 @@ const person = ref({
     cities: ["台北市", "新北市", "桃園市"],
   },
 });
+
+
+function updateProfile(newData) {
+  person.value = {
+    ...person.value,
+    name: newData.nickname || person.value.name,
+    location: newData.location || person.value.location,
+    job: newData.job || person.value.job,
+    hobbies: newData.hobbies?.length ? newData.hobbies : person.value.hobbies,
+    intro: newData.intro || person.value.intro,
+    preference: {
+      gender: newData.preference?.gender || person.value.preference.gender,
+      ageRange: newData.preference?.ageRange?.length
+        ? newData.preference.ageRange
+        : person.value.preference.ageRange,
+      cities: newData.preference?.cities?.length
+        ? newData.preference.cities
+        : person.value.preference.cities
+    }
+  };
+  isEditing.value = false; // 回到顯示模式
+}
+
+function cancelEdit() {
+  isEditing.value = false;
+}
+
+
 </script>
 
 <template>
   <div class="innercontainer">
     <div class="content">
-    <div class="card">
+    <div v-if="!isEditing" class="card">
   <!-- 左邊照片 -->
   <div class="image-wrapper">
     <img class="avatar" :src="person.avatar" :alt="person.name" />
@@ -69,11 +102,11 @@ const person = ref({
     </div>
 
     <div class="edit-section">
-      <button class="edit-btn btn-outline-primary"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料</button>
+      <button @click="isEditing = true" class="edit-btn btn-outline-primary"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料</button>
     </div>
   </div>
 </div>
-
+ <DatingEdit v-else @save="updateProfile" @cancel="cancelEdit"/>
     </div>
   </div>
 </template>
@@ -155,10 +188,10 @@ p {
   position: absolute;
   bottom: 35px;
   left: 10px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #fff;
   text-align: left;
-  padding: 0.3rem 0.6rem;
+  padding: 0.8rem 0.6rem;
   border-radius: 3px;
   text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
 }
@@ -308,6 +341,10 @@ p {
   border: 2px solid transparent; /* 先設透明邊框 */
   border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   border-image-slice: 1; /* 必須設定，否則不會顯示 */
+}
+.info-overlay{
+  font-size: 1.2rem;
+  padding: 0rem 0.6rem;
 }
 }
 </style>
