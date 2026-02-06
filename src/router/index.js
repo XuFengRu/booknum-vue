@@ -69,6 +69,18 @@ const router = createRouter({
           name: 'member-group',
           component: () => import('../views/Member/Group/GroupView.vue')
         },
+        // ---------------------
+        {
+          path: 'group/create',
+          name: 'member-group-create',
+          component: () => import('../views/Member/Group/ActivityNew.vue')
+        },
+        {
+          path: "group/:id",
+          name: "member-group-detail",
+          component: () => import("../views/Member/Group/ActivityDetail.vue"),
+        },
+        // ---------------------
         {
           path: 'profile',
           name: 'member-profile',

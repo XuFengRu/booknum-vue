@@ -1,16 +1,18 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 const keyword = ref("");
 
-const activities = ref([
+const STORAGE_KEY = "activities_v1";
+
+/** ✅ 初始假資料（localStorage 沒資料時才會塞進去） */
+const seedActivities = [
   {
     id: 1,
     title: "一起吃拉麵（新宿）",
     category: "吃飯",
-    people: 4,
     need: 8,
     joined: 6,
     isJoinedByMe: false,
@@ -24,7 +26,6 @@ const activities = ref([
     id: 2,
     title: "周末爬山（象山）",
     category: "運動",
-    people: 8,
     need: 10,
     joined: 2,
     isJoinedByMe: true,
@@ -38,7 +39,6 @@ const activities = ref([
     id: 3,
     title: "桌遊之夜（狼人殺）",
     category: "桌遊",
-    people: 10,
     need: 10,
     joined: 10,
     isJoinedByMe: false,
@@ -48,7 +48,33 @@ const activities = ref([
     image:
       "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab4?w=1200&q=80",
   },
-]);
+];
+
+function loadActivities() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveActivities(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+const activities = ref([]);
+
+onMounted(() => {
+  const list = loadActivities();
+  if (!Array.isArray(list) || list.length === 0) {
+    // ✅ 第一次進來 localStorage 沒資料：塞入 seed
+    saveActivities(seedActivities);
+    activities.value = seedActivities;
+  } else {
+    activities.value = list;
+  }
+});
 
 const filtered = computed(() => {
   const k = keyword.value.trim().toLowerCase();
@@ -61,25 +87,28 @@ const filtered = computed(() => {
 });
 
 function goCreate() {
-  router.push({ name: "activity-new" });
+  router.push({ name: "member-group-create" });
 }
+
 function goDetail(id) {
-  router.push({ name: "activity-detail", params: { id } });
+  router.push({ name: "member-group-detail", params: { id } });
+}
+
+function isFull(a) {
+  return (Number(a.joined) || 0) >= (Number(a.need) || 0);
 }
 
 function toggleJoin(a) {
   if (a.isJoinedByMe) {
-    a.joined = Math.max(0, a.joined - 1);
+    a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
     a.isJoinedByMe = false;
-    return;
+  } else {
+    if (isFull(a)) return;
+    a.joined = (Number(a.joined) || 0) + 1;
+    a.isJoinedByMe = true;
   }
-  if (a.joined >= a.need) return;
-  a.joined += 1;
-  a.isJoinedByMe = true;
-}
-
-function isFull(a) {
-  return a.joined >= a.need;
+  // ✅ 存回 localStorage，詳細頁才會同步
+  saveActivities(activities.value);
 }
 </script>
 
@@ -87,9 +116,7 @@ function isFull(a) {
   <div class="container py-4 activity-page">
     <div class="activity-panel p-4 rounded-4 border shadow-sm">
       <!-- 標題 -->
-      <div
-        class="d-flex justify-content-between align-items-start gap-3 flex-wrap"
-      >
+      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <div class="title-pill">
@@ -102,8 +129,6 @@ function isFull(a) {
             用關鍵字搜尋標題 / 地點 / 類型，快速找到你要的活動
           </div>
         </div>
-
-        <!-- ✅ 這裡原本的「建立活動」按鈕已移除 -->
       </div>
 
       <!-- 搜尋 -->
@@ -118,9 +143,7 @@ function isFull(a) {
       <!-- 列表 -->
       <div class="row g-3 mt-2">
         <div v-for="a in filtered" :key="a.id" class="col-12">
-          <div
-            class="card border-0 shadow-sm rounded-4 overflow-hidden activity-card"
-          >
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden activity-card">
             <div class="row g-0">
               <!-- 圖片 -->
               <div class="col-12 col-md-4">
@@ -132,16 +155,14 @@ function isFull(a) {
               <!-- 內容 -->
               <div class="col-12 col-md-8">
                 <div class="card-body p-3 p-md-4">
-                  <div
-                    class="d-flex justify-content-between align-items-start gap-3"
-                  >
+                  <div class="d-flex justify-content-between align-items-start gap-3">
                     <div class="flex-grow-1">
                       <h5 class="fw-bold mb-2 text-dark title-text">
                         {{ a.title }}
                       </h5>
 
                       <div class="text-muted meta-text mb-2">
-                        類型：{{ a.category }}｜人數：{{ a.people }}
+                        類型：{{ a.category }}
                         <span class="ms-2">
                           已報名
                           <b class="text-dark">{{ a.joined }}</b>
@@ -177,9 +198,7 @@ function isFull(a) {
                     </div>
 
                     <!-- 按鈕 -->
-                    <div
-                      class="d-flex flex-column flex-sm-row gap-2 align-items-start"
-                    >
+                    <div class="d-flex flex-column flex-sm-row gap-2 align-items-start">
                       <button
                         class="btn btn-outline-primary rounded-pill px-3 btn-lgish"
                         @click="goDetail(a.id)"
@@ -224,11 +243,10 @@ function isFull(a) {
       </div>
     </div>
 
-    <!-- ✅ 右下角浮動建立活動按鈕 -->
-    <button class="fab-create" @click="goCreate" aria-label="建立活動">
-  +
-</button>
-
+    <!-- 右下角 + -->
+    <RouterLink :to="{ name: 'member-group-create' }" class="fab-create" aria-label="建立活動">
+      +
+    </RouterLink>
   </div>
 </template>
 
@@ -333,20 +351,16 @@ function isFull(a) {
   line-height: 1;
   vertical-align: middle;
 }
-
-/* 漸層版本 */
 .badge-pill--hot {
   color: #fff;
   background: linear-gradient(135deg, #ff4d6d, #ff914d);
 }
-
-/* 灰色版本 */
 .badge-pill--full {
   color: #5f6772;
   background: #e9ecef;
 }
 
-/* ✅ 右下角浮動 + 按鈕 (FAB) */
+/* FAB */
 .fab-create {
   position: fixed;
   right: 112px;
@@ -371,15 +385,14 @@ function isFull(a) {
 
   z-index: 9999;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
 
+  text-decoration: none;
+}
 .fab-create:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 16px 36px rgba(255, 77, 109, 0.45);
 }
-
 .fab-create:active {
   transform: scale(0.95);
 }
-
 </style>
