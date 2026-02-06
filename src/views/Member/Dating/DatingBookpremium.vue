@@ -76,7 +76,8 @@ const plans = [
 <style scoped>
 .innercontainer {
   display: flex;
-  height: 100vh;
+  min-height: 100vh; /* 改成 min-height */
+  background: linear-gradient(180deg, #fffdf7, #fff8e1);
 }
 
 
@@ -87,8 +88,6 @@ const plans = [
   justify-content: center;
   align-items: flex-start;
   padding: 0.5rem;
-  background: linear-gradient(180deg, #fffdf7, #fff8e1);
-
   min-height: 100vh; /* 保證至少跟視窗一樣高 */
   width: 100%;
 }
