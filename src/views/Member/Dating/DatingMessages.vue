@@ -1,50 +1,31 @@
 <script setup>
-import { ref } from "vue";
-import ChatBox from "@/components/datingChatBox.vue";
+import { ref } from 'vue'
+import { usedatingRead } from '@/stores/datingRead'
+import ChatBox from '@/components/datingChatBox.vue'
 
-const conversations = [
-  {
-    id: "xiaomei",
-    name: "小美",
-    avatar: "https://pic3.zhimg.com/v2-b1136c6d946d263709a7461de8b0f9a2_r.jpg",
-    messages: [
-      { from: "她", text: "嗨～週末有空嗎？", time: "10:30" },
-      { from: "我", text: "有啊！我們週末見囉！", time: "10:32" },
-    ],
-  },
-  {
-    id: "aili",
-    name: "艾莉",
-    avatar: "https://www.63099.net/zb_users/upload/2024/09/1725899463861.png",
-    messages: [
-      { from: "她", text: "最近在看那部電影～", time: "14:05" },
-      { from: "我", text: "我也超喜歡那部！", time: "14:07" },
-    ],
-  },
-];
-const selectedChat = ref(null);
-const isMobile = ref(false);
+const datingRead = usedatingRead()
+const selectedChat = ref(null)
+const isMobile = ref(false)
 
-// 判斷螢幕寬度
 function checkMobile() {
-  isMobile.value = window.innerWidth <= 768;
+  isMobile.value = window.innerWidth <= 768
 }
-window.addEventListener("resize", checkMobile);
-checkMobile();
+window.addEventListener('resize', checkMobile)
+checkMobile()
 
 function openChat(chat) {
-  selectedChat.value = chat;
+  selectedChat.value = chat
+  datingRead.markAsRead(chat.id) // 進入聊天後標記已讀
 }
 function backToList() {
-  selectedChat.value = null;
+  datingRead.value = null
 }
 
 function getLastMessage(chat) {
-  if (!chat.messages || chat.messages.length === 0) return "";
-  let text = chat.messages[chat.messages.length - 1].text;
-  return text.length > 10 ? text.slice(0, 10) + "..." : text;
+  if (!chat.messages || chat.messages.length === 0) return ''
+  let text = chat.messages[chat.messages.length - 1].text
+  return text.length > 10 ? text.slice(0, 10) + '...' : text
 }
-
 </script>
 
 <template>
@@ -53,18 +34,24 @@ function getLastMessage(chat) {
     <div class="content" v-if="!isMobile || !selectedChat">
       <h2 class="text-gradient">&nbsp;&nbsp;我的訊息</h2>
       <p>
-        <span class="text-primary">&nbsp;&nbsp;&nbsp;&nbsp;{{ conversations.length }}</span>&nbsp;個對話
+        <span class="text-primary"
+          >&nbsp;&nbsp;&nbsp;&nbsp;{{ datingRead.conversations.length }}</span
+        >&nbsp;個對話
       </p>
       <div class="chat-list">
         <div
-          v-for="chat in conversations"
+          v-for="chat in datingRead.conversations"
           :key="chat.id"
           class="chat-item"
           @click="openChat(chat)"
         >
           <img class="avatar" :src="chat.avatar" alt="avatar" />
           <div class="text">
-            <h3>{{ chat.name }}</h3>
+            <h3 class="name-wrapper">
+              {{ chat.name }}
+              <span v-if="chat.unreadCount > 0" class="badge">{{ chat.unreadCount }}</span>
+            </h3>
+
             <p class="preview">
               {{ getLastMessage(chat) }}
               <span class="preview-time">{{ chat.messages[chat.messages.length - 1].time }}</span>
@@ -83,22 +70,41 @@ function getLastMessage(chat) {
   </div>
 </template>
 <style scoped>
+.name-wrapper {
+  display: inline-flex;
+  align-items: center; /* 垂直置中 */
+  gap: 6px;
+}
+
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 12px; /* 圓角 */
+}
+
 .innercontainer {
   display: flex;
   height: 100vh;
-    flex-direction: row; /* 桌面版預設橫向 */
+  flex-direction: row; /* 桌面版預設橫向 */
 }
 .innercontainer.mobile {
   flex-direction: column; /* 手機版改成縱向 */
 }
 
 /* 右邊聊天 */
-.chat{
+.chat {
   flex: 1;
   background-color: #fff;
   padding: 1rem;
   overflow-y: auto; /* 列表可滾動 */
-
 }
 
 .content {
@@ -106,7 +112,6 @@ function getLastMessage(chat) {
   border-right: 1px solid #ddd;
   background: #fff;
   min-height: 100vh; /* 改成 min-height */
-
 }
 .chat-item {
   display: flex;
@@ -118,7 +123,7 @@ function getLastMessage(chat) {
   border-top: 1px solid #f5ebeb;
 }
 .chat-item:hover {
-  color:#FF3366
+  color: #ff3366;
 }
 .avatar {
   width: 50px;
@@ -151,7 +156,7 @@ function getLastMessage(chat) {
   margin-bottom: 1rem;
   background: none;
   border: none;
-  color: #FF3366;
+  color: #ff3366;
   font-size: 1rem;
   cursor: pointer;
 }
@@ -163,9 +168,6 @@ function getLastMessage(chat) {
   }
   .chat {
     width: 100%;
-
   }
-  
 }
-
 </style>

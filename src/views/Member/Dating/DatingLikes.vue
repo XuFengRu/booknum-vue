@@ -31,11 +31,22 @@ const users = [
 function openProfile(index) {
   selectedUser.value = index
 }
+
+
+function handleLike(person) {
+  // 做喜歡的邏輯
+  selectedUser.value = null // 回到列表頁
+}
+
+function handleReject(person) {
+  // 做不喜歡的邏輯
+  selectedUser.value = null // 回到列表頁
+}
+
 </script>
 
 <template>
   <div class="innercontainer">
-
     <main class="likes-page">
       <!-- 當 selectedUser 為 null 時顯示列表 -->
       <template v-if="selectedUser === null">
@@ -51,11 +62,7 @@ function openProfile(index) {
 
         <div class="card-grid">
           <template v-if="isPremium">
-            <div
-              v-for="(user, index) in users"
-              :key="index"
-              class="preview-card"
-            >
+            <div v-for="(user, index) in users" :key="index" class="preview-card">
               <img :src="user.avatar" class="preview-avatar" />
               <h4 class="name-age">{{ user.name }} {{ user.age }}</h4>
 
@@ -63,28 +70,23 @@ function openProfile(index) {
               <div class="card-footer">
                 <p class="location">{{ user.location }}</p>
               </div>
-              <button
-                @click="openProfile(index)"
-                class="view-btn-top btn-outline-primary"
-              >
+              <button @click="openProfile(index)" class="view-btn-top btn-outline-primary">
                 <i class="bi bi-eye"></i>
               </button>
             </div>
           </template>
 
           <template v-else>
-            <div
-              v-for="(user, index) in users"
-              :key="index"
-              class="locked-card"
-            >
+            <div v-for="(user, index) in users" :key="index" class="locked-card">
               <div class="locked-avatar-wrapper">
                 <img :src="user.avatar" class="locked-avatar" />
               </div>
               <div class="diamond"><i class="bi bi-gem"></i></div>
               <p class="locked-text">升級至 BookPremium</p>
               <p class="locked-sub">查看誰喜歡你</p>
-              <RouterLink :to="{ name: 'member-bookpremium' }" class="upgrade-btn">立即升級</RouterLink>
+              <RouterLink :to="{ name: 'member-bookpremium' }" class="upgrade-btn"
+                >立即升級</RouterLink
+              >
             </div>
           </template>
         </div>
@@ -92,9 +94,11 @@ function openProfile(index) {
 
       <!-- 當 selectedUser 不為 null 時顯示單一卡片 -->
       <template v-else>
-       <button @click="selectedUser = null" class="back btn-outline-primary"><i class="bi-x"></i>返回</button>
+        <button @click="selectedUser = null" class="back btn-outline-primary">
+          <i class="bi-x"></i>返回
+        </button>
         <div class="profile-page">
-          <DatingCard :person="users[selectedUser]" />
+          <DatingCard :person="users[selectedUser]" @like="handleLike" @reject="handleReject" />
         </div>
       </template>
     </main>
@@ -151,7 +155,6 @@ function openProfile(index) {
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 0.5rem;
-  
 }
 
 .card-footer {
@@ -185,7 +188,6 @@ function openProfile(index) {
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
-
 
 .view-btn {
   border: none;
@@ -226,16 +228,16 @@ function openProfile(index) {
 .diamond {
   font-size: 2rem;
   background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin-top: 2.5rem;
 }
 .locked-text {
   font-weight: bold;
   margin-top: 0.5rem;
   background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-size: 1.2rem;
 }
 .locked-sub {
@@ -244,23 +246,22 @@ function openProfile(index) {
   margin-bottom: 1.5rem;
 }
 .upgrade-btn {
-  display: inline-block;          /* 讓 RouterLink 看起來像按鈕 */
-  text-decoration: none;          /* 移除超連結底線 */
-  color: #333;                  
-  border: none;                  
-  padding: 0.5rem 1.2rem;        
-  border-radius: 6px;     
+  display: inline-block; /* 讓 RouterLink 看起來像按鈕 */
+  text-decoration: none; /* 移除超連結底線 */
+  color: #333;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
   background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15); 
-  transition: all 0.3s ease;      /* 動畫過渡 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease; /* 動畫過渡 */
 }
 
 .upgrade-btn:hover {
   background: linear-gradient(135deg, #fed11b, #ffde69);
-  transform: translateY(-2px);    
-  text-decoration: none;     
+  transform: translateY(-2px);
+  text-decoration: none;
 }
-
 
 .card-actions {
   display: flex;
@@ -268,8 +269,6 @@ function openProfile(index) {
   justify-content: center;
   gap: 2rem;
 }
-
-
 
 /* 右上角查看按鈕 */
 .view-btn-top {
@@ -280,10 +279,7 @@ function openProfile(index) {
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   cursor: pointer;
-
-
 }
-
 
 .profile-page {
   flex: 1;
@@ -292,10 +288,8 @@ function openProfile(index) {
   align-items: flex-start; /* 卡片靠上顯示 */
 }
 
-
 .back {
   margin-bottom: 1rem;
   border-radius: 6px;
 }
-
 </style>

@@ -30,6 +30,7 @@ const users = [
 function openProfile(index) {
   selectedUser.value = index
 }
+
 </script>
 
 <template>
