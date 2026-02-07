@@ -31,7 +31,16 @@ watch(
 
 <template>
   <div class="chat-box">
-    <h2 class="chat-bar">與 <span class="text-primary">{{ chat.name }}</span> 的聊天室</h2>
+      <div class="chat-bar">
+      <h2>
+        與 <span class="text-primary">{{ chat.name }}</span> 的聊天室
+      </h2>
+      <!-- 垃圾桶按鈕 -->
+      <button class="delete-btn">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+
 
     <div class="messages" ref="messagesContainer">
       <div
@@ -68,9 +77,27 @@ watch(
 }
 
 .chat-bar{
+  display: flex;
+  justify-content: space-between; /* 左右分佈 */
+  align-items: center;
+
   border-bottom: 1px solid #ddd;
   padding-bottom: 0.5rem;
 }
+
+.delete-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #888;
+  transition: color 0.2s ease;
+}
+
+.delete-btn:hover {
+  color: #ff1a53; /* hover 時變紅色 */
+}
+
 
 .messages {
   flex: 1;

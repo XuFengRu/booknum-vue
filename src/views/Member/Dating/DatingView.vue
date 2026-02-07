@@ -3,26 +3,43 @@ import ProfileCard from '@/components/datingCard.vue'
 import { ref } from 'vue'
 
 // 模擬配對到的對象資料
-const person = ref({
-  name: '小魚',
-  age: 25,
-  location: '台北市',
-  job: '平面設計師',
-  avatar: 'https://pic4.zhimg.com/v2-37bd36f3e158683ecb875e124cff305f_r.jpg',
-  hobbies: ['旅行', '攝影', '咖啡', '爬山', '閱讀'],
-  intro: '喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。'
-})
-
+const person = ref([
+  {
+    name: '小魚',
+    age: 25,
+    location: '台北市',
+    job: '平面設計師',
+    avatar: 'https://pic4.zhimg.com/v2-37bd36f3e158683ecb875e124cff305f_r.jpg',
+    hobbies: ['旅行', '攝影', '咖啡', '爬山', '閱讀'],
+    intro: '喜歡旅行和攝影，熱愛探索世界的每個角落...喜歡旅行和攝影，熱愛探索世界的每個角落...喜歡旅行和攝影，熱愛探索世界的每個角落...喜歡旅行和攝影，熱愛探索世界的每個角落...'
+  },
+  {
+    name: '小華',
+    age: 28,
+    location: '台中市',
+    job: '工程師',
+    avatar: 'https://tse1.explicit.bing.net/th/id/OIP.2f8ONfRuhbpCwQzu7e9LaQHaLH?rs=1&pid=ImgDetMain&o=7&rm=3',
+    hobbies: ['健身', '程式', '美食'],
+    intro: '喜歡挑戰新技術，也愛運動保持活力。喜歡挑戰新技術，也愛運動保持活力。喜歡挑戰新技術，也愛運動保持活力。喜歡挑戰新技術，也愛運動保持活力。'
+  }
+])
+const currentIndex = ref(0)
 // 控制是否顯示卡片
 const showCard = ref(false)
+
 
 function startMatch() {
   showCard.value = true
 }
 
-function backToStart() {
-  showCard.value = false
+function nextPerson() {
+  if (currentIndex.value < person.value.length - 1) {
+    currentIndex.value++
+  } else {
+    currentIndex.value = 0 // 或者結束
+  }
 }
+
 </script>
 
 <template>
@@ -37,7 +54,10 @@ function backToStart() {
 
     <!-- 配對卡片 -->
     <div v-else class="card-wrapper">
-        <ProfileCard :person="person" />
+        <ProfileCard :person="person[currentIndex]"
+          @like="nextPerson"
+          @reject="nextPerson"
+ />
     </div>
   </div>
 </template>

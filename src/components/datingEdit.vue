@@ -1,8 +1,11 @@
 <!-- src/components/EditProfile.vue -->
 <script setup>
 import { ref } from "vue";
-import { ElSelect, ElOption, ElButton, ElSlider } from "element-plus";
+import { ElSelect, ElOption, ElButton, ElSlider, ElForm, ElFormItem } from "element-plus";
 import "element-plus/dist/index.css";
+
+
+const emit = defineEmits(["save","cancel"]);  
 
 const cities = [
   // 北部
@@ -29,144 +32,170 @@ const form = ref({
   avatar: "",   // 照片欄位
   preference: {
     gender: "不拘",
-    ageRange: [20, 40],
+    ageRange: [18, 80],
     cities: []
   }
 });
 
-// 處理檔案選擇
+const rules = {
+  avatar: [{ required: true, message: "請上傳照片", trigger: "change" }],
+  nickname: [{ required: true, message: "請輸入綽號", trigger: "blur" }],
+  location: [{ required: true, message: "請選擇現居地", trigger: "change" }],
+  job: [{ required: true, message: "請輸入職業", trigger: "blur" }],
+  intro: [{ required: true, message: "請輸入自我介紹", trigger: "blur" }]
+};
+
+const formRef = ref();
+
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
     reader.onload = e => {
-      form.value.avatar = e.target.result; // base64 URL
+      form.value.avatar = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 }
 
-// 清除所有已選城市
 function clearCities() {
   form.value.preference.cities = [];
 }
 
-// 清除所有已選興趣
 function clearHobbies() {
   form.value.hobbies = [];
 }
+
+function submitForm() {
+  formRef.value.validate(valid => {
+    if (valid) {
+      // 驗證通過才觸發 save
+      emit("save", form.value);
+    }
+  });
+}
 </script>
+
 
 <template>
   <div class="edit-form">
     <h3 class="text-gradient text-center">編輯交友資料</h3>
 
-    <!-- 照片 -->
-    <label>照片</label> 
-    <div v-if="form.avatar" class="preview">
-      <img :src="form.avatar" alt="預覽圖片" />
-    </div>
-    <input type="file" accept="image/*" @change="handleFileUpload" class="form-control"/>
+    <el-form :model="form" :rules="rules" ref="formRef" label-position="top">
+      <!-- 照片 -->
+      <el-form-item label="照片" prop="avatar">
+        <div v-if="form.avatar" class="preview">
+          <img :src="form.avatar" alt="預覽圖片" />
+        </div>
+        <input type="file" accept="image/*" @change="handleFileUpload" class="form-control"/>
+      </el-form-item>
 
-    <!-- 綽號 -->
-    <label>綽號</label>
-    <input v-model="form.nickname" type="text" class="form-control" />
+      <!-- 綽號 -->
+      <el-form-item label="綽號" prop="nickname">
+        <input v-model="form.nickname" type="text" class="form-control" />
+      </el-form-item>
 
-    <!-- 現居地 -->
-    <label>現居地</label>
-    <select v-model="form.location">
-      <option disabled value="">請選擇</option>
-      <option v-for="city in cities" :key="city" :value="city" class="form-select">{{ city }}</option>
-    </select>
+      <!-- 現居地 -->
+      <el-form-item label="現居地" prop="location">
+        <select v-model="form.location">
+          <option disabled value="">請選擇</option>
+          <option v-for="city in cities" :key="city" :value="city" class="form-select">{{ city }}</option>
+        </select>
+      </el-form-item>
 
-    <!-- 職業 -->
-    <label>職業</label>
-    <input v-model="form.job" type="text" class="clear form-control" />
+      <!-- 職業 -->
+      <el-form-item label="職業" prop="job">
+        <input v-model="form.job" type="text" class=" form-control" />
+      </el-form-item>
 
-    <!-- 興趣 -->
-    <label>興趣 - 限 8 個</label>
-    <el-select
-      v-model="form.hobbies"
-      multiple
-      collapse-tags
-      placeholder="選擇興趣"
-      style="width: 100%;"
-      :max-collapse-tags="10"
-      size="large"
-    >
-      <el-option
-        v-for="hobby in hobbyOptions"
-        :key="hobby"
-        :label="hobby"
-        :value="hobby"
-        :disabled="form.hobbies.length >= 8 && !form.hobbies.includes(hobby)"
-      />
-    </el-select>
-    <div v-if="form.hobbies.length" class="selected-hobbies">
-      <el-button type="danger" size="small" @click="clearHobbies" class="clear btn-outline-primary">清除全部</el-button>
-    </div>
+      <!-- 興趣 -->
+      <el-form-item label="興趣 - 限 8 個">
+        <el-select
+          v-model="form.hobbies"
+          multiple
+          collapse-tags
+          placeholder="選擇興趣"
+          style="width: 100%;"
+          :max-collapse-tags="10"
+          size="large"
+        >
+          <el-option
+            v-for="hobby in hobbyOptions"
+            :key="hobby"
+            :label="hobby"
+            :value="hobby"
+            :disabled="form.hobbies.length >= 8 && !form.hobbies.includes(hobby)"
+          />
+        </el-select>
+        <div v-if="form.hobbies.length" class="selected-hobbies">
+          <el-button type="danger" size="small" @click="clearHobbies" class=" btn-outline-primary">清除全部</el-button>
+        </div>
+      </el-form-item>
 
-    <!-- 自我介紹 -->
-    <label>自我介紹 - 限 250 字</label>
-    <textarea
-      v-model="form.intro"
-      rows="5"
-      @input="form.intro = form.intro.slice(0,250)"
-      class="form-textarea"></textarea>
-    <p style="font-size: 13px;">剩餘字數 {{ 250 - form.intro.length }}</p>
+      <!-- 自我介紹 -->
+      <el-form-item label="自我介紹 - 限 250 字" prop="intro">
+        <textarea
+          v-model="form.intro"
+          rows="5"
+          @input="form.intro = form.intro.slice(0,250)"
+          class="form-textarea"></textarea>
+        <p style="font-size: 13px;">剩餘字數 {{ 250 - form.intro.length }}</p>
+      </el-form-item>
 
-    <!-- 偏好設定 -->
-    <h2 class="text-gradient text-center">偏好設定</h2>
-    <label>性別偏好</label>
-    <select v-model="form.preference.gender" class="form-select">
-      <option>女性</option>
-      <option>男性</option>
-      <option>不拘</option>
-    </select>
+      <!-- 偏好設定 -->
+      <h2 class="text-gradient text-center">偏好設定</h2>
+      <el-form-item label="性別偏好">
+        <select v-model="form.preference.gender" class="form-select">
+          <option>女性</option>
+          <option>男性</option>
+          <option>不拘</option>
+        </select>
+      </el-form-item>
 
+      <el-form-item label="年齡範圍偏好">
+        <el-slider
+          v-model="form.preference.ageRange"
+          range
+          :min="18"
+          :max="80"
+          :step="1"
+          show-stops
+          style="width: 100%;"
+        />
+        <p>選擇年齡：{{ form.preference.ageRange[0] }} ~ {{ form.preference.ageRange[1] }} 歲</p>
+      </el-form-item>
 
- <label>年齡範圍偏好</label>
-    <el-slider
-      v-model="form.preference.ageRange"
-      range
-      :min="18"
-      :max="80"
-      :step="1"
-      show-stops
-      style="width: 100%;"
-    />
-    <p>選擇年齡：{{ form.preference.ageRange[0] }} ~ {{ form.preference.ageRange[1] }} 歲</p>
+      <el-form-item label="城市偏好">
+        <el-select
+          v-model="form.preference.cities"
+          multiple
+          collapse-tags
+          placeholder="選擇城市"
+          style="width: 100%;"
+          :max-collapse-tags="10"
+          size="large"
+        >
+          <el-option
+            v-for="city in cities"
+            :key="city"
+            :label="city"
+            :value="city"
+          />
+        </el-select>
+        <div v-if="form.preference.cities.length" class="selected-cities">
+          <el-button type="danger" size="small" @click="clearCities" class=" btn-outline-primary">清除全部</el-button>
+        </div>
+      </el-form-item>
 
-    <label>城市偏好</label>
-    <el-select
-      v-model="form.preference.cities"
-      multiple
-      collapse-tags
-      placeholder="選擇城市"
-      style="width: 100%;"
-      :max-collapse-tags="10"
-      size="large"
-
-    >
-      <el-option
-        v-for="city in cities"
-        :key="city"
-        :label="city"
-        :value="city"
-      />
-    </el-select>
-    <div v-if="form.preference.cities.length" class="selected-cities">
-      <el-button type="danger" size="small" @click="clearCities" class="clear btn-outline-primary">清除全部</el-button>
-    </div>
-
-    <!-- 儲存 & 返回按鈕 -->
-    <div class="action-buttons">
-      <button class="save-btn btn-outline-primary my-3" @click="$emit('cancel')">返回</button>
-      <button class="save-btn btn-primary my-3" @click="$emit('save', form)">儲存</button>
-
-    </div>
+      <!-- 儲存 & 返回按鈕 -->
+      <div class="action-buttons">
+        <button class="save-btn btn-outline-primary my-3" @click="$emit('cancel')">返回</button>
+        <button class="save-btn btn-primary my-3" @click.prevent="submitForm">儲存</button>
+      </div>
+    </el-form>
   </div>
 </template>
+
 
 <style scoped>
 .edit-form {
@@ -225,6 +254,7 @@ input, select, textarea {
   border-radius: 8px;
   box-shadow: 0 1px 5px rgba(0,0,0,0.2);
 }
+
 .selected-cities,
 .selected-hobbies {
   margin-top: 0.5rem;
@@ -233,10 +263,6 @@ input, select, textarea {
   background-color: #e9e9e9;
 }
 
-.clear{
-  display: flex;
-  margin-left: auto;
-}
 
 :deep(.el-slider__bar) {
   background: linear-gradient(135deg, #ff4d94, #ffcc00);
