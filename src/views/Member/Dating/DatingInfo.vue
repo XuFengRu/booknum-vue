@@ -1,27 +1,27 @@
 <script setup>
-import { ref } from "vue";
-import DatingEdit from "@/components/datingEdit.vue";
+import { ref } from 'vue'
+import DatingEdit from '@/components/datingEdit.vue'
 
-const isEditing = ref(false);
-
+const isEditing = ref(false)
 
 const person = ref({
-  name: "小J",
+  name: '小J',
   age: 28,
-  location: "台南市",
-  job: "老師",
-  avatar: "https://media.vogue.com.tw/photos/685a91da9afad780315cf5ee/2:3/w_2560%2Cc_limit/%25E9%2587%2591%25E6%25B3%25B0%25E4%25BA%25A86.jpg",
-  hobbies: ["旅行", "攝影", "咖啡", "爬山", "閱讀", "閱讀", "閱讀", "閱讀", "閱讀", "閱讀"],
-  intro: "喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。無論是巍峨山巒、靜謐海岸，或是街頭巷尾的日常片刻，都能成為靈感來源。喜歡旅行和攝影，熱愛探索世界的每個角落。",
+  location: '台南市',
+  job: '老師',
+  avatar:
+    'https://media.vogue.com.tw/photos/685a91da9afad780315cf5ee/2:3/w_2560%2Cc_limit/%25E9%2587%2591%25E6%25B3%25B0%25E4%25BA%25A86.jpg',
+  hobbies: ['旅行', '攝影', '咖啡', '爬山', '閱讀', '閱讀', '閱讀', '閱讀', '閱讀', '閱讀'],
+  intro:
+    '喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。無論是巍峨山巒、靜謐海岸，或是街頭巷尾的日常片刻，都能成為靈感來源。喜歡旅行和攝影，熱愛探索世界的每個角落。',
   matches: 24,
   likes: 156,
   preference: {
-    gender: "女性",
+    gender: '女性',
     ageRange: [25, 35],
-    cities: ["台北市", "新北市", "桃園市"],
+    cities: ['台北市', '新北市', '桃園市'],
   },
-});
-
+})
 
 function updateProfile(newData) {
   person.value = {
@@ -38,74 +38,85 @@ function updateProfile(newData) {
         : person.value.preference.ageRange,
       cities: newData.preference?.cities?.length
         ? newData.preference.cities
-        : person.value.preference.cities
-    }
-  };
-  isEditing.value = false; // 回到顯示模式
+        : person.value.preference.cities,
+    },
+  }
+  isEditing.value = false // 回到顯示模式
 }
 
 function cancelEdit() {
-  isEditing.value = false;
+  isEditing.value = false
 }
-
-
 </script>
 
 <template>
   <div class="innercontainer">
     <div class="content">
-    <div v-if="!isEditing" class="card">
-  <!-- 左邊照片 -->
-  <div class="image-wrapper">
-    <img class="avatar" :src="person.avatar" :alt="person.name" />
-    <div class="info-overlay">
-      <h1>{{ person.name }} {{ person.age }}</h1>
-      <p><i class="bi bi-geo-alt"></i>&nbsp;&nbsp;{{ person.location }}</p>
-      <p><i class="bi bi-bag-heart"></i>&nbsp;&nbsp;{{ person.job }}</p>
-    </div>
-  </div>
+      <div v-if="!isEditing" class="card">
+        <!-- 左邊照片 -->
+        <div class="image-wrapper">
+          <img class="avatar" :src="person.avatar" :alt="person.name" />
+          <div class="info-overlay">
+            <h1>{{ person.name }} {{ person.age }}</h1>
+            <p><i class="bi bi-geo-alt"></i>&nbsp;&nbsp;{{ person.location }}</p>
+            <p><i class="bi bi-bag-heart"></i>&nbsp;&nbsp;{{ person.job }}</p>
+          </div>
+        </div>
 
-  <!-- 右邊資訊 -->
-  <div class="info">
-    <div class="stats-section">
-      <div class="stat-card">
-        <i class="bi bi-person-check"></i>
-        <div class="stat-number">{{ person.matches }}</div>
-        <div class="stat-label">配對數</div>
+        <!-- 右邊資訊 -->
+        <div class="info">
+          <div class="stats-section">
+            <div class="stat-card">
+              <i class="bi bi-person-check"></i>
+              <div class="stat-number">{{ person.matches }}</div>
+              <div class="stat-label">配對數</div>
+            </div>
+            <div class="stat-card">
+              <i class="bi bi-heart"></i>
+              <div class="stat-number">{{ person.likes }}</div>
+              <div class="stat-label">喜歡數</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>興趣愛好</h4>
+            <div class="hobbies">
+              <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>自我介紹</h4>
+            <p class="bio">{{ person.intro }}</p>
+          </div>
+
+          <div class="section" id="preference">
+            <h4>偏好設定</h4>
+            <p>
+              <strong>性別</strong> <span class="pref-tag">{{ person.preference.gender }}</span>
+            </p>
+            <p>
+              <strong>年齡</strong>
+              <span class="pref-tag"
+                >{{ person.preference.ageRange[0] }} ~ {{ person.preference.ageRange[1] }} 歲</span
+              >
+            </p>
+            <p>
+              <strong>城市</strong>
+              <span class="pref-tag" v-for="city in person.preference.cities" :key="city">{{
+                city
+              }}</span>
+            </p>
+          </div>
+
+          <div class="edit-section">
+            <button @click="isEditing = true" class="edit-btn btn-outline-primary">
+              <i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="stat-card">
-        <i class="bi bi-heart"></i>
-        <div class="stat-number">{{ person.likes }}</div>
-        <div class="stat-label">喜歡數</div>
-      </div>
-    </div>
-
-    <div class="section">
-      <h4>興趣愛好</h4>
-      <div class="hobbies">
-        <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
-      </div>
-    </div>
-
-    <div class="section">
-      <h4>自我介紹</h4>
-      <p>{{ person.intro }}</p>
-    </div>
-
-    <div class="section" id="preference">
-      <h4>偏好設定</h4>
-      <p><strong>性別</strong> <span class="pref-tag">{{ person.preference.gender }}</span></p>
-      <p><strong>年齡</strong> <span class="pref-tag">{{ person.preference.ageRange[0]}} ~ {{ person.preference.ageRange[1] }} 歲</span></p>
-      <p><strong>城市</strong> <span class="pref-tag" v-for="city in person.preference.cities" :key="city">{{ city }}</span>
-      </p>
-    </div>
-
-    <div class="edit-section">
-      <button @click="isEditing = true" class="edit-btn btn-outline-primary"><i class="bi bi-pencil-square"></i>&nbsp;&nbsp;編輯個人資料</button>
-    </div>
-  </div>
-</div>
- <DatingEdit v-else @save="updateProfile" @cancel="cancelEdit"/>
+      <DatingEdit v-else @save="updateProfile" @cancel="cancelEdit" />
     </div>
   </div>
 </template>
@@ -173,7 +184,7 @@ p {
   display: inline-block;
   margin-right: 0.5rem;
   margin-top: 0.3rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .image-wrapper {
@@ -221,11 +232,12 @@ p {
   padding: 0.6rem 2rem;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
 }
 .edit-btn:hover {
   color: #ffe6f2;
-
 }
 
 /* 小卡片樣式 */
@@ -238,7 +250,7 @@ p {
   flex: 1;
   padding: 0.4rem;
   text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   border: 2px solid transparent; /* 先設透明邊框 */
   border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   border-image-slice: 1; /* 必須設定，否則不會顯示 */
@@ -302,17 +314,20 @@ p {
     height: 100%;
   }
 
-
-    .info .section:nth-of-type(2) { 
-    flex: 0.8; 
-    overflow-y: auto; 
+  .bio {
+    white-space: pre-wrap; /* 保留換行並自動換行 */
   }
 
-     .info .section:nth-of-type(3) { /* 第二個 section 就是自我介紹 */
+  .info .section:nth-of-type(2) {
+    flex: 0.8;
+    overflow-y: auto;
+  }
+
+  .info .section:nth-of-type(3) {
+    /* 第二個 section 就是自我介紹 */
     flex: 1.4; /* 佔比較大 */
     overflow-y: auto; /* 保險用，避免文字超出 */
   }
-
 
   /* 編輯按鈕保持在底部 */
   .info .edit-section {
@@ -348,7 +363,7 @@ p {
   }
 
   #preference {
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     border: 2px solid transparent;
     border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     border-image-slice: 1;
