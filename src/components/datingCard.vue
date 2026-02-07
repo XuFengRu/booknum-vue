@@ -46,7 +46,7 @@ const handleLike = () => {
         </div>
       </div>
 
-<div class="text-content">
+<div class="text-content ">
   <div class="section">
     <h4>興趣愛好</h4>
     <div class="hobbies">
@@ -211,12 +211,26 @@ p {
     object-fit: cover;
   }
 
+
+  /* 上半段佔 4 */
+  .card .text-content .section:nth-child(1) {
+    flex: 3.5;
+    overflow-y: auto; /* 如果內容太多可滾動 */
+  }
+
+  /* 下半段佔 8 */
+  .card .text-content .section:nth-child(2) {
+    flex: 8.5;
+    overflow-y: auto;
+  }
+
+
+
   /* 右邊文字區塊：上下排列 */
   .card .text-content {
     flex: 1;
     display: flex;
     flex-direction: column; /* 強制上下排列 */
-    justify-content:space-evenly;
     padding: 1rem;
     
   }

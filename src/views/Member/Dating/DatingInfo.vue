@@ -12,8 +12,8 @@ const person = ref({
   location: "台南市",
   job: "老師",
   avatar: "https://media.vogue.com.tw/photos/685a91da9afad780315cf5ee/2:3/w_2560%2Cc_limit/%25E9%2587%2591%25E6%25B3%25B0%25E4%25BA%25A86.jpg",
-  hobbies: ["旅行", "攝影", "咖啡", "爬山", "閱讀"],
-  intro: "喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。無論是巍峨山巒、靜謐海岸，或是街頭巷尾的日常片刻，都能成為靈感來源。喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。喜歡旅行和攝影，熱愛探索世界的每個角落。喜歡旅行和攝影，熱愛探索世界的每個角落。喜歡旅行和攝影。",
+  hobbies: ["旅行", "攝影", "咖啡", "爬山", "閱讀", "閱讀", "閱讀", "閱讀", "閱讀", "閱讀"],
+  intro: "喜歡旅行和攝影，熱愛探索世界的每個角落。透過鏡頭記錄不同文化、風景與人文故事，在行走中感受城市的溫度與自然的壯麗。無論是巍峨山巒、靜謐海岸，或是街頭巷尾的日常片刻，都能成為靈感來源。喜歡旅行和攝影，熱愛探索世界的每個角落。",
   matches: 24,
   likes: 156,
   preference: {
@@ -148,7 +148,7 @@ p {
   text-align: left;
 }
 .section {
-  padding: 1rem;
+  padding: 0.5rem;
   text-align: left;
 }
 .section h4 {
@@ -172,7 +172,7 @@ p {
   border-radius: 6px;
   font-size: 0.9rem;
   display: inline-block;
-  margin-right: 0.4rem;
+  margin-right: 0.5rem;
   margin-top: 0.3rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
@@ -232,18 +232,19 @@ p {
 /* 小卡片樣式 */
 .stats-section {
   display: flex;
-  justify-content: space-around;
-  padding: 1rem;
+  margin: 1rem;
   gap: 1rem;
 }
 .stat-card {
   flex: 1;
-  padding: 0.4rem;
+  padding: 0.2rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   border: 2px solid transparent; /* 先設透明邊框 */
   border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   border-image-slice: 1; /* 必須設定，否則不會顯示 */
+  width: 100px;
+  height: 100px;
 }
 
 .stat-card i {
@@ -298,19 +299,35 @@ p {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    justify-content: space-evenly;
+    height: 100%;
   }
 
-  .stats-section {
+
+    .info .section:nth-of-type(2) { 
+    flex: 0.6; 
+    overflow-y: auto; 
+  }
+
+     .info .section:nth-of-type(3) { /* 第二個 section 就是自我介紹 */
+    flex: 1.4; /* 佔比較大 */
+    overflow-y: auto; /* 保險用，避免文字超出 */
+  }
+
+
+  /* 編輯按鈕保持在底部 */
+  .info .edit-section {
+    flex: 0;
     display: flex;
-    gap: 2rem;
+    align-items: center;
     justify-content: flex-start;
   }
 
   .stat-card {
     flex: none;
     width: 120px;
-    text-align: center;
+  }
+  .stats-section {
+    margin: 0rem;
   }
 
   .section h4 {
@@ -331,20 +348,16 @@ p {
     gap: 0.6rem;
   }
 
-  .edit-section {
-    text-align: left;
+  #preference {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    border-image-slice: 1;
   }
 
-  #preference {
-
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  border: 2px solid transparent; /* 先設透明邊框 */
-  border-image: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  border-image-slice: 1; /* 必須設定，否則不會顯示 */
-}
-.info-overlay{
-  font-size: 1.2rem;
-  padding: 0rem 0.6rem;
-}
+  .info-overlay {
+    font-size: 1.2rem;
+    padding: 0rem 0.6rem;
+  }
 }
 </style>
