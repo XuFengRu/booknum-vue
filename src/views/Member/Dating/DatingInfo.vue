@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import EditProfile from "@/components/datingEdit.vue";
 import DatingEdit from "@/components/datingEdit.vue";
 
 const isEditing = ref(false);
@@ -237,7 +236,7 @@ p {
 }
 .stat-card {
   flex: 1;
-  padding: 0.2rem;
+  padding: 0.4rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   border: 2px solid transparent; /* 先設透明邊框 */
@@ -245,6 +244,7 @@ p {
   border-image-slice: 1; /* 必須設定，否則不會顯示 */
   width: 100px;
   height: 100px;
+  margin-top: 0.5rem;
 }
 
 .stat-card i {
@@ -304,7 +304,7 @@ p {
 
 
     .info .section:nth-of-type(2) { 
-    flex: 0.6; 
+    flex: 0.8; 
     overflow-y: auto; 
   }
 
@@ -318,7 +318,6 @@ p {
   .info .edit-section {
     flex: 0;
     display: flex;
-    align-items: center;
     justify-content: flex-start;
   }
 
