@@ -18,7 +18,7 @@ function openChat(chat) {
   datingRead.markAsRead(chat.id) // 進入聊天後標記已讀
 }
 function backToList() {
-  datingRead.value = null
+  selectedChat.value = null
 }
 
 function getLastMessage(chat) {
