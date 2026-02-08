@@ -16,7 +16,6 @@ const sidebarMenus = {
     { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes' },
     { name: '心動對象', icon: 'bi-star', link: '/member/dating/favorites' },
     { name: '我的訊息', icon: 'bi-chat-dots', link: '/member/dating/messages'},
-    { name: 'BOOKPREMIUM', icon: 'bi-gem', link: '/member/dating/bookpremium' },
     { name: '基本資料', icon: 'bi-person', link: '/member/dating/info' },
   ],
   rent: [
