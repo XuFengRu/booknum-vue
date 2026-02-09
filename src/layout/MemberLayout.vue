@@ -11,23 +11,24 @@ const toggleSidebar = () => {
 
 // ★★★★★★★ 定義不同服務的 Sidebar 選單資料 ★★★★★★★
 const sidebarMenus = {
-  dating: [
-    { name: '開始配對', icon: 'bi-fire', link: '/member/dating' }, // dating 首頁
-    { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes' },
-    { name: '心動對象', icon: 'bi-star', link: '/member/dating/favorites' },
-    { name: '我的訊息', icon: 'bi-chat-dots', link: '/member/dating/messages'},
-    { name: '基本資料', icon: 'bi-person', link: '/member/dating/info' },
-  ],
-  rent: [
-    { name: '尋找出租', icon: 'bi-search', link: '/member/rent' }, // Rent 首頁
-    { name: '付款資訊', icon: 'bi-credit-card', link: '/member/rent/payments' },
-    { name: '我的預約', icon: 'bi-calendar-check', link: '/member/rent/bookings' },
-  ],
-  group: [
-    { name: '熱門揪團', icon: 'bi-flag', link: '/member/group' }, // Group 首頁
-    { name: '發起揪團', icon: 'bi-plus-circle', link: '/member/group/create' },
-    { name: '我的報名', icon: 'bi-ticket-perforated', link: '/member/group/tickets' },
-  ],
+dating: [
+        { name: '開始配對', icon: 'bi-fire', link: '/member/dating' }, // dating 首頁
+        { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes' },
+        { name: '心動對象', icon: 'bi-star', link: '/member/dating/favorites' },
+        { name: '我的訊息', icon: 'bi-chat-dots', link: '/member/dating/messages' }, // 採用 FR，移除 badge
+        { name: '基本資料', icon: 'bi-person', link: '/member/dating/info' }, // FR 新增的
+    ],
+    rent: [
+        { name: '尋找出租', icon: 'bi-search', link: '/member/rent' }, // Rent 首頁
+        { name: '購物車', icon: 'bi-cart', link: '/member/rent/Cart', badge: 3 }, // 保留原本的
+        { name: '付款資訊', icon: 'bi-credit-card', link: '/member/rent/Payment' }, // 保留原本的大寫 P
+        { name: '我的預約', icon: 'bi-calendar-check', link: '/member/rent/bookings' },
+    ],
+    group: [
+        { name: '熱門揪團', icon: 'bi-flag', link: '/member/group' }, // Group 首頁
+        { name: '發起揪團', icon: 'bi-plus-circle', link: '/member/group/create' },
+        { name: '我的報名', icon: 'bi-ticket-perforated', link: '/member/group/tickets' },
+    ]
 }
 
 // Sidebar：自動判斷現在該顯示哪一組選單

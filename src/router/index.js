@@ -90,6 +90,27 @@ const router = createRouter({
           component: () => import('../views/Member/Rent/RentView.vue')
         },
         {
+          path: 'rent/Payment',   // 網址: /member/rent/Payment
+          name: 'member-rent-payment',
+          component: () => import('../views/Member/Rent/Payment.vue')
+        },
+        {
+          path: 'rent/Cart',   
+          name: 'member-rent-cart',
+          component: () => import('../views/Member/Rent/cart.vue')
+        },
+        {
+        path: 'rent/bookings',   
+        name: 'member-rent-bookings',
+        component: () => import('../views/Member/Rent/bookings.vue')
+        },
+        {
+        path: '/rent/:name',
+        name: 'rent-detail',
+        component: () => import('../views/Member/Rent/RentDetail.vue'),
+        props: true
+        },
+        {
           path: 'group',  // 網址: /member/group
           name: 'member-group',
           component: () => import('../views/Member/Group/GroupView.vue')
