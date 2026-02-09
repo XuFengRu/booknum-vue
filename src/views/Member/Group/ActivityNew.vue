@@ -4,29 +4,25 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-/** ✅ 回列表頁（你現在 router 裡列表頁 name 是 member-group） */
 const LIST_ROUTE_NAME = "member-group";
 
-/** localStorage key（列表頁也建議用同一個） */
 const STORAGE_KEY = "activities_v1";
 
-/** 表單資料（✅已新增 description） */
 const form = ref({
   title: "",
   category: "吃飯",
-  description: "", // ✅ 活動敘述
-  startAt: "", // yyyy-mm-ddThh:mm
+  description: "", 
+  startAt: "", 
   endAt: "",
-  location: "", // 最後會變成 "台北市 信義區"
-  need: 8, // 名額上限
+  location: "", 
+  need: 8, 
   image: "",
 });
 
-/** UI 狀態 */
+
 const touched = ref(false);
 const isSaving = ref(false);
 
-/** ====== ✅ 全台縣市/行政區（22 縣市） ====== */
 const CITY_DISTRICTS = {
   "台北市": ["中正區","大同區","中山區","松山區","大安區","萬華區","信義區","士林區","北投區","內湖區","南港區","文山區"],
   "新北市": ["板橋區","三重區","中和區","永和區","新莊區","新店區","樹林區","鶯歌區","三峽區","淡水區","汐止區","瑞芳區","土城區","蘆洲區","五股區","泰山區","林口區","深坑區","石碇區","坪林區","三芝區","石門區","八里區","平溪區","雙溪區","貢寮區","金山區","萬里區","烏來區"],
@@ -72,7 +68,6 @@ function onDistrictChange() {
   }
 }
 
-/** 左側預覽用的文字 */
 const startLabel = computed(() =>
   form.value.startAt ? form.value.startAt.replace("T", " ") : "（未選）"
 );
@@ -80,7 +75,6 @@ const endLabel = computed(() =>
   form.value.endAt ? form.value.endAt.replace("T", " ") : "（未選）"
 );
 
-/** 讀取/儲存活動 */
 function loadActivities() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -93,7 +87,6 @@ function saveActivities(list) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
 }
 
-/** datetime-local -> YYYY/MM/DD HH:mm */
 function toDisplay(dtLocal) {
   if (!dtLocal) return "";
   const [date, time] = dtLocal.split("T");
@@ -113,7 +106,7 @@ const errors = computed(() => {
   if (!title) e.title = "請輸入活動標題";
   if (!f.category) e.category = "請選擇類型";
 
-  // ✅ 活動敘述（必填；如果你要可選我也能幫你改）
+  // 活動敘述
   if (!description) e.description = "請輸入活動敘述";
 
   if (!f.startAt) e.startAt = "請選擇開始時間";
@@ -123,7 +116,7 @@ const errors = computed(() => {
   const need = Number(f.need);
   if (!Number.isFinite(need) || need < 1) e.need = "名額需為 1 以上";
 
-  // ✅ 結束時間必須晚於開始時間
+  // 結束時間必須晚於開始時間
   if (f.startAt && f.endAt) {
     const s = new Date(f.startAt).getTime();
     const t = new Date(f.endAt).getTime();
@@ -132,10 +125,10 @@ const errors = computed(() => {
     }
   }
 
-  // 圖片可選，但如果填了要看起來像 URL
-  if (image && !/^https?:\/\/.+/i.test(image)) {
-    e.image = "圖片請輸入 http(s) 開頭的網址（可留空）";
-  }
+
+if (!image) {
+  e.image = "請輸入活動封面圖片";
+}
 
   return e;
 });
@@ -145,6 +138,9 @@ const isValid = computed(() => Object.keys(errors.value).length === 0);
 async function submit() {
   touched.value = true;
   if (!isValid.value) return;
+
+  const ok = window.confirm("確定要建立這個活動嗎？");
+  if (!ok) return;
 
   isSaving.value = true;
   try {
@@ -159,10 +155,12 @@ async function submit() {
       id: newId,
       title: f.title.trim(),
       category: f.category,
-      description: f.description.trim(), // ✅ 存敘述
+      description: f.description.trim(),
       need: Number(f.need) || 1,
       joined: 0,
       isJoinedByMe: false,
+      createdByMe: true,
+      joinedUsers: [],
       startAt: toDisplay(f.startAt),
       endAt: toDisplay(f.endAt),
       location: f.location.trim(),
@@ -172,17 +170,20 @@ async function submit() {
     list.unshift(newActivity);
     saveActivities(list);
 
+    // ✅ 建立成功提示
+    window.alert("建立成功！");
+
     router.push({ name: LIST_ROUTE_NAME });
   } finally {
     isSaving.value = false;
   }
 }
 
+
 function goBack() {
   router.back();
 }
 
-/** 預設時間：現在 + 1 小時 / + 2 小時 */
 onMounted(() => {
   const now = new Date();
   const plus1 = new Date(now.getTime() + 60 * 60 * 1000);
@@ -276,7 +277,6 @@ onMounted(() => {
           <div class="col-12 col-lg-8">
             <form @submit.prevent="submit">
               <div class="row g-3">
-                <!-- Title -->
                 <div class="col-12">
                   <label class="form-label fw-bold">活動標題</label>
                   <input
@@ -287,7 +287,6 @@ onMounted(() => {
                   <div v-if="touched && errors.title" class="err">{{ errors.title }}</div>
                 </div>
 
-                <!-- Category -->
                 <div class="col-12">
                   <label class="form-label fw-bold">活動類型</label>
                   <select v-model="form.category" class="form-select input-lg">
@@ -300,7 +299,6 @@ onMounted(() => {
                   <div v-if="touched && errors.category" class="err">{{ errors.category }}</div>
                 </div>
 
-                <!-- ✅ Description -->
                 <div class="col-12">
                   <label class="form-label fw-bold">活動敘述</label>
                   <textarea
@@ -497,7 +495,6 @@ onMounted(() => {
   display: block;
 }
 
-/* badge */
 .badge-pill {
   display: inline-flex;
   align-items: center;
@@ -513,7 +510,6 @@ onMounted(() => {
   background: linear-gradient(135deg, #ff4d6d, #ff914d);
 }
 
-/* 讓預覽敘述換行 */
 .preline {
   white-space: pre-line;
 }

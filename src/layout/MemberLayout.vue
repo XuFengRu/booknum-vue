@@ -27,7 +27,7 @@ dating: [
     group: [
         { name: '熱門揪團', icon: 'bi-flag', link: '/member/group' }, // Group 首頁
         { name: '發起揪團', icon: 'bi-plus-circle', link: '/member/group/create' },
-        { name: '我的報名', icon: 'bi-ticket-perforated', link: '/member/group/tickets' },
+        { name: '我的活動', icon: 'bi-ticket-perforated', link: '/member/group/my' },
     ]
 }
 
