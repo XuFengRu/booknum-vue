@@ -83,7 +83,7 @@ function copySummary() {
 </script>
 
 <template>
-  <div class="container py-4">
+  <div class="container py-4 detail-page">
     <div class="panel p-4 rounded-4 border shadow-sm">
       <!-- Header -->
       <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
@@ -99,7 +99,6 @@ function copySummary() {
         </button>
       </div>
 
-      <!-- 找不到活動 -->
       <div v-if="!activity" class="text-center py-5">
         <div class="fw-bold mb-2">找不到這個活動</div>
         <div class="text-muted mb-4">可能是活動不存在或已被移除。</div>
@@ -108,13 +107,10 @@ function copySummary() {
         </button>
       </div>
 
-      <!-- ✅ 兩欄式 -->
       <div v-else class="mt-4">
         <div class="row g-4 align-items-start">
-          <!-- 左：預覽卡（你的風格） -->
           <div class="col-12 col-lg-4">
             <div class="preview-card sticky-preview p-3 rounded-4 border shadow-sm">
-              <div class="fw-bold mb-2">封面預覽</div>
 
               <div
                 class="img-wrap rounded-4 overflow-hidden"
@@ -185,9 +181,7 @@ function copySummary() {
             </div>
           </div>
 
-          <!-- 右：內容 + 行動 -->
           <div class="col-12 col-lg-8">
-            <!-- 行動卡 -->
             <div class="action-card p-4 rounded-4 border shadow-sm">
               <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
                 <div>
@@ -251,7 +245,7 @@ function copySummary() {
               </div>
             </div>
 
-            <!-- 內容卡：基本資訊 -->
+            <!-- 基本資訊 -->
             <div class="content-card p-4 rounded-4 border shadow-sm mt-4">
               <div class="fw-bold mb-3">基本資訊</div>
 
@@ -320,6 +314,7 @@ function copySummary() {
 /* 左卡 */
 .preview-card {
   background: #fff;
+  
 }
 .sticky-preview {
   position: sticky;
@@ -341,7 +336,6 @@ function copySummary() {
   white-space: pre-line;
 }
 
-/* 摘要最多 3 行 */
 .clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -380,15 +374,16 @@ function copySummary() {
 }
 
 .label {
-  font-size: 13px;
+  font-size: 0.9em;   
   font-weight: 800;
   color: #6c757d;
   margin-bottom: 6px;
 }
 .value {
-  font-size: 15px;
+  font-size: 1.05em;  
   color: #111;
 }
+
 
 /* buttons */
 .btn-lgish {
@@ -412,4 +407,9 @@ function copySummary() {
   border: none;
   cursor: not-allowed;
 }
+
+.detail-page {
+  font-size: 19px; 
+}
+
 </style>

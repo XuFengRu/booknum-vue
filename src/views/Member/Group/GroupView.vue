@@ -7,7 +7,10 @@ const keyword = ref("");
 
 const STORAGE_KEY = "activities_v1";
 
-/** ✅ 初始假資料（localStorage 沒資料時才會塞進去） */
+const CURRENT_USER = { id: 83, name: "Arille.M" };
+
+const showMine = ref(false);
+
 const seedActivities = [
   {
     id: 1,
@@ -16,6 +19,7 @@ const seedActivities = [
     need: 8,
     joined: 6,
     isJoinedByMe: false,
+    joinedUsers: [], 
     startAt: "2026/02/03 19:00",
     endAt: "2026/02/03 21:00",
     location: "台北市 信義區",
@@ -29,6 +33,7 @@ const seedActivities = [
     need: 10,
     joined: 2,
     isJoinedByMe: true,
+    joinedUsers: [], 
     startAt: "2026/02/08 09:00",
     endAt: "2026/02/08 12:00",
     location: "台北市 信義區",
@@ -42,6 +47,7 @@ const seedActivities = [
     need: 10,
     joined: 10,
     isJoinedByMe: false,
+    joinedUsers: [], 
     startAt: "2026/02/12 19:30",
     endAt: "2026/02/12 22:30",
     location: "新北市 板橋區",
@@ -68,7 +74,6 @@ const activities = ref([]);
 onMounted(() => {
   const list = loadActivities();
   if (!Array.isArray(list) || list.length === 0) {
-    // ✅ 第一次進來 localStorage 沒資料：塞入 seed
     saveActivities(seedActivities);
     activities.value = seedActivities;
   } else {
@@ -76,10 +81,25 @@ onMounted(() => {
   }
 });
 
+function refreshFromStorage() {
+  const list = loadActivities();
+  if (Array.isArray(list)) activities.value = list;
+}
+
+window.addEventListener("focus", refreshFromStorage);
+
+
 const filtered = computed(() => {
   const k = keyword.value.trim().toLowerCase();
-  if (!k) return activities.value;
-  return activities.value.filter((a) =>
+
+  let list = activities.value;
+
+  if (showMine.value) {
+    list = list.filter((a) => a.isJoinedByMe);
+  }
+
+  if (!k) return list;
+  return list.filter((a) =>
     [a.title, a.location, a.category].some((v) =>
       String(v).toLowerCase().includes(k)
     )
@@ -99,23 +119,42 @@ function isFull(a) {
 }
 
 function toggleJoin(a) {
+  a.joinedUsers = Array.isArray(a.joinedUsers) ? a.joinedUsers : [];
+
+  const uid = CURRENT_USER.id;
+  const idx = a.joinedUsers.findIndex((u) => u.id === uid);
+
   if (a.isJoinedByMe) {
+    // 取消報名前確認
+    const ok = window.confirm("確定要取消報名嗎？");
+    if (!ok) return;
+
+    if (idx !== -1) a.joinedUsers.splice(idx, 1);
     a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
     a.isJoinedByMe = false;
   } else {
+    // 報名前確認
+    const ok = window.confirm("確定要報名這個活動嗎？");
+    if (!ok) return;
+
     if (isFull(a)) return;
+    if (idx === -1) a.joinedUsers.push({ id: uid, name: CURRENT_USER.name });
     a.joined = (Number(a.joined) || 0) + 1;
     a.isJoinedByMe = true;
   }
-  // ✅ 存回 localStorage，詳細頁才會同步
+
   saveActivities(activities.value);
+}
+
+
+function toggleMine() {
+  showMine.value = !showMine.value;
 }
 </script>
 
 <template>
   <div class="container py-4 activity-page">
     <div class="activity-panel p-4 rounded-4 border shadow-sm">
-      <!-- 標題 -->
       <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
         <div>
           <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -129,6 +168,16 @@ function toggleJoin(a) {
             用關鍵字搜尋標題 / 地點 / 類型，快速找到你要的活動
           </div>
         </div>
+
+        <!-- 右上角：我的報名 -->
+        <button
+          class="btn rounded-pill px-3 btn-lgish btn-mine"
+          :class="showMine ? 'btn-mine--on' : 'btn-mine--off'"
+          @click="toggleMine"
+        >
+          <i class="fa-regular fa-bookmark me-2"></i>
+          {{ showMine ? "全部活動" : "我的報名" }}
+        </button>
       </div>
 
       <!-- 搜尋 -->
@@ -136,7 +185,7 @@ function toggleJoin(a) {
         <input
           v-model="keyword"
           class="form-control search-input"
-          placeholder="輸入關鍵字..."
+          :placeholder="showMine ? '在我的報名中搜尋...' : '輸入關鍵字...'"
         />
       </div>
 
@@ -220,10 +269,10 @@ function toggleJoin(a) {
                       >
                         {{
                           a.isJoinedByMe
-                            ? "取消報名"
+                            ? '取消報名'
                             : isFull(a)
-                              ? "已額滿"
-                              : "報名"
+                              ? '已額滿'
+                              : '報名'
                         }}
                       </button>
                     </div>
@@ -237,14 +286,18 @@ function toggleJoin(a) {
 
         <div v-if="filtered.length === 0" class="col-12">
           <div class="text-center text-muted py-5 empty-text">
-            目前沒有符合條件的活動
+            {{ showMine ? "你目前還沒有報名任何活動" : "目前沒有符合條件的活動" }}
           </div>
         </div>
       </div>
     </div>
 
     <!-- 右下角 + -->
-    <RouterLink :to="{ name: 'member-group-create' }" class="fab-create" aria-label="建立活動">
+    <RouterLink
+      :to="{ name: 'member-group-create' }"
+      class="fab-create"
+      aria-label="建立活動"
+    >
       +
     </RouterLink>
   </div>
@@ -258,20 +311,56 @@ function toggleJoin(a) {
   background: #fff;
 }
 
-/* 標題漸層 */
 .title-pill {
   display: inline-flex;
   align-items: center;
-  padding: 10px 18px;
+  padding: 12px 22px;              
   border-radius: 999px;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 20px;                 
+  font-weight: 900;                
+  letter-spacing: 0.5px;           
   color: #fff;
   background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.22);
+  box-shadow:
+    0 10px 24px rgba(255, 77, 109, 0.35), 
+    0 0 0 4px rgba(255, 77, 109, 0.12);   
 }
+
 .subtitle {
   font-size: 15px;
+}
+
+.btn-mine {
+  border: 0;
+  font-weight: 800;
+  font-size: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+.btn-mine--off {
+  background: linear-gradient(135deg, #ff4d6d, #ff914d);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.22);
+}
+
+.btn-mine--off:hover {
+  opacity: 0.92;
+}
+
+.btn-mine--on {
+  background: linear-gradient(135deg, #ff4d6d, #ff914d);
+  color: #fff;
+  border: none;
+  box-shadow: 0 12px 26px rgba(255, 77, 109, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-mine--on:hover {
+  opacity: 0.92;
 }
 
 /* 搜尋 */
@@ -360,7 +449,6 @@ function toggleJoin(a) {
   background: #e9ecef;
 }
 
-/* FAB */
 .fab-create {
   position: fixed;
   right: 112px;
