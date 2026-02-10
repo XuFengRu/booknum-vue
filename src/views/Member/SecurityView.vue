@@ -44,9 +44,7 @@
                         更新密碼
                     </button>
                 </div>
-                <h6 class="fw-bold mb-3 border-bottom pb-2 mt-5" style="color: var(--text-main);">第三方登入提供者</h6>
-                <p class="small text-muted mb-4 ms-1">連結第三方帳號以使用快速登入</p>
-                
+                <h6 class="fw-bold mb-3 border-bottom pb-2 mt-5" style="color: var(--text-main);">第三方登入 (AuthProvider)</h6>
                 <div class="vstack gap-3 mb-4">
                     <div class="border rounded-4 p-3 d-flex align-items-center justify-content-between bg-white shadow-sm">
                         <div class="d-flex align-items-center gap-3">
@@ -55,12 +53,12 @@
                             </div>
                             <div>
                                 <h6 class="mb-0 fw-bold">Google</h6>
-                                <small class="text-muted">使用 Google 帳號快速登入</small>
+                                <small class="text-muted">使用 Google 帳號登入</small>
                             </div>
                         </div>
                         <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold">連結</button>
                     </div>
-
+                    
                     <div class="border rounded-4 p-3 d-flex align-items-center justify-content-between bg-white shadow-sm">
                         <div class="d-flex align-items-center gap-3">
                             <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
@@ -68,20 +66,7 @@
                             </div>
                             <div>
                                 <h6 class="mb-0 fw-bold">Facebook</h6>
-                                <small class="text-muted">使用 Facebook 帳號快速登入</small>
-                            </div>
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold">連結</button>
-                    </div>
-
-                    <div class="border rounded-4 p-3 d-flex align-items-center justify-content-between bg-white shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                <i class="bi bi-apple text-dark fs-5"></i>
-                            </div>
-                            <div>
-                                <h6 class="mb-0 fw-bold">Apple</h6>
-                                <small class="text-muted">使用 Apple ID 快速登入</small>
+                                <small class="text-muted">使用 Facebook 帳號登入</small>
                             </div>
                         </div>
                         <button class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-bold">連結</button>
@@ -90,7 +75,7 @@
 
 
 
-                <div class="border border-danger border-opacity-25 rounded-4 p-4 bg-danger bg-opacity-10 mt-5">
+                <div class="border border-danger border-opacity-50 rounded-4 p-4 mt-5">
                     <h6 class="fw-bold text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>危險區域</h6>
                     <p class="small text-muted mb-4">這些操作無法復原，請謹慎使用</p>
                     
