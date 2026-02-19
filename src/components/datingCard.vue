@@ -1,248 +1,118 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
-
-const props = defineProps({
+defineProps({
   person: {
     type: Object,
     required: true,
   },
-  isAction: {
-    type: Boolean,
-    default: true, // 預設顯示按鈕
-  },
-});
+})
 
-const emit = defineEmits(["reject", "like"]);
-
-const handleReject = () => {
-  emit("reject", props.person);
-};
-
-const handleLike = () => {
-  emit("like", props.person);
-};
+defineEmits(['like', 'reject'])
 </script>
 
 <template>
-  <div class="card-content">
-    <!-- 左邊按鈕 -->
+  <div class="d-flex justify-content-center align-items-center gap-3 gap-md-5 w-100 px-2 px-md-0">
+
     <button
-      v-if="isAction"
-      class="reject"
-      @click="handleReject"
+      class="btn btn-light shadow-lg btn-circle btn-circle-lg flex-shrink-0 btn-reject"
+      @click="$emit('reject')"
+      title="跳過"
     >
-      <i class="bi bi-x-lg"></i>
+      <i class="bi bi-x-lg text-danger opacity-75"></i>
     </button>
 
-    <!-- 卡片 -->
-    <div class="card">
-      <div class="image-wrapper">
-        <img class="avatar" :src="person.avatar" :alt="person.name" />
-        <!-- 左下角資訊 -->
-        <div class="info-overlay">
-          <h1>{{ person.name }} {{ person.age }}</h1>
-          <p><i class="bi bi-geo-alt"></i>&nbsp;&nbsp;{{ person.location }}</p>
-          <p><i class="bi bi-bag-heart"></i>&nbsp;&nbsp;{{ person.job }}</p>
+    <div class="card overflow-hidden border-0 shadow-lg rounded-5 flex-fill" style="max-width: 1050px;">
+      <div class="row g-0 h-100">
+        
+        <div class="col-md-5 position-relative image-container">
+          <img
+            :src="person.avatar"
+            class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+            :alt="person.name"
+          >
+          <div class="d-md-none position-absolute bottom-0 start-0 w-100 h-25" style="background: linear-gradient(to top, rgba(255,255,255,1), transparent);"></div>
+        </div>
+
+        <div class="col-md-7 bg-white">
+          <div class="card-body p-4 p-lg-5 d-flex flex-column justify-content-center h-100 text-start">
+            
+            <div class="d-flex align-items-end mb-4">
+              <h1 class="card-title fw-bolder mb-0 me-3 text-dark display-5">{{ person.name }}</h1>
+              <span class="fs-3 text-muted">{{ person.age }}歲</span>
+            </div>
+
+            <div class="mb-5 text-secondary d-flex flex-wrap gap-4 fs-5 text-uppercase fw-bold" style="letter-spacing: 1px;">
+              <span class="d-flex align-items-center">
+                <i class="bi bi-briefcase-fill me-2 text-primary opacity-50"></i>{{ person.job }}
+              </span>
+              <span class="d-flex align-items-center">
+                <i class="bi bi-geo-alt-fill me-2 text-primary opacity-50"></i>{{ person.location }}
+              </span>
+            </div>
+
+            <div class="mb-4">
+              <h5 class="fw-bold text-muted mb-3">興趣愛好</h5>
+              <div class="d-flex flex-wrap gap-2">
+                <span 
+                  v-for="hobby in person.hobbies" 
+                  :key="hobby" 
+                  class="badge bg-light text-dark border border-light-subtle rounded-pill fw-normal px-4 py-2 fs-6"
+                >
+                  {{ hobby }}
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <h5 class="fw-bold text-muted mb-3">自我介紹</h5>
+              <p class="card-text lh-lg text-dark fs-6 mb-0">
+                {{ person.intro }}
+              </p>
+            </div>
+
+          </div>
         </div>
       </div>
-
-<div class="text-content ">
-  <div class="section">
-    <h4>興趣愛好</h4>
-    <div class="hobbies">
-      <span class="tag" v-for="hobby in person.hobbies" :key="hobby">{{ hobby }}</span>
-    </div>
-  </div>
-
-  <div class="section">
-    <h4>自我介紹</h4>
-    <p class="bio">{{ person.intro }}</p>
-  </div>
-</div>
     </div>
 
-    <!-- 右邊按鈕 -->
     <button
-      v-if="isAction"
-      class="like"
-      @click="handleLike"
+      class="btn btn-light shadow-lg btn-circle btn-circle-lg flex-shrink-0 btn-like"
+      @click="$emit('like')"
+      title="喜歡"
     >
-      <i class="bi bi-heart-fill" style="padding-top: 5px"></i>
+      <i class="bi bi-heart-fill text-danger opacity-75"></i>
     </button>
+
   </div>
 </template>
 
 <style scoped>
-.card-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem; /* 按鈕和卡片之間的間距 */
-  flex-direction: row; /* 強制水平排列 */
-  height: 93%;
+/* --- Hover 動畫與陰影效果 (保留專屬行為) --- */
+.btn-reject:hover {
+  transform: scale(1.15) rotate(-10deg);
+  box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.2) !important;
+  color: var(--bs-danger) !important;
+  border-color: rgba(220, 53, 69, 0.2);
 }
-.card {
-  width: 375px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 1px 5px #6e6b6b;
-  text-align: center;
-  margin: 1rem;
-  display: flex;
-  flex-direction: column; /* 手機版維持直式 */
+.btn-reject:hover i { opacity: 1 !important; color: #dc3545 !important; }
+
+.btn-like:hover {
+  transform: scale(1.15) rotate(10deg);
+  box-shadow: 0 1rem 3rem rgba(255, 71, 87, 0.2) !important;
+  color: var(--bs-primary) !important;
+  border-color: rgba(255, 71, 87, 0.2);
 }
-.avatar {
-  height: 500px;
-  width: 375px;
-  margin-bottom: 1rem;
-  object-fit: cover;
-  border-radius: 12px 12px 0 0;
-}
-h1 {
-  margin: 0.5rem 0;
-  text-align: left;
-}
-p {
-  margin: 0.3rem 0;
-  text-align: left;
-}
-.section {
-  padding: 1rem;
-  text-align: left;
-}
-.section h4 {
-  font-size: 1.1rem;
-  color: #333;
-  margin-bottom: 0.3rem;
-}
-.section p {
-  line-height: 1.5;
-  color: #444;
-}
-.image-wrapper {
-  height: 500px;
-  width: 375px;
-  position: relative;
-}
-.info-overlay {
-  width: 200px;
-  height: 100px;
-  position: absolute;
-  bottom: 35px;
-  left: 10px;
-  font-size: 1rem;
-  color: #fff;
-  text-align: left;
-  padding: 0.6rem 0.6rem;
-  border-radius: 3px;
-  text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-}
-.hobbies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-.tag {
-  background: linear-gradient(135deg, #ff1a53 0%, #ff7b1a 100%);
-  color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  display: inline-block;
+.btn-like:hover i { opacity: 1 !important; color: var(--bs-primary) !important; }
+
+/* --- 響應式調整 (只保留圖片與卡片高度，按鈕已交由 common.css 控制) --- */
+@media (max-width: 767.98px) {
+  .image-container {
+    height: 420px;
+  }
 }
 
-/* 按鈕樣式 */
-.reject:hover {
-  background: var(--gradient-hover);
-  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
-}
-.like:hover {
-  background: var(--gradient-main);
-  box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.3);
-}
-.reject,
-.like {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: none;
-  font-size: 1.8rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-.reject {
-  background-color: #ff4d4d;
-  color: #fff;
-}
-.like {
-  background-color: #ff4081;
-  color: #fff;
-}
-
-.bio{
-  white-space: pre-wrap; /* 最佳的保留格式+自動換行 */
-}
-
-
-/* 桌面版：橫式排版 */
-@media (min-width: 1200px) {
+@media (min-width: 768px) {
   .card {
-    flex-direction: row; /* 改成橫式：左圖右文 */
-    width: 800px;
-    height: 600px;
-    text-align: left;
-  }
-
-  .image-wrapper {
-    width: 50%; /* 左半邊放圖片 */
-    height: auto;
-  }
-
-  .avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 12px 0 0 12px; /* 左邊圓角 */
-    margin-bottom: 0;
-    object-fit: cover;
-  }
-
-
-  /* 上半段佔 4 */
-  .card .text-content .section:nth-child(1) {
-    flex: 3.5;
-    overflow-y: auto; /* 如果內容太多可滾動 */
-  }
-
-  /* 下半段佔 8 */
-  .card .text-content .section:nth-child(2) {
-    flex: 8.5;
-    overflow-y: auto;
-  }
-
-
-
-  /* 右邊文字區塊：上下排列 */
-  .card .text-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column; /* 強制上下排列 */
-    padding: 1rem;
-    
-  }
-
-  .card .section {
-    margin-bottom: 1rem; /* 區塊之間留間距 */
-  }
-
-  .info-overlay {
-    bottom: 25px;
-    left: 10px;
-    padding: 0rem 0.6rem;
+    height: 650px;
   }
 }
 </style>

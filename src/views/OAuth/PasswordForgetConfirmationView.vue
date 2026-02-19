@@ -7,15 +7,15 @@ import OAuthCard from '@/components/OAuthCard.vue'
   <OAuthCard>
     
     <template #left-side>
-      <i class="bi bi-heart-fill floating-obj fs-3" style="left: 15%; animation-delay: 0s;"></i>
-      <i class="bi bi-envelope-check-fill floating-obj fs-2" style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
+      <i class="bi bi-envelope-heart-fill floating-obj fs-1" style="left: 20%; animation-duration: 15s;"></i>
+      <i class="bi bi-send-fill floating-obj fs-3" style="left: 60%; animation-duration: 12s; animation-delay: 2s;"></i>
 
       <div class="position-relative z-2 text-center">
         <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
-          <i class="bi bi-check-lg fs-1" style="color: var(--bs-primary);"></i>
+          <i class="bi bi-send-check-fill fs-1" style="color: var(--bs-primary);"></i>
         </div>
-        <h1 class="fs-1 fw-bolder mb-2">歡迎加入</h1>
-        <p class="fs-5 mb-0">BOOK仁 大家庭<br>期待與您相遇</p>
+        <h1 class="fs-1 fw-bolder mb-2">信件已發送</h1>
+        <p class="fs-5 mb-0">我們已寄出重設連結</p>
         <div style="width: 40px; height: 3px; background: white; margin: 15px auto;"></div>
       </div>
     </template>
@@ -23,8 +23,8 @@ import OAuthCard from '@/components/OAuthCard.vue'
     <div style="max-width: 450px; margin: 0 auto;">
       
       <div class="text-center text-lg-start mb-4">
-        <h2 class="fw-bold text-gradient mb-2">註冊成功！</h2>
-        <p class="text-muted">您的帳號已建立，請完成最後驗證。</p>
+        <h2 class="fw-bold text-gradient mb-2">請查收信件</h2>
+        <p class="text-muted">重設密碼的步驟已發送至您的信箱。</p>
       </div>
 
       <div class="alert alert-custom p-4 mb-4">
@@ -33,10 +33,10 @@ import OAuthCard from '@/components/OAuthCard.vue'
             <i class="bi bi-envelope-exclamation-fill fs-3" style="color: var(--bs-primary);"></i>
           </div>
           <div>
-            <h5 class="fw-bold mb-1" style="color: var(--text-main);">只差最後一步</h5>
+            <h5 class="fw-bold mb-1" style="color: var(--text-main);">下一步：重設密碼</h5>
             <p class="mb-0 small text-muted lh-base">
-              驗證信已發送至您的電子信箱。<br>
-              請點擊信中的連結以啟用帳號。
+              請點擊信中的連結以設定新密碼。<br>
+              連結有效時間為 30 分鐘。
             </p>
           </div>
         </div>

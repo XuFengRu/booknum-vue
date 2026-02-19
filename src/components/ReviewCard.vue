@@ -1,23 +1,25 @@
 <script setup>
 defineProps({
-  review: String, // 評論內容
-  name: String,   // 使用者名稱
-  job: String,    // 職業/身分
-  avatar: String, // 頭像顯示的英文字母 (例如 S, M, A)
-  stars: {        // 星星數 (預設給 5 顆，也可以之後改傳數字)
-    type: String,
-    default: '★★★★★'
+  review: String,
+  name: String,
+  job: String,
+  avatar: String,
+  stars: {
+    type: Number,
+    default: 5
   }
 })
 </script>
 
 <template>
-  <div class="card card-hover h-100 border-0 shadow-sm rounded-4 p-4 text-center">
-    <div class="text-warning mb-3">{{ stars }}</div>
+  <div class="card h-100 p-4 text-center">
+    <div class="text-warning mb-3">
+      <i v-for="n in stars" :key="n" class="bi bi-star-fill"></i>
+    </div>
     <p class="text-muted mb-4">"{{ review }}"</p>
     
     <div class="mt-auto d-flex align-items-center justify-content-center gap-3">
-      <div class="avatar bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center" 
+      <div class="avatar bg-gradient text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" 
            style="width:40px;height:40px;">
         {{ avatar }}
       </div>

@@ -8,288 +8,219 @@ const selectedUser = ref(null)
 
 const users = [
   {
-    name: '小鄧',
+    name: '小雅',
     age: 25,
     location: '台北市',
     job: '平面設計師',
-    hobbies: ['旅行', '攝影', '咖啡', '爬山', '閱讀'],
-    intro: '喜歡旅行和攝影，熱愛探索世界的每個角落。週末...',
-    avatar: 'https://dimg04.c-ctrip.com/images/1hq2n12000r400lb370CE.jpg',
+    hobbies: ['看展', '下午茶', '攝影', '底片相機'],
+    intro: '喜歡用鏡頭記錄生活，週末常常在各大美術館或文青咖啡廳出沒。個性比較慢熟，但熟了之後是個會陪你瘋到底的女孩。',
+    avatar: '/images/Girlfriend1.jpg',
   },
   {
-    name: '阿MO',
+    name: 'Bella',
     age: 28,
-    location: '新竹市',
-    job: '前端工程師',
-    hobbies: ['健身', '電影', '音樂', '程式'],
-    intro: '喜歡挑戰新技術，也愛看科幻片和聽搖滾樂。',
-    avatar:
-      'https://tse2.mm.bing.net/th/id/OIP.Tr8tQzSlcsEZR7LV04CkkQHaLH?rs=1&pid=ImgDetMain&o=7&rm=3',
+    location: '台中市',
+    job: '時尚模特兒',
+    hobbies: ['健身', '品酒', '高爾夫', '皮拉提斯'],
+    intro: '平時工作節奏快，希望休假時能找個人一起享受微醺的週末夜晚。喜歡保持自律的生活，如果你也愛運動，那就太棒了！',
+    avatar: '/images/Girlfriend2.jpg',
   },
+  {
+    name: '恩熙',
+    age: 24,
+    location: '高雄市',
+    job: '咖啡廳店長',
+    hobbies: ['烘焙', '旅行', '音樂', '手作'],
+    intro: '自己經營一家小咖啡廳，雖然忙碌但每天都很充實。假日的樂趣是開發新甜點，想找個能一起分享咖啡香與療癒時光的人。',
+    avatar: '/images/Girlfriend3.jpg',
+  },
+  {
+    name: '小琪',
+    age: 22,
+    location: '新北市',
+    job: '大學生',
+    hobbies: ['桌遊', '電影', '密室逃脫', '動漫'],
+    intro: '超愛玩桌遊跟劇本殺！個性活潑開朗，腦袋裡裝著各種天馬行空的想法。如果你也是遊戲咖，我們絕對可以玩在一塊！',
+    avatar: '/images/Girlfriend4.jpg',
+  },
+  {
+    name: '萱萱',
+    age: 26,
+    location: '台北市',
+    job: '行銷企劃',
+    hobbies: ['逛街', '美食', '探店', '看劇'],
+    intro: '標準的吃貨一枚，手機裡存了滿滿的美食清單，從路邊攤到米其林都愛。誰要陪我一起去把清單上的餐廳都踩點一遍？',
+    avatar: '/images/Girlfriend5.jpg',
+  },
+  {
+    name: '舒華',
+    age: 26,
+    location: '桃園市',
+    job: '歌手、舞者',
+    hobbies: ['旅行', '戲劇', '韓文', '舞蹈', '閱讀', '作曲'],
+    intro: '哈囉！我是舒華。平時在舞台上享受唱歌與跳舞的熱情，偶爾也會跨足主持和作曲。私底下的我隨性直率，期待能遇見一個可以陪我到處吃喝玩樂、一起分享生活趣事的人！',
+    avatar: '/images/Girlfriend6.jpg',
+  },
+  {
+    name: '芷瑜',
+    age: 27,
+    location: '台南市',
+    job: '自由插畫家',
+    hobbies: ['畫畫', '底片相機', '看海', '爵士樂'],
+    intro: '喜歡海浪的聲音和底片洗出來的驚喜感。是個內心世界很豐富的浪漫主義者，希望能遇到一個願意聽我分享日常瑣事與靈感的人。',
+    avatar: '/images/Girlfriend7.jpg',
+  }
 ]
 
 function openProfile(index) {
   selectedUser.value = index
 }
 
-
 function handleLike(person) {
-  // 做喜歡的邏輯
-  selectedUser.value = null // 回到列表頁
+  console.log('Liked:', person?.name)
+  selectedUser.value = null 
 }
 
 function handleReject(person) {
-  // 做不喜歡的邏輯
-  selectedUser.value = null // 回到列表頁
+  console.log('Rejected:', person?.name)
+  selectedUser.value = null 
 }
-
 </script>
 
 <template>
-  <div class="innercontainer">
-    <main class="likes-page">
-      <!-- 當 selectedUser 為 null 時顯示列表 -->
-      <template v-if="selectedUser === null">
-        <h1 class="text-gradient">誰喜歡我</h1>
-        <p class="summary">
-          有 <span class="text-primary">{{ users.length }}</span> 個人喜歡你
-        </p>
-
-        <label class="toggle">
-          <input type="checkbox" v-model="isPremium" />
-          Premium
-        </label>
-
-        <div class="card-grid">
-          <template v-if="isPremium">
-            <div v-for="(user, index) in users" :key="index" class="preview-card">
-              <img :src="user.avatar" class="preview-avatar" />
-              <h4 class="name-age">{{ user.name }} {{ user.age }}</h4>
-
-              <!-- 底部資訊區塊 -->
-              <div class="card-footer">
-                <p class="location">{{ user.location }}</p>
-              </div>
-              <button @click="openProfile(index)" class="view-btn-top btn-outline-primary">
-                <i class="bi bi-eye"></i>
-              </button>
-            </div>
-          </template>
-
-          <template v-else>
-            <div v-for="(user, index) in users" :key="index" class="locked-card">
-              <div class="locked-avatar-wrapper">
-                <img :src="user.avatar" class="locked-avatar" />
-              </div>
-              <div class="diamond"><i class="bi bi-gem"></i></div>
-              <p class="locked-text">升級至 BookPremium</p>
-              <p class="locked-sub">查看誰喜歡你</p>
-              <RouterLink :to="{ name: 'member-bookpremium' }" class="upgrade-btn"
-                >立即升級</RouterLink
-              >
-            </div>
-          </template>
+  <div class="w-100 fade-in-up">
+    
+    <template v-if="selectedUser === null">
+      
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+        <div>
+          <h2 class="fw-bold text-gradient mb-2">誰喜歡我</h2>
+          <p class="text-muted mb-0">
+            有 <span class="fw-bold fs-5 text-primary">{{ users.length }}</span> 個人對你心動
+          </p>
         </div>
-      </template>
 
-      <!-- 當 selectedUser 不為 null 時顯示單一卡片 -->
-      <template v-else>
-        <button @click="selectedUser = null" class="back btn-outline-primary">
-          <i class="bi-x"></i>返回
-        </button>
-        <div class="profile-page">
+        <div class="form-check form-switch bg-white rounded-pill shadow-sm px-3 py-2 border d-inline-flex align-items-center gap-2 transition-all hover-shadow">
+          <label class="form-check-label small fw-bold text-muted mb-0" for="premiumToggle" style="cursor: pointer;">
+            預覽 Premium 視角
+          </label>
+          <input class="form-check-input m-0 fs-5" type="checkbox" role="switch" id="premiumToggle" v-model="isPremium" style="cursor: pointer;">
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div v-for="(user, index) in users" :key="index" class="col-6 col-md-4 col-xl-3">
+          
+          <div v-if="isPremium" 
+               class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
+               @click="openProfile(index)">
+            
+            <div class="ratio image-ratio">
+              <img :src="user.avatar" class="w-100 h-100 object-fit-cover transition-all" :alt="user.name">
+            </div>
+            
+            <div class="position-absolute bottom-0 start-0 w-100 p-3 overlay-gradient">
+              <h5 class="fw-bold text-white mb-1">{{ user.name }} <span class="fs-6 fw-normal text-white-50">{{ user.age }}</span></h5>
+              <p class="text-white-50 small mb-0"><i class="bi bi-geo-alt-fill me-1"></i>{{ user.location }}</p>
+            </div>
+          </div>
+
+          <div v-else class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative bg-dark user-card">
+            <div class="ratio image-ratio">
+              <img :src="user.avatar" class="w-100 h-100 object-fit-cover blur-img" alt="locked">
+            </div>
+            
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-3 locked-overlay">            
+              <div class="gem-icon-wrapper mb-3">
+                <i class="bi bi-gem display-4 text-warning" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></i>
+              </div>
+              <h5 class="fw-bold text-white text-shadow mb-2">升級 Premium</h5>
+              <p class="text-white text-shadow mb-4 px-2">解鎖對你心動的對象，不再錯過任何緣分。</p>
+              
+              <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning btn-sm rounded-pill fw-bold shadow-lg px-5 py-3 fs-5">
+                立即解鎖
+              </RouterLink>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="d-flex justify-content-center align-items-center w-100 fade-in-up" style="min-height: 70vh;">
+        
+        <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1400px;">
+          
+          <button @click="selectedUser = null" 
+                  class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
+                  title="返回列表">
+            <i class="bi bi-arrow-left"></i>
+          </button>
+          
           <DatingCard :person="users[selectedUser]" @like="handleLike" @reject="handleReject" />
+        
         </div>
-      </template>
-    </main>
+      </div>
+    </template>
+
   </div>
 </template>
 
 <style scoped>
-.innercontainer {
-  display: flex;
-  height: 100vh;
-}
-.likes-page {
-  flex: 1;
-  text-align: center;
-  padding: 0.5rem;
-}
-.summary {
-  margin-bottom: 1rem;
-}
-.toggle {
-  margin-bottom: 1.5rem;
-  display: inline-block;
-}
-.card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
+/* 控制照片比例 (3:4) */
+.image-ratio {
+  --bs-aspect-ratio: 133%;
 }
 
-.preview-card,
-.locked-card {
-  width: 210px;
-  height: 280px;
-  border-radius: 12px;
-
-  text-align: center;
-  position: relative;
-}
-.preview-card {
-  width: 210px;
-  height: 280px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 1px 5px #6e6b6b;
-  position: relative; /* 讓 footer 可以絕對定位在卡片內 */
-  overflow: hidden;
-  text-align: center;
-}
-
-.avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-}
-
-.card-footer {
-  position: absolute;
-  bottom: 0px; /* 貼齊卡片底部 */
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between; /* 左右分布 */
-  align-items: center;
-}
-
-.name-age {
-  position: absolute;
-  bottom: 32px; /* 放在圖片底部 */
-  left: 10px;
-  color: white;
-  text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-}
-
-.location {
-  font-size: 0.9rem;
-  color: white;
-  text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-}
-
-.preview-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-}
-
-.view-btn {
-  border: none;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
+.cursor-pointer {
   cursor: pointer;
 }
 
-.locked-card {
-  background: #f5f5f5;
-  overflow: hidden;
+/* 圖片動畫 */
+.user-card img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.locked-avatar-wrapper {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  z-index: 1;
-}
-.locked-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(4px);
+.user-card:hover img {
+  transform: scale(1.08);
 }
 
-.diamond,
-.locked-text,
-.locked-sub,
-.upgrade-btn {
-  position: relative;
-  z-index: 2;
+.overlay-gradient {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
 }
 
-.diamond {
-  font-size: 2rem;
-  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-top: 2.5rem;
-}
-.locked-text {
-  font-weight: bold;
-  margin-top: 0.5rem;
-  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-size: 1.2rem;
-}
-.locked-sub {
-  font-size: 1rem;
-  color: white;
-  margin-bottom: 1.5rem;
-}
-.upgrade-btn {
-  display: inline-block; /* 讓 RouterLink 看起來像按鈕 */
-  text-decoration: none; /* 移除超連結底線 */
-  color: #333;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #ffdd56, var(--color-secondary));
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease; /* 動畫過渡 */
+.blur-img {
+  filter: blur(18px) brightness(1.3) contrast(0.8);
+  transform: scale(1.2);
 }
 
-.upgrade-btn:hover {
-  background: linear-gradient(135deg, #fed11b, #ffde69);
-  transform: translateY(-2px);
-  text-decoration: none;
+.locked-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
 }
 
-.card-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-/* 右上角查看按鈕 */
-.view-btn-top {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
+.hover-shadow {
+  transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
 }
 
-.profile-page {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* 卡片靠上顯示 */
+/* --- 獨立詳細頁返回按鈕精準定位 --- */
+.custom-back-btn {
+  position: absolute !important;
+  left: 50px !important;
+  z-index: 1050;
 }
 
-.back {
-  margin-bottom: 1rem;
-  border-radius: 6px;
+/* 手機版排版微調 */
+@media (max-width: 767.98px) {
+  .custom-back-btn {
+    left: 10px !important;
+  }
 }
 </style>

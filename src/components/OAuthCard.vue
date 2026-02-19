@@ -1,37 +1,34 @@
 <script setup>
-// 這是一個純外框元件，不需要太多邏輯
+import { RouterLink } from 'vue-router'
+// 這是一個純外框元件，封裝左側視覺與右側表單區塊
 </script>
 
 <template>
-    <div class="login-page">
-        <main class="container">
-            <div class="row justify-content-center w-100 g-0">
-                <div class="col-xl-10 col-lg-11">
-                    <div class="card card-login">
-                        <div class="row g-0" style="min-height: 600px;">
+  <main class="auth-container">
+<RouterLink to="/" 
+                class="btn btn-light shadow-sm btn-circle btn-circle-md position-absolute" 
+                style="top: 25px; left: 25px; z-index: 100;" 
+                title="返回首頁">
+      <i class="bi bi-arrow-left"></i>
+    </RouterLink>
 
-                            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 position-relative dating-bg-animated">
-                                
-                                <div class="circle-deco" style="width: 200px; height: 200px; top: -50px; left: -50px;"></div>
-                                <div class="circle-deco" style="width: 300px; height: 300px; bottom: -80px; right: -80px;"></div>
+    <div class="card auth-card mx-auto">
+      <div class="row g-0">
+        
+        <div class="col-lg-5 d-none d-lg-flex brand-section p-5">
+          <div class="deco-circle" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
+          <div class="deco-circle" style="width: 150px; height: 150px; bottom: 80px; right: -20px;"></div>
 
-                                <slot name="left-side"></slot>
-                            </div>
+          <slot name="left-side"></slot>
+        </div>
 
-                            <div class="col-lg-7 p-4 p-md-5 bg-body d-flex flex-column justify-content-center">
-                                <div class="w-75 mx-auto">
-                                    <slot></slot>
-                                </div>
-                            </div>
+        <div class="col-lg-7 form-section p-4 p-md-5">
+          <div class="w-100 mx-auto" style="max-width: 420px;">
+            <slot></slot>
+          </div>
+        </div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+      </div>
     </div>
+  </main>
 </template>
-
-<style scoped>
-
-</style>

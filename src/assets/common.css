@@ -1,126 +1,218 @@
-/* =========================
-   1. 全域變數 & 主題設定
-   ========================= */
+/* =========================================
+   style.css - BOOK仁 共用核心與驗證頁面樣式
+   ========================================= */
+
+/* =========================================
+   1. 全域變數
+   ========================================= */
 :root {
-    /* 核心玻璃擬態變數 */
-    --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.1) 100%);
-    --glass-border: rgba(255, 255, 255, 0.5);
+    /* 預設玻璃擬態 (首頁與共用) */
+    --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.15) 100%);
     --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
     --blur-strength: 20px;
-
+    
     /* 品牌色系 */
-    --color-primary: #ff4757;
-    --color-primary-rgb: 255, 71, 87; /* 用於 rgba 轉換 */
-    --color-secondary: #FF8C33;
-    
-    --gradient-main: linear-gradient(135deg, #ff4757 0%, #FF8C33 100%);
-    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    --gradient-hover: linear-gradient(135deg, #ff1a53 0%, #ff7b1a 100%);
-    
+    --bs-primary: #ff4757;
+    --bs-secondary: #FF8C33;
+    --bs-body-color: #2c3e50;
     --text-main: #2c3e50;
     --text-muted: #64748b;
-
-    /* 佈局變數 */
-    --sidebar-width: 260px; 
+    --gradient-main: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-secondary) 100%);
+    --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
 }
 
-/* 文字反白選取顏色 */
-::selection {
-    background-color: rgba(var(--color-primary-rgb), 0.3);
-    color: inherit;
-}
-
-/* =========================
-   2. 背景與動畫 (Love Fluid Flow)
-   ========================= */
+/* =========================================
+   2. 全域背景與排版
+   ========================================= */
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--text-main);
     background-color: #fffdf9;
-    
-    /* 複雜的漸層背景 */
+    min-height: 100vh;
     background-image:
-        radial-gradient(at 0% 0%, hsla(340, 100%, 65%, 0.5) 0px, transparent 55%),
-        radial-gradient(at 100% 0%, hsla(35, 100%, 60%, 0.4) 0px, transparent 55%),
-        radial-gradient(at 0% 100%, hsla(330, 100%, 60%, 0.5) 0px, transparent 55%),
-        radial-gradient(at 100% 100%, hsla(50, 100%, 75%, 0.4) 0px, transparent 55%);
-
+        radial-gradient(at 0% 0%, hsla(340, 100%, 65%, 0.4) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, hsla(35, 100%, 60%, 0.3) 0px, transparent 55%),
+        radial-gradient(at 0% 100%, hsla(330, 100%, 60%, 0.4) 0px, transparent 55%),
+        radial-gradient(at 100% 100%, hsla(50, 100%, 75%, 0.3) 0px, transparent 55%);
     background-attachment: fixed;
     background-size: 180% 180%;
     animation: loveFluidFlow 15s ease infinite;
-    min-height: 100vh;
-    overflow-x: hidden;
 }
 
-@keyframes loveFluidFlow {
-    0% { background-position: 0% 0%; background-size: 180% 180%; }
-    25% { background-position: 100% 0%; background-size: 160% 160%; }
-    50% { background-position: 100% 100%; background-size: 180% 180%; }
-    75% { background-position: 0% 100%; background-size: 160% 160%; }
-    100% { background-position: 0% 0%; background-size: 180% 180%; }
+section,
+.bg-light {
+    background: transparent !important;
 }
 
-a { text-decoration: none; transition: all 0.3s ease; }
-a:hover { color: var(--color-primary); }
-
-/* =========================
-   3. 核心玻璃擬態 - Bootstrap 覆寫
-   ========================= */
-
-/* 定義「玻璃材質」的共通樣式，直接覆蓋 Bootstrap 元件 */
-.offcanvas-lg,
+/* 核心玻璃擬態與 Bootstrap 全域覆寫 */
+.glass-skin,
 .card,
-.btn-light,
-.nav-pills,
-.modal-content,
-.dropdown-menu {
+.navbar,
+footer,
+.offcanvas-lg,
+.nav-pills {
     background: var(--glass-bg) !important;
     backdrop-filter: blur(var(--blur-strength));
     -webkit-backdrop-filter: blur(var(--blur-strength));
-    
-    /* 光影邊框 */
     border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-left: 1px solid rgba(255, 255, 255, 0.8) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
     border-right: 1px solid rgba(255, 255, 255, 0.3) !important;
-    
+    box-shadow: var(--glass-shadow) !important;
+}
+
+/* =========================================
+   3. 驗證頁面專屬佈局 (Auth Layout)
+   ========================================= */
+.auth-container {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.auth-card {
+    width: 100%;
+    border: none;
+    border-radius: 24px !important;
+    overflow: hidden;
+    background: transparent !important;
+    box-shadow: 0 15px 35px rgba(31, 38, 135, 0.1) !important;
+}
+
+/* 左側：品牌視覺區 */
+.brand-section {
+    background: var(--gradient-main);
+    position: relative;
+    overflow: hidden;
+    color: white;
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.brand-section h1, 
+.brand-section h2, 
+.brand-section p {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 右側：表單操作區 (覆寫玻璃透明度) */
+.form-section {
+    /* 這裡使用區域變數覆寫，讓登入表單的背景更白、更清楚 */
+    --glass-bg: rgba(255, 255, 255, 0.85); 
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--blur-strength));
+    -webkit-backdrop-filter: blur(var(--blur-strength));
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* =========================================
+   4. 表單元件 (Forms)
+   ========================================= */
+/* 共用表單預設樣式 (如首頁聯絡我們) */
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(200, 200, 200, 0.6);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    padding: 12px; /* 預設 padding */
+    color: var(--text-main);
+    font-size: 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #fff;
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 4px rgba(255, 71, 87, 0.15);
+    outline: none;
+}
+
+/* 登入/註冊頁專用表單樣式 (帶 Icon) */
+.input-group-custom {
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.input-group-custom i {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    z-index: 10;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+/* 針對包裝在 .input-group-custom 內的 input，特別留出左側 Icon 的空間 */
+.input-group-custom .form-control,
+.input-group-custom .form-select {
+    padding: 12px 20px 12px 50px; 
+}
+
+.form-control:focus + i,
+.form-select:focus + i,
+.input-group-custom:focus-within i {
+    color: var(--bs-primary);
+}
+
+.auth-container .form-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-left: 15px;
+    margin-bottom: 6px;
+}
+
+/* =========================================
+   5. 按鈕與元件樣式 (Buttons & Components)
+   ========================================= */
+.btn-primary {
+    background: var(--gradient-main) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+    border-radius: 50rem;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-light {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(var(--blur-strength));
+    -webkit-backdrop-filter: blur(var(--blur-strength));
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    color: var(--text-muted) !important;
+    border-radius: 50rem;
     box-shadow: var(--glass-shadow) !important;
     transition: all 0.3s ease;
 }
 
-/* =========================
-   4. 基礎元件 (按鈕、標籤)
-   ========================= */
-
-/* Primary Button */
-.btn-primary {
-    background: var(--gradient-main) !important;
-    border: none !important;
-    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
-    transition: all 0.3s ease;
-    color: white !important;
-}
-.btn-primary:hover {
-    background: var(--gradient-hover) !important;
-    box-shadow: 0 8px 25px rgba(255, 51, 102, 0.5);
-    transform: translateY(-2px);
+.btn-light:hover {
+    background: rgba(255, 255, 255, 0.6) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 51, 102, 0.2) !important;
+    color: var(--bs-primary) !important;
 }
 
-/* Outline Primary (從舊版移植並調整) */
-.btn-outline-primary {
-    color: var(--color-primary);
-    border: 2px solid var(--color-primary);
-    background: transparent;
-    transition: all 0.3s ease;
-}
-.btn-outline-primary:hover {
-    background: var(--gradient-main) !important;
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 5px 15px rgba(255, 51, 102, 0.3);
-}
-
-/* Warning Button (尊爵金) */
 .btn-warning {
     background: var(--gradient-gold) !important;
     border: none !important;
@@ -128,147 +220,188 @@ a:hover { color: var(--color-primary); }
     box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
     transition: all 0.3s ease;
 }
+
+/* === 補回的按鈕特效 === */
 .btn-warning:hover {
     box-shadow: 0 8px 25px rgba(255, 165, 0, 0.5);
     transform: translateY(-2px);
-    color: white !important;
 }
 
-/* Glass Button (.btn-light) */
-.btn-light {
-    color: var(--text-muted) !important;
+.btn-outline-light {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--text-muted);
+    backdrop-filter: blur(5px);
     border-radius: 50rem;
+    transition: all 0.3s ease;
 }
-.btn-light.rounded-circle {
+
+.btn-outline-light:hover,
+.btn-outline-light.active {
+    background: rgba(255, 255, 255, 0.6) !important;
+    color: var(--bs-primary) !important;
+    border-color: white !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* 圓形社群按鈕 */
+.btn-social, .btn-light.rounded-circle {
     width: 45px;
     height: 45px;
     padding: 0;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s;
 }
-.btn-light:hover {
-    background: rgba(255, 255, 255, 0.6) !important;
+
+.btn-social {
+    background: white;
+    border: 1px solid #eee;
+    color: var(--text-muted);
+}
+
+.btn-social:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(255, 51, 102, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.9) !important;
-    color: var(--color-primary) !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
 }
 
-/* Badges */
-.badge { font-weight: 600; letter-spacing: 0.5px; padding: 0.5em 0.8em; }
-.bg-danger { background-color: #ff4757 !important; }
-.bg-warning { background-color: #ffa502 !important; color: white !important; }
 
-/* =========================
-   5. 表單與輸入框 (整合舊版功能與新版風格)
-   ========================= */
+.btn-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+}
 
-/* 現代化表單控件 - 改為半透明白底以適應玻璃背景 */
-.form-control,
-.form-select {
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    background-color: rgba(255, 255, 255, 0.5); /* 半透明白 */
-    backdrop-filter: blur(10px);
-    color: #212529;
+.btn-circle i {
     transition: all 0.3s ease;
-    font-size: 1rem;
-    padding: 0.8rem 1.2rem;
-    border-radius: 12px;
 }
 
-.form-control:focus,
-.form-select:focus {
-    background-color: rgba(255, 255, 255, 0.9);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 0.25rem rgba(var(--color-primary-rgb), 0.25);
-    outline: none;
+/* 尺寸設定 */
+.btn-circle-sm {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
 }
 
-/* Input Icon Group (從舊版保留) */
-.input-icon-group {
-    position: relative;
-    margin-bottom: 1.2rem;
-}
-.input-icon-group i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6c757d;
-    z-index: 2;
-    transition: color 0.3s ease;
-    font-size: 1.1rem;
-}
-.input-icon-group:focus-within i {
-    color: var(--color-primary);
-}
-.input-icon-group .form-control {
-    padding-left: 2.8rem;
+.btn-circle-md {
+    width: 55px;
+    height: 55px;
+    font-size: 1.6rem;
 }
 
-/* Form Check - 粉橘勾選 */
-.form-check-input {
-    border: 2px solid rgba(0,0,0,0.1);
-    background-color: rgba(255,255,255,0.5);
-}
-.form-check-input:checked {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 0.25rem rgba(var(--color-primary-rgb), 0.25);
+.btn-circle-lg {
+    width: 90px;
+    height: 90px;
+    border: 4px solid transparent; /* 保留給喜歡/跳過按鈕的邊框變化 */
 }
 
-/* =========================
-   6. 卡片系統 (Card System)
-   ========================= */
-/* .card 已經在上方「玻璃擬態」區塊定義了基礎樣式 */
-
-/* 懸浮效果修飾符 (從舊版移植) */
-.card-hover:hover {
-    border-color: rgba(255, 71, 87, 0.3) !important;
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(var(--color-primary-rgb), 0.2) !important;
-    z-index: 2;
+.btn-circle-lg i {
+    font-size: 3rem;
 }
 
-/* 特色卡片 (Feature Card) */
-.card-feature {
-    border-radius: 24px;
+/* 手機版尺寸適配 */
+@media (max-width: 767.98px) {
+    .btn-circle-lg { 
+        width: 65px; 
+        height: 65px; 
+        border-width: 3px; 
+    }
+    .btn-circle-lg i { 
+        font-size: 2rem; 
+    }
+    .btn-circle-md { 
+        width: 45px; 
+        height: 45px; 
+        font-size: 1.3rem; 
+    }
 }
 
-/* =========================
-   7. 導航與佈局元件
-   ========================= */
+/* =========================================
+   6. 導覽列與側邊欄 (Navbar & Offcanvas)
+   ========================================= */
+.navbar {
+    border-radius: 50rem !important;
+    padding: 10px 20px;
+    transition: all 0.4s ease;
+}
 
-/* (A) 側邊欄 (.offcanvas-lg) */
+.navbar .nav-link {
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 50rem;
+    transition: all 0.3s;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: var(--bs-primary);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.nav-link i {
+    font-size: 1.25rem;
+    margin-right: 8px;
+}
+
+.nav-pills .nav-link i {
+    font-size: inherit;
+    margin-right: 4px;
+}
+
+footer {
+    border-radius: 24px 24px 0 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.6) !important;
+}
+
 .offcanvas-lg {
-    position: fixed;
-    left: 20px;
-    top: 20px;
-    bottom: 20px;
-    width: var(--sidebar-width);
-    padding: 24px;
     z-index: 1050;
-    display: flex;
-    flex-direction: column;
     border-radius: 24px !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
 }
 
-.brand-area { margin-bottom: 2rem; padding-left: 10px; }
-.brand-text {
-    font-size: 1.5rem;
-    font-weight: 800;
-    background: var(--gradient-main);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
+.nav-pills {
+    padding: 8px;
+    border-radius: 50rem;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
 }
 
-/* 側邊欄連結 (一般的 .nav-link) */
-.nav:not(.nav-pills) .nav-link {
+.nav-pills .nav-link {
+    padding: 10px 24px;
+    border-radius: 50rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 20px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* === 補回的 Nav Pills hover 特效 === */
+.nav-pills .nav-link:hover {
+    color: var(--bs-primary);
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.nav-pills .nav-link.active {
+    background: white !important;
+    color: var(--bs-primary) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.nav:not(.nav-pills):not(.navbar-nav) .nav-link {
     padding: 12px 16px;
-    margin-bottom: 8px;
     border-radius: 16px;
     color: var(--text-muted);
     font-weight: 600;
@@ -277,82 +410,32 @@ a:hover { color: var(--color-primary); }
     transition: all 0.3s;
     border: 1px solid transparent;
 }
-.nav:not(.nav-pills) .nav-link:hover {
+
+.nav:not(.nav-pills):not(.navbar-nav) .nav-link:hover,
+.nav:not(.nav-pills):not(.navbar-nav) .nav-link.active {
     background: rgba(255, 255, 255, 0.5);
-    color: var(--color-primary);
+    color: var(--bs-primary) !important;
 }
-.nav:not(.nav-pills) .nav-link.active {
+
+.nav:not(.nav-pills):not(.navbar-nav) .nav-link.active {
     background: white;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    color: var(--color-primary) !important;
     border-color: rgba(255, 255, 255, 0.8);
 }
-.nav:not(.nav-pills) .nav-link i { font-size: 1.25rem; margin-right: 12px; color: #ffb3c6; transition: color 0.3s; }
-.nav:not(.nav-pills) .nav-link.active i { color: var(--color-primary); }
 
-
-/* (B) 頂部導航藥丸 (.nav-pills) */
-.nav-pills {
-    padding: 8px;
-    border-radius: 50rem;
-    display: inline-flex;
-    gap: 5px;
-    align-items: center;
-}
-.nav-pills .nav-link {
-    padding: 10px 24px;
-    border-radius: 50rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-}
-.nav-pills .nav-link:hover {
-    color: var(--color-primary);
-    background: rgba(255, 255, 255, 0.3);
-}
-.nav-pills .nav-link.active {
-    background: white !important;
-    color: var(--color-primary) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-.nav-pills .nav-link i { margin-right: 6px; }
-
-/* (C) Dropdown Menu */
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    margin-top: 10px !important;
-    padding: 8px;
-}
-.dropdown-item {
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-weight: 500;
-}
-.dropdown-item:hover {
-    background: rgba(255, 51, 102, 0.08);
-    color: var(--color-primary);
+/* =========================================
+   7. 實用工具與文字 (Utilities & Typography)
+   ========================================= */
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-/* User Profile Button Specifics */
-.user-profile-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 4px 6px 4px 16px;
-    cursor: pointer;
-}
-
-/* =========================
-   8. 實用工具 (Utilities) - 從舊版移植
-   ========================= */
-
-/* Text Gradient */
 .text-gradient {
     background: var(--gradient-main);
     -webkit-background-clip: text;
@@ -360,107 +443,47 @@ a:hover { color: var(--color-primary); }
     background-clip: text;
 }
 
-/* Text Gradient Hover */
-.text-gradient-hover {
-    font-size: 1rem;
-    padding: 0.5rem 0;
-    position: relative;
-    transition: all 0.3s;
-    cursor: pointer;
-}
-.text-gradient-hover:hover,
-.text-gradient-hover.active {
-    background: var(--gradient-main);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800 !important;
-}
-.text-gradient-hover::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 50%;
-    background: var(--gradient-main);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-}
-.text-gradient-hover:hover::after,
-.text-gradient-hover.active::after {
-    width: 100%;
-}
-
-/* Background Utilities */
-.bg-gradient { background: var(--gradient-main) !important; }
-.bg-pink-light { background: rgba(var(--color-primary-rgb), 0.08); }
-
-/* Table Customization (適應玻璃背景) */
-.table {
-    --bs-table-bg: transparent;
-    --bs-table-color: var(--text-main);
-    border-color: rgba(255,255,255,0.3);
-}
-.table thead th {
-    border-bottom: 2px solid var(--color-primary);
-    color: var(--color-primary);
-    font-weight: 600;
-}
-.table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Pagination */
-.page-link {
-    color: var(--color-primary);
-    border: 1px solid rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.3);
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-}
-.page-link:hover {
-    color: var(--color-secondary);
-    background-color: rgba(255, 255, 255, 0.6);
-}
-.page-item.active .page-link {
+.bg-gradient {
     background: var(--gradient-main) !important;
-    border-color: transparent;
-    color: white;
-    box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.3);
 }
 
-/* Accordion (手風琴) */
-.accordion-item {
-    background: transparent;
-    border: none;
-    margin-bottom: 0.5rem;
-}
-.accordion-button {
-    background: rgba(255,255,255,0.4) !important;
-    backdrop-filter: blur(10px);
-    border-radius: 12px !important;
-    box-shadow: none;
-}
-.accordion-button:not(.collapsed) {
-    color: var(--color-primary);
-    background: rgba(255,255,255,0.7) !important;
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
-}
-/* 讓箭頭圖示變成粉紅色 */
-.accordion-button:not(.collapsed)::after {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23FF3366'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+.badge.bg-danger { background-color: #ff4757 !important; }
+.badge.bg-warning { background-color: #ffa502 !important; color: white !important; }
+
+/* 登入頁專屬警告區塊與 Icon */
+.alert-custom {
+    background: rgba(255, 71, 87, 0.05);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    border-radius: 16px;
+    color: var(--text-main);
 }
 
-/* =========================
-   9. 動畫 (Animations)
-   ========================= */
+/* =========================================
+   8. 動畫與裝飾物件 (Animations)
+   ========================================= */
+.deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.floating-obj {
+    position: absolute;
+    color: rgba(255, 255, 255);
+    opacity: 0;
+    animation: floatUp 8s infinite ease-in;
+    z-index: 1;
+}
+
 .fade-in-up {
     animation: fadeInUp 0.6s ease forwards;
 }
 
-.btn-pulse {
-    animation: pulse-glow 2s infinite;
+@keyframes loveFluidFlow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
 }
 
 @keyframes fadeInUp {
@@ -468,385 +491,16 @@ a:hover { color: var(--color-primary); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse-glow {
-    0% { box-shadow: 0 0 0 0 rgba(255, 144, 69, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 144, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 144, 69, 0); }
-}
-
-/* =========================
-   10. RWD 佈局設定
-   ========================= */
-.main-layout {
-    margin-left: 300px;
-    padding: 20px 40px 40px 0;
-    transition: margin-left 0.3s ease;
-}
-
-.sticky-header {
-    position: sticky;
-    top: 20px;
-    margin-bottom: 30px;
-    z-index: 900;
-}
-
-/* =========================
-   Login / Auth Page Styles
-   ========================= */
-.login-page {
-    --brand-blue-dark: #0d47a1;
-    --brand-blue-adaptive: #1976D2;
-    --brand-pink: var(--color-primary);
-    --brand-orange: #ff9045;
-    --main-bg: #f8f9fa;
-    --sidebar-bg: #ffffff;
-    --text-main: #212529;
-    --text-muted: #6c757d;
-    background: linear-gradient(135deg, var(--main-bg) 0%, rgba(13, 71, 161, 0.05) 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-.login-page .theme-floater {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-}
-
-.login-page .dating-bg-animated {
-    background: linear-gradient(-45deg, var(--brand-blue-dark), #5E35B1, #FF5252, var(--brand-orange));
-    background-size: 600% 600%;
-    animation: gradientShift 15s ease infinite;
-    position: relative;
-    overflow: hidden;
-}
-
-.login-page .floating-particle {
-    position: absolute;
-    bottom: -10%;
-    pointer-events: none;
-    animation: floatUp linear infinite;
-    z-index: 1;
-}
-
-.login-page .circle-deco {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-}
-/* =========================
-   Login / Auth Page Styles
-   ========================= */
-.login-page {
-    --brand-blue-dark: #0d47a1;
-    --brand-blue-adaptive: #1976D2;
-    --brand-pink: var(--color-primary);
-    --brand-orange: #ff9045;
-    --main-bg: #f8f9fa;
-    --sidebar-bg: #ffffff;
-    --text-main: #212529;
-    --text-muted: #6c757d;
-    background: linear-gradient(135deg, var(--main-bg) 0%, rgba(13, 71, 161, 0.05) 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-}
-
-.login-page .theme-floater {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
-}
-
-.login-page .dating-bg-animated {
-    background: linear-gradient(-45deg, var(--brand-blue-dark), #5E35B1, #FF5252, var(--brand-orange));
-    background-size: 600% 600%;
-    animation: gradientShift 15s ease infinite;
-    position: relative;
-    overflow: hidden;
-}
-
-.login-page .floating-particle {
-    position: absolute;
-    bottom: -10%;
-    pointer-events: none;
-    animation: floatUp linear infinite;
-    z-index: 1;
-}
-
-.login-page .circle-deco {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-}
-
-/* =========================
-   11. Login 頁面專用救援樣式 (放在檔案最下方)
-   ========================= */
-
-/* 1. 強制重設 Login 頁面背景，覆蓋掉 body 的粉紅流體動畫 */
-.login-page {
-    position: relative; 
-    z-index: 10; /* 確保蓋在 body 動畫層之上 */
-    background: linear-gradient(135deg, #f8f9fa 0%, rgba(13, 71, 161, 0.05) 100%) !important;
-    min-height: 100vh;
-    width: 100%;
-}
-
-/* 2. 還原 Login 裡面的卡片為「實心白底」，取消全域玻璃特效 */
-.login-page .card {
-    background: #ffffff !important; /* 變回實心白 */
-    backdrop-filter: none !important; /* 移除毛玻璃模糊 */
-    border: none !important; /* 移除玻璃光邊框 */
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important; /* 還原深邃陰影 */
-}
-
-/* 3. 確保 Login 內的文字顏色正確 (避免被全域變數影響) */
-.login-page {
-    --text-main: #212529;
-    --text-muted: #6c757d;
-    color: var(--text-main);
-}
-
-/* =========================
-   Login Split Card Extension (繼承玻璃擬態，但支援雙欄)
-   ========================= */
-
-/* 寬版玻璃卡片 (覆蓋原本單欄 login-card 的寬度限制) */
-.login-card-split {
-    width: 100%;
-    max-width: 1000px !important; /* 加寬以容納雙欄 */
-    padding: 0 !important; /* 移除內距，讓內部 Grid 貼邊 */
-    overflow: hidden; /* 確保圓角內的內容不溢出 */
-    display: flex;
-    flex-direction: row;
-}
-
-/* 左側：品牌視覺區 (保留原本的強烈漸層) */
-.login-side-panel {
-    background: linear-gradient(135deg, #0d47a1, #5E35B1, #FF5252, #ff9045);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    position: relative;
-    overflow: hidden;
-    height: 100%;
-    min-height: 600px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
-}
-
-/* 右側：表單區 (純淨玻璃感) */
-.login-form-panel {
-    background: rgba(255, 255, 255, 0.4); /* 比左邊淺，強調輸入區 */
-    backdrop-filter: blur(10px); /* 額外的模糊 */
-    padding: 3rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-/* 動畫：找回原本的漸層流動 */
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* 動畫：找回原本的漂浮粒子 */
-.floating-particle {
-    position: absolute;
-    bottom: -10%;
-    pointer-events: none;
-    animation: floatUp linear infinite;
-    z-index: 1;
-}
-
 @keyframes floatUp {
-    0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-    }
-    20% { opacity: 0.6; }
+    0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+    20% { opacity: 0.8; }
     80% { opacity: 0.4; }
-    100% {
-        transform: translateY(-800px) rotate(360deg);
-        opacity: 0;
-    }
-}
-
-/* RWD: 手機版調整 */
-@media (max-width: 992px) {
-    .login-card-split {
-        flex-direction: column;
-        max-width: 450px !important;
-    }
-    .login-side-panel {
-        min-height: 200px;
-        padding: 2rem;
-    }
-    .login-form-panel {
-        padding: 2rem;
-    }
-}
-
-#home {
-    --text-dark: #333333;
-    --text-muted: #888888;
-    --bg-light: #f8f9fa;
-    color: var(--text-dark);
-    background-color: #ffffff;
-    font-style: normal !important;
-}
-
-/* Buttons */
-#home .btn-filter {
-    background: white;
-    color: var(--text-muted);
-    border: 1px solid #eee;
-    transition: all 0.3s ease;
-}
-
-#home .btn-filter:hover {
-    background: #f8f9fa;
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-#home .btn-filter.active {
-    background: var(--gradient-main);
-    color: white;
-    border: none;
-    box-shadow: 0 5px 15px rgba(var(--color-primary-rgb), 0.2);
-}
-
-/* Social Buttons (Footer) */
-#home .social-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f1f1f1;
-    color: #666;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 16px;
-    font-style: normal;
-    transition: all 0.3s ease;
-}
-
-#home .social-btn:hover {
-    background-color: var(--color-primary);
-    color: white !important;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(var(--color-primary-rgb), 0.3);
-}
-
-/* Navbar */
-#home .navbar-nav .nav-link {
-    font-weight: 600;
-    color: var(--text-dark);
-    font-size: 0.95rem;
-    transition: color 0.3s;
-}
-
-#home .navbar-nav .nav-link:hover,
-#home .navbar-nav .nav-link.active {
-    color: var(--color-primary);
-}
-
-/* Hero Section Decoration */
-#home .blob-bg {
-    position: absolute;
-    top: -20%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.1) 0%, rgba(255, 255, 255, 0) 70%);
-    border-radius: 50%;
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Carousel Customization */
-#home .carousel-indicators [data-bs-target] {
-    background-color: var(--color-primary);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: 0 5px;
-    opacity: 0.5;
-    border: none;
-}
-
-#home .carousel-indicators .active {
-    opacity: 1;
-    width: 25px;
-    border-radius: 10px;
-}
-
-#home .avatar {
-    font-weight: 600;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 10px rgba(var(--color-primary-rgb), 0.3);
+    100% { transform: translateY(-400px) scale(1.5) rotate(20deg); opacity: 0; }
 }
 
 @media (max-width: 992px) {
-    /* 側邊欄：預設隱藏在畫面左側 */
-    .offcanvas-lg {
-        transform: translateX(-120%);
-        left: 0; top: 0; bottom: 0;
-        margin: 0;
-        width: 280px;
-        border-radius: 0 24px 24px 0 !important;
-        height: 100vh;
-    }
-    .offcanvas-lg.show {
-        transform: translateX(0);
-    }
-
-    .main-layout {
-        margin-left: 0;
-        padding: 20px;
-    }
-
-    .sticky-header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: stretch !important;
-    }
-    
-    .nav-pills {
-        width: 100%;
-        justify-content: center;
-        overflow-x: auto;
-        padding-bottom: 12px;
-    }
-
-    /* 遮罩 */
-    .sidebar-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(3px);
-        z-index: 1040;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-    .sidebar-overlay.show {
-        opacity: 1;
-        visibility: visible;
+    .btn-light.rounded-circle {
+        width: 40px;
+        height: 40px;
     }
 }

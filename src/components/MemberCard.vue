@@ -2,25 +2,24 @@
 defineProps({
   image: String,
   name: String,
-  tag: String,     // 例如：NEW ARRIVAL
-  tagColor: {      // 控制標籤顏色 (danger, secondary, dark...)
+  tag: String,
+  tagColor: {
     type: String, 
     default: 'danger' 
   }, 
-  specialty: String, // 專長/地點
+  specialty: String,
   price: String
 })
 </script>
 
 <template>
-  <div class="card card-hover h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-    <div class="position-relative">
-      <img :src="image" class="card-img-top object-fit-cover" height="320" :alt="name">
+  <div class="card h-100">
+    <div class="position-relative p-2">
+      <img :src="image" class="card-img-top" :alt="name" style="border-radius: 20px 20px 0 0; height: 300px; object-fit: cover;">
     </div>
     
-    <div class="card-body p-4 text-start">
-      <span v-if="tag" :class="`badge bg-${tagColor} rounded-1 mb-2 px-2 py-1`"
-        style="font-size: 0.7rem; letter-spacing: 1px;">
+    <div class="card-body px-4 pb-4 pt-2 text-start">
+      <span v-if="tag" :class="`badge bg-${tagColor} rounded-pill mb-2 px-2`">
         {{ tag }}
       </span>
       

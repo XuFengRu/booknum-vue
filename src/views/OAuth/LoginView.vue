@@ -11,66 +11,73 @@ const handleLogin = () => {
 </script>
 
 <template>
-    <OAuthCard>
-        
-        <template #left-side>
-            <i class="bi bi-heart-fill floating-particle original text-white opacity-50 display-4" style="left: 15%; animation-duration: 12s;"></i>
-            <i class="bi bi-chat-heart-fill floating-particle original text-white opacity-25 h1" style="left: 35%; animation-duration: 18s; animation-delay: 2s;"></i>
-            <i class="bi bi-heart-fill floating-particle original text-white opacity-25 h3" style="left: 75%; animation-duration: 15s; animation-delay: 1s;"></i>
+  <OAuthCard>
+    
+    <template #left-side>
+      <i class="bi bi-heart-fill floating-obj fs-3" style="left: 20%; animation-delay: 0s;"></i>
+      <i class="bi bi-chat-heart-fill floating-obj fs-1" style="left: 50%; animation-delay: 2s; animation-duration: 9s;"></i>
 
-            <div class="position-relative z-2 text-center">
-                <div class="mb-4">
-                    <span class="fw-bolder display-3" style="letter-spacing: 2px;">BOOK</span>
-                    <span class="fw-bolder display-3" style="letter-spacing: 2px; color: var(--brand-orange);">仁</span>
-                </div>
-                <h4 class="fw-light mb-3">遇見，從這裡開始</h4>
-                <p class="opacity-75">探索專屬於你的緣分<br>連結每一個心動時刻</p>
-            </div>
-        </template>
-
-        <div class="text-center text-lg-start mb-5">
-            <h2 class="fw-bold" style="color: var(--text-main);">歡迎回來</h2>
-            <p class="text-muted">請輸入您的帳號密碼以繼續</p>
+      <div class="position-relative z-2">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
+          <i class="bi bi-heart-fill fs-1" style="color: var(--bs-primary);"></i>
         </div>
+        <h1 class="fs-1 fw-bolder mb-2" style="letter-spacing: 2px;">BOOK仁</h1>
+        <p class="fs-5 mb-4">遇見，從這裡開始</p>
+        <div style="width: 50px; height: 3px; background: white; margin: 0 auto 20px auto;"></div>
+        <p class="small lh-lg">
+          探索專屬於你的緣分<br>連結每一個心動時刻
+        </p>
+      </div>
+    </template>
 
-        <form @submit.prevent="handleLogin">
-            
-            <div class="input-icon-group">
-                <i class="bi bi-envelope"></i>
-                <input type="email" class="form-control rounded-pill" placeholder="帳號 ( Email )" value="xiaoming@example.com" required autofocus>
-            </div>
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-gradient mb-2">歡迎回來</h2>
+      <p class="text-muted">請輸入您的帳號密碼以繼續</p>
+    </div>
 
-            <div class="input-icon-group">
-                <i class="bi bi-lock"></i>
-                <input type="password" class="form-control rounded-pill" placeholder="密碼" value="000" required>
-            </div>
+    <form @submit.prevent="handleLogin">
+      
+      <div class="input-group-custom">
+        <input type="email" class="form-control" placeholder="電子信箱" required autofocus>
+        <i class="bi bi-envelope"></i>
+      </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe">
-                    <label class="form-check-label small text-muted" for="rememberMe" style="cursor: pointer;">記住我 (7天)</label>
-                </div>
-                <RouterLink to="/forget-password" class="text-decoration-none small fw-bold" style="color: var(--brand-blue-adaptive);">
-                    忘記密碼?
-                </RouterLink>
-            </div>
+      <div class="input-group-custom">
+        <input type="password" class="form-control" placeholder="密碼" required>
+        <i class="bi bi-lock"></i>
+      </div>
 
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm btn-pulse" style="border: none;">
-                    登入系統 
-                </button>
-            </div>
-        </form>
-
-        <div class="text-center mt-5">
-            <p class="small text-muted mb-1">還沒有帳號嗎?</p>
-            <RouterLink to="/register" class="text-decoration-none fw-bold fs-6" style="color: var(--brand-orange);">
-                立即免費註冊 <i class="bi bi-arrow-right-short"></i>
-            </RouterLink>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="rememberMe">
+          <label class="form-check-label small text-muted" for="rememberMe">記住我</label>
         </div>
+        <RouterLink to="/forget-password" class="text-decoration-none small fw-bold text-muted">
+          忘記密碼?
+        </RouterLink>
+      </div>
 
-    </OAuthCard>
+      <div class="d-grid mb-4">
+        <button type="submit" class="btn btn-primary btn-lg">立即登入</button>
+      </div>
+
+      <div class="text-center mb-4 position-relative">
+        <hr class="text-muted opacity-25">
+        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">或使用以下方式</span>
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mb-4">
+        <button type="button" class="btn btn-social"><i class="bi bi-google text-danger"></i></button>
+        <button type="button" class="btn btn-social"><i class="bi bi-facebook text-primary"></i></button>
+      </div>
+    </form>
+
+    <div class="text-center">
+      <p class="small text-muted mb-0">
+        還沒有帳號嗎? 
+        <RouterLink to="/register" class="fw-bold ms-1 text-gradient text-decoration-none">免費註冊</RouterLink>
+      </p>
+    </div>
+
+  </OAuthCard>
 </template>
-
-<style scoped>
-</style>
