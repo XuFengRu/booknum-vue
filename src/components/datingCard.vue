@@ -13,14 +13,14 @@ defineEmits(['like', 'reject'])
   <div class="d-flex justify-content-center align-items-center gap-3 gap-md-5 w-100 px-2 px-md-0">
 
     <button
-      class="btn btn-light shadow-lg btn-circle btn-circle-lg flex-shrink-0 btn-reject"
+      class="btn btn-light btn-circle btn-circle-lg flex-shrink-0 btn-reject"
       @click="$emit('reject')"
       title="跳過"
     >
       <i class="bi bi-x-lg text-danger opacity-75"></i>
     </button>
 
-    <div class="card overflow-hidden border-0 shadow-lg rounded-5 flex-fill" style="max-width: 1050px;">
+    <div class="card overflow-hidden border-0 rounded-5 flex-fill" style="max-width: 1050px;">
       <div class="row g-0 h-100">
         
         <div class="col-md-5 position-relative image-container">
@@ -75,7 +75,7 @@ defineEmits(['like', 'reject'])
     </div>
 
     <button
-      class="btn btn-light shadow-lg btn-circle btn-circle-lg flex-shrink-0 btn-like"
+      class="btn btn-light btn-circle btn-circle-lg flex-shrink-0 btn-like"
       @click="$emit('like')"
       title="喜歡"
     >
@@ -86,7 +86,6 @@ defineEmits(['like', 'reject'])
 </template>
 
 <style scoped>
-/* --- Hover 動畫與陰影效果 (保留專屬行為) --- */
 .btn-reject:hover {
   transform: scale(1.15) rotate(-10deg);
   box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.2) !important;
@@ -103,7 +102,6 @@ defineEmits(['like', 'reject'])
 }
 .btn-like:hover i { opacity: 1 !important; color: var(--bs-primary) !important; }
 
-/* --- 響應式調整 (只保留圖片與卡片高度，按鈕已交由 common.css 控制) --- */
 @media (max-width: 767.98px) {
   .image-container {
     height: 420px;

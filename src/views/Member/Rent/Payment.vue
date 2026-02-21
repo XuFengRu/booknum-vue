@@ -1,71 +1,36 @@
-
-
-<template>
-  <div class="container">
-    <h1 class="title">付款資訊</h1>
-
-    
-    <div class="grid">
-      <div v-for="method in paymentMethods" :key="method.name" class="card">
-        <img :src="method.image" :alt="method.name" class="card-img"/>
-        <h2 class="card-title">{{ method.name }}</h2>
-        <p class="card-desc">{{ method.description }}</p>
-        <button class="btn" @click="selectMethod(method)">選擇此方式</button>
-      </div>
-    </div>
-
-    
-    <div v-if="selectedMethod" class="payment-form mt-5">
-      <h2 class="fw-bold mb-3">填寫付款資訊</h2>
-      <p class="mb-3">您選擇的付款方式：<strong>{{ selectedMethod.name }}</strong></p>
-      <form @submit.prevent="submitPayment">
-        <div class="form-group mb-3">
-          <label>姓名</label>
-          <input type="text" v-model="form.name" class="form-control" required />
-        </div>
-        <div class="form-group mb-3">
-          <label>Email</label>
-          <input type="email" v-model="form.email" class="form-control" required />
-        </div>
-        <div class="form-group mb-3" v-if="selectedMethod.requiresCard">
-          <label>信用卡號</label>
-          <input type="text" v-model="form.cardNumber" class="form-control" required />
-        </div>
-        <button type="submit" class="btn">確認付款</button>
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
 defineOptions({
   name: 'PaymentPage'
 });
 
-import { ref } from "vue";
+const router = useRouter();
 
 const paymentMethods = ref([
   {
     name: "信用卡",
     description: "使用 VISA / MasterCard / JCB 付款",
-    image: "/images/Card.png",   // 改成 card.png
+    image: "/images/Card.png",
     requiresCard: true
   },
   {
     name: "Line Pay",
     description: "快速掃碼付款，支援多家銀行",
-    image: "/images/linepay.png", // 改成 Linepay.png
+    image: "/images/linepay.png",
     requiresCard: false
   },
   {
     name: "ATM 轉帳",
     description: "使用銀行 ATM 或網銀轉帳",
-    image: "/images/ATM.png",     // 改成 ATM.png
+    image: "/images/ATM.png",
     requiresCard: false
   }
 ]);
 
-const selectedMethod = ref(null);
+// 預設直接選中第一個付款方式，讓右側表單一開始就顯示！
+const selectedMethod = ref(paymentMethods.value[0]);
 const form = ref({
   name: "",
   email: "",
@@ -77,72 +42,113 @@ function selectMethod(method) {
 }
 
 function submitPayment() {
-  alert(`付款成功！方式：${selectedMethod.value.name}`);
+  alert(`付款成功！您使用的付款方式為：${selectedMethod.value.name}`);
+  // 結帳成功後可以引導回首頁或訂單列表
+  // router.push('/bookings');
 }
 </script>
 
+<template>
+  <div class="w-100 fade-in-up">
+    
+    <div class="mb-4 mb-xl-5 text-center">
+      <h2 class="fw-bolder text-gradient mb-2">結帳付款</h2>
+      <p class="text-muted">選擇最方便的付款方式，安全完成預約</p>
+    </div>
+
+    <div class="row g-4 g-xl-5">
+      
+      <div class="col-lg-5">
+        <h5 class="fw-bold text-dark mb-4">1. 選擇付款方式</h5>
+        
+        <div class="d-flex flex-column gap-3">
+          <div v-for="method in paymentMethods" :key="method.name"
+               class="card border-2 rounded-4 overflow-hidden transition-all bg-white"
+               :class="selectedMethod?.name === method.name ? 'border-primary shadow-sm' : 'border-light-subtle shadow-sm'"
+               style="cursor: pointer; --glass-bg: rgba(255, 255, 255, 0.95);"
+               @click="selectMethod(method)">
+            
+            <div class="card-body p-3 p-md-4 d-flex align-items-center gap-3">
+              <div class="bg-light rounded-3 d-flex align-items-center justify-content-center border border-light-subtle flex-shrink-0" 
+                   style="width: 80px; height: 56px; padding: 6px;">
+                <img :src="method.image" :alt="method.name" class="w-100 h-100" style="object-fit: contain;">
+              </div>
+              
+              <div class="flex-grow-1">
+                <h6 class="fw-bolder mb-1" :class="selectedMethod?.name === method.name ? 'text-primary' : 'text-dark'">
+                  {{ method.name }}
+                </h6>
+                <p class="text-muted small mb-0">{{ method.description }}</p>
+              </div>
+              
+              <div class="flex-shrink-0 ms-2">
+                <i v-if="selectedMethod?.name === method.name" class="bi bi-check-circle-fill text-primary fs-4 fade-in-up"></i>
+                <i v-else class="bi bi-circle text-black-50 fs-4 opacity-50"></i>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <h5 class="fw-bold text-dark mb-4">2. 安全結帳資訊</h5>
+        
+        <div class="card border-0 shadow-sm rounded-5 overflow-hidden w-100 fade-in-up bg-white" style="--glass-bg: rgba(255, 255, 255, 0.95); min-height: 400px;">
+          <div class="card-body p-4 p-md-5 d-flex flex-column h-100">
+
+            <div class="d-flex align-items-center border-bottom border-light-subtle pb-3 mb-4">
+              <i class="bi bi-shield-lock-fill text-success fs-4 me-2"></i>
+              <h5 class="fw-bolder text-dark mb-0">填寫資料</h5>
+              <span class="badge bg-light text-dark border border-light-subtle rounded-pill ms-auto px-3 py-2 shadow-sm">
+                已選：{{ selectedMethod.name }}
+              </span>
+            </div>
+
+            <form @submit.prevent="submitPayment" class="flex-grow-1 d-flex flex-column">
+              <div class="row g-4 mb-4">
+                
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small ms-1">真實姓名</label>
+                  <div class="input-group-custom mb-0">
+                    <input type="text" v-model="form.name" class="form-control" placeholder="請輸入付款人姓名" required />
+                    <i class="bi bi-person"></i>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label fw-bold text-muted small ms-1">電子信箱</label>
+                  <div class="input-group-custom mb-0">
+                    <input type="email" v-model="form.email" class="form-control" placeholder="example@email.com" required />
+                    <i class="bi bi-envelope"></i>
+                  </div>
+                </div>
+
+                <div v-if="selectedMethod.requiresCard" class="col-12 fade-in-up">
+                  <label class="form-label fw-bold text-muted small ms-1">信用卡號</label>
+                  <div class="input-group-custom mb-0">
+                    <input type="text" v-model="form.cardNumber" class="form-control" placeholder="0000 0000 0000 0000" required />
+                    <i class="bi bi-credit-card"></i>
+                  </div>
+                </div>
+                
+              </div>
+
+              <div class="mt-auto pt-4 border-top border-light-subtle">
+                <button type="submit" class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm py-3 fs-5">
+                  確認付款 <i class="bi bi-arrow-right-circle ms-2"></i>
+                </button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-}
-.title {
-  text-align: center;
-  margin-bottom: 20px;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-}
-.card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  text-align: center;
-}
-.card-img {
-  width: 100%;
-  height: 300px;          /* 固定高度 */
-  object-fit: cover;      /* 保持比例並裁切 */
-  object-position: bottom;/* 從下方裁切，不切到頭 */
-  border-radius: 8px;
-}
-.card-title {
-  font-size: 18px;
-  margin: 10px 0;
-}
-.card-desc {
-  font-size: 14px;
-  color: #555;
-}
-.btn {
-  background: #6b4f3f;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.btn:hover {
-  background: #8c6b56;
-}
-.payment-form {
-  margin-top: 40px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.form-group label {
-  font-weight: bold;
-}
-.form-control {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
+/* 所有影響排版與圖片變形的舊 CSS 已經全數消滅，交給 Bootstrap 網格處理！ */
 </style>

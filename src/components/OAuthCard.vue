@@ -1,12 +1,11 @@
 <script setup>
 import { RouterLink } from 'vue-router'
-// 這是一個純外框元件，封裝左側視覺與右側表單區塊
 </script>
 
 <template>
   <main class="auth-container">
 <RouterLink to="/" 
-                class="btn btn-light shadow-sm btn-circle btn-circle-md position-absolute" 
+                class="btn btn-light btn-circle btn-circle-md position-absolute" 
                 style="top: 25px; left: 25px; z-index: 100;" 
                 title="返回首頁">
       <i class="bi bi-arrow-left"></i>

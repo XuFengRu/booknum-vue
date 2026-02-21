@@ -5,7 +5,6 @@ import OAuthCard from '@/components/OAuthCard.vue'
 const router = useRouter()
 
 const handleLogin = () => {
-    // 模擬登入成功，跳轉到會員頁
     router.push('/member')
 }
 </script>
@@ -58,7 +57,7 @@ const handleLogin = () => {
       </div>
 
       <div class="d-grid mb-4">
-        <button type="submit" class="btn btn-primary btn-lg">立即登入</button>
+        <button type="submit" class="btn btn-primary fs-5">立即登入</button>
       </div>
 
       <div class="text-center mb-4 position-relative">

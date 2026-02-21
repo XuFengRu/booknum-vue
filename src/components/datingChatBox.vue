@@ -12,12 +12,11 @@ function sendMessage() {
   if (newMessage.value.trim() !== '') {
     const now = new Date()
     const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-    props.chat.messages.push({ from: '我', text: newMessage.value, time })
+    props.chat.messages.push({ from: '我', text: newMessage.value.trim(), time })
     newMessage.value = ''
   }
 }
 
-// 監聽 chat.messages，每次更新後自動捲到底
 watch(
   () => props.chat.messages.length,
   async () => {
@@ -25,154 +24,81 @@ watch(
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
     }
-  }
+  },
+  { immediate: true }
 )
 </script>
 
 <template>
-  <div class="chat-box">
-      <div class="chat-bar">
-      <h2>
-        與 <span class="text-primary">{{ chat.name }}</span> 的聊天室
-      </h2>
-      <!-- 垃圾桶按鈕 -->
-      <button class="delete-btn">
-        <i class="bi bi-trash"></i>
+  <div class="d-flex flex-column h-100 w-100 overflow-hidden">
+    <div class="border-bottom p-3 d-flex justify-content-between align-items-center flex-shrink-0" style="height: 80px; border-color: rgba(255,255,255,0.4) !important;">
+      
+      <div class="d-flex align-items-center gap-3 overflow-hidden">
+        <img :src="chat.avatar" class="rounded-circle object-fit-cover shadow-sm border border-2 border-white flex-shrink-0" width="45" height="45" alt="avatar" />
+        <h5 class="mb-0 fw-bold text-dark text-truncate">{{ chat.name }}</h5>
+      </div>
+      
+      <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0" title="刪除對話">
+        <i class="bi bi-trash-fill"></i>
       </button>
+      
     </div>
 
-
-    <div class="messages" ref="messagesContainer">
+    <div class="flex-grow-1 overflow-auto p-4 d-flex flex-column gap-3" ref="messagesContainer">
       <div
         v-for="(msg, index) in chat.messages"
         :key="index"
-        class="message-row"
-        :class="msg.from === '我' ? 'me-row' : 'other-row'"
+        class="d-flex flex-column"
+        :class="msg.from === '我' ? 'align-items-end' : 'align-items-start'"
       >
-        <div :class="['bubble', msg.from === '我' ? 'me' : 'other']">
-          <span class="text">{{ msg.text }}</span>
+        <div 
+          class="message-bubble shadow-sm mb-1"
+          :class="msg.from === '我' ? 'bubble-me bg-gradient text-white' : 'bubble-other bg-white text-dark'"
+        >
+          {{ msg.text }}
         </div>
-        <span class="time">{{ msg.time }}</span>
+        <small class="text-muted" style="font-size: 0.75rem;">{{ msg.time }}</small>
       </div>
     </div>
 
-    <div class="input-area">
-      <input
-        v-model="newMessage"
-        type="text"
-        placeholder="輸入訊息..."
-        @keyup.enter="sendMessage"
-      />
-      <button @click="sendMessage" class="btn-primary"> <i class="bi bi-send-fill"></i>
-</button>
+    <div class="border-top p-3 mt-auto" style="border-color: rgba(255,255,255,0.4) !important;">
+      <div class="d-flex gap-2 align-items-center">
+        <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0" title="附加檔案">
+          <i class="bi bi-paperclip"></i>
+        </button>
+        
+        <input
+          v-model="newMessage"
+          type="text"
+          class="form-control rounded-pill px-4 py-2 border-0 shadow-sm"
+          placeholder="輸入訊息..."
+          @keyup.enter="sendMessage"
+        />
+        <button 
+          @click="sendMessage" 
+          
+          class="btn btn-primary btn-circle btn-circle-sm flex-shrink-0"
+          :disabled="!newMessage.trim()"
+        >
+          <i class="bi bi-send-fill ms-1"></i> 
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.chat-box {
-  display: flex;
-  flex-direction: column;
-  height: 93%;
-}
-
-.chat-bar{
-  display: flex;
-  justify-content: space-between; /* 左右分佈 */
-  align-items: center;
-
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 0.5rem;
-}
-
-.delete-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #888;
-  transition: color 0.2s ease;
-}
-
-.delete-btn:hover {
-  color: #ff1a53; /* hover 時變紅色 */
-}
-
-
-.messages {
-  flex: 1;
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  overflow-y: auto;
-}
-
-/* 每一行訊息 */
-.message-row {
-  display: flex;
-  flex-direction: column;
-  max-width: 40%;
-}
-
-.me-row {
-  align-self: flex-end;
-  text-align: left;
-}
-
-.other-row {
-  align-self: flex-start;
-  text-align: left;
-}
-
-/* 泡泡樣式 */
-.bubble {
-  padding: 0.6rem 1rem;
-  border-radius: 12px;
+.message-bubble {
+  max-width: 75%;
+  padding: 12px 18px;
   font-size: 0.95rem;
+  line-height: 1.5;
+  word-wrap: break-word;
 }
-
-.bubble .text {
-  display: block;
+.bubble-me {
+  border-radius: 20px 20px 4px 20px;
 }
-
-.me {
-   background: linear-gradient(135deg, #ff1a53 0%, #ff7b1a 100%);
-  color: white;
+.bubble-other {
+  border-radius: 20px 20px 20px 4px;
 }
-
-.other {
-  background-color: #eee;
-}
-
-
-.time {
-  font-size: 0.7rem;
-  color: #9e9e9e;
-  margin-top: 2px;
-  line-height: 1.2;
-  opacity: 0.8;
-}
-
-
-.input-area {
-  display: flex;
-  border-top: 1px solid #ddd;
-  padding-top: 0.5rem;
-  gap: 0.5rem;
-}
-.input-area input {
-  flex: 1;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-.input-area button {
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 1rem;
-}
-
-
-
 </style>

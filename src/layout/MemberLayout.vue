@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import { usedatingRead } from '@/stores/datingRead'
 
 const route = useRoute()
+const datingReadStore = usedatingRead()
 const isSidebarOpen = ref(false)
 
 const toggleSidebar = () => {
@@ -13,12 +15,23 @@ const closeSidebar = () => {
   isSidebarOpen.value = false
 }
 
-const sidebarMenus = {
+// 計算所有對話的總未讀數
+const totalUnreadCount = computed(() => {
+  return datingReadStore.conversations.reduce((sum, chat) => sum + chat.unreadCount, 0)
+})
+
+const sidebarMenus = computed(() => ({
   dating: [
     { name: '開始配對', icon: 'bi-fire', link: '/member/dating' },
     { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes', badge: 3, badgeClass: 'bg-danger' },
     { name: '心動對象', icon: 'bi-star', link: '/member/dating/favorites' },
-    { name: '我的訊息', icon: 'bi-chat-dots', link: '/member/dating/messages', badge: 2, badgeClass: 'bg-warning' },
+    { 
+      name: '我的訊息', 
+      icon: 'bi-chat-dots', 
+      link: '/member/dating/messages', 
+      badge: totalUnreadCount.value > 0 ? totalUnreadCount.value : null, 
+      badgeClass: 'bg-warning' 
+    },
     { name: '基本資料', icon: 'bi-person', link: '/member/dating/info' },
   ],
   rent: [
@@ -32,12 +45,12 @@ const sidebarMenus = {
     { name: '發起揪團', icon: 'bi-plus-circle', link: '/member/group/create' },
     { name: '我的報名', icon: 'bi-ticket-perforated', link: '/member/group/tickets' },
   ]
-}
+}))
 
 const currentMenu = computed(() => {
-  if (route.path.includes('/member/rent')) return sidebarMenus.rent
-  if (route.path.includes('/member/group')) return sidebarMenus.group
-  return sidebarMenus.dating
+  if (route.path.includes('/member/rent')) return sidebarMenus.value.rent
+  if (route.path.includes('/member/group')) return sidebarMenus.value.group
+  return sidebarMenus.value.dating
 })
 
 const isActiveService = (path) => route.path.includes(path)
@@ -45,12 +58,11 @@ const isActiveService = (path) => route.path.includes(path)
 
 <template>
   <div class="member-page">
-    
     <div class="sidebar-overlay d-lg-none" :class="{ 'show': isSidebarOpen }" @click="closeSidebar"></div>
 
     <aside class="offcanvas-lg offcanvas-start" :class="{ 'show': isSidebarOpen }" id="sidebar">      
       <div class="d-lg-none d-flex justify-content-end mb-2">
-        <button class="btn btn-light rounded-circle shadow-sm" @click="closeSidebar">
+        <button class="btn btn-light btn-circle btn-circle-md" @click="closeSidebar">
           <i class="bi bi-x-lg"></i>
         </button>
       </div>
@@ -80,13 +92,14 @@ const isActiveService = (path) => route.path.includes(path)
 
       <div class="mt-4 p-3 rounded-4" style="background: linear-gradient(135deg, #FFF0F5 0%, #fff 100%);">
         <div class="d-flex align-items-center mb-2">
-          <i class="bi bi-crown-fill text-warning me-2"></i>
+          <i class="bi bi-gem text-warning me-2"></i>
           <span class="fw-bold small text-dark">Premium</span>
         </div>
         <p class="small text-muted mb-2 lh-sm">解鎖無限瀏覽與專屬徽章</p>
-        <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning w-100 rounded-pill btn-sm fw-bold">
-          立即升級
-        </RouterLink>
+        
+      <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning w-100 rounded-pill fw-bold" style="padding: 8px 16px !important;">
+        立即升級
+      </RouterLink>
       </div>
     </aside>
 
@@ -105,15 +118,13 @@ const isActiveService = (path) => route.path.includes(path)
         </nav>
 
         <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light rounded-circle d-lg-none" @click="toggleSidebar">
+            <button class="btn btn-light btn-circle btn-circle-md d-lg-none" @click="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
-            <button class="btn btn-light rounded-circle">
-              <i class="bi bi-bell-fill"></i>
-            </button>
+
             <div class="dropdown">
-                <button class="btn btn-light rounded-pill d-flex align-items-center gap-2 ps-3 pe-1 py-1 border-0" data-bs-toggle="dropdown">
-                  <span class="fw-bold text-dark small">UserName</span>
+                <button class="bg-white bg-opacity-75 border border-white shadow-sm rounded-pill d-flex align-items-center gap-2 ps-3 pe-1 py-1 transition-all" data-bs-toggle="dropdown" style="backdrop-filter: blur(10px);">
+                  <span class="fw-bold text-dark small text-nowrap">UserName</span>
                   <img src="/images/Girlfriend1.jpg" class="rounded-circle border border-2 border-white" width="36" height="36" alt="User">
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 mt-2">
@@ -161,12 +172,28 @@ const isActiveService = (path) => route.path.includes(path)
 }
 @media (max-width: 992px) {
   .offcanvas-lg { 
-    left: 0; top: 0; bottom: 0; width: auto; padding: 20px; 
+    left: 0; top: 0; bottom: 0; width: auto; padding: 40px; 
     position: fixed; --bs-offcanvas-width: 280px; transform: translateX(-100%);
+    background: rgba(255, 255, 255, 0.85) !important;
   }
   .offcanvas-lg.show { transform: translateX(0); }
-  .main-layout { margin-left: 0; padding: 20px; }
-  .sticky-header { flex-direction: column; gap: 15px; }
-  .nav-pills { width: 100%; justify-content: center; }
+  
+  .main-layout { margin-left: 0; padding: 10px; }
+  .sticky-header { flex-direction: column; gap: 10px; margin-bottom: 15px; }
+  
+  .nav-pills { 
+    width: 100%; 
+    justify-content: center; 
+    flex-wrap: nowrap; 
+    overflow-x: auto;
+    padding: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-pills::-webkit-scrollbar { display: none; }
+  .nav-pills .nav-link {
+    font-size: 15px !important;
+    padding: 8px 16px !important;
+    white-space: nowrap;
+  }
 }
 </style>

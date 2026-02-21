@@ -49,9 +49,13 @@ function toggleJoin() {
   if (!a) return;
 
   if (a.isJoinedByMe) {
+    const ok = window.confirm("確定要取消報名嗎？");
+    if (!ok) return;
     a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
     a.isJoinedByMe = false;
   } else {
+    const ok = window.confirm("確定要報名這個活動嗎？");
+    if (!ok) return;
     if (isFull(a)) return;
     a.joined = (Number(a.joined) || 0) + 1;
     a.isJoinedByMe = true;
@@ -66,350 +70,233 @@ function goBack() {
 function goList() {
   router.push({ name: "member-group" });
 }
+
 function copyLink() {
   navigator.clipboard?.writeText(window.location.href);
+  alert("連結已複製！");
 }
+
 function copySummary() {
   const a = activity.value;
   if (!a) return;
-  const text = `【${a.title}】
-類型：${a.category}
-時間：${a.startAt} ～ ${a.endAt}
-地點：${a.location}
-名額：${a.joined}/${a.need}
-敘述：${a.description || ""}`.trim();
+  const text = `【${a.title}】\n類型：${a.category}\n時間：${a.startAt} ～ ${a.endAt}\n地點：${a.location}\n名額：${a.joined}/${a.need}\n\n敘述：${a.description || ""}`.trim();
   navigator.clipboard?.writeText(text);
+  alert("活動資訊已複製！");
 }
 </script>
 
 <template>
-  <div class="container py-4 detail-page">
-    <div class="panel p-4 rounded-4 border shadow-sm">
-      <!-- Header -->
-      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-        <div>
-          <div class="title-pill">
-            <i class="fa-solid fa-circle-info me-2"></i>
-            活動詳細
+  <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
+    
+    <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1500px;">
+      
+      <button @click="goBack" class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" title="返回列表">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+
+      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto bg-white" style="max-width: 1300px; --glass-bg: rgba(255, 255, 255, 0.5);">
+        
+        <div v-if="!activity" class="text-center py-5 my-5">
+          <div class="icon-circle bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border border-light-subtle" style="width: 100px; height: 100px; color: var(--text-muted);">
+            <i class="bi bi-exclamation-circle display-4"></i>
           </div>
+          <h4 class="fw-bold text-dark mb-2">找不到這個活動</h4>
+          <p class="text-muted mb-4">可能是活動不存在或已被移除。</p>
+          <button class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" @click="goList">
+            回活動列表
+          </button>
         </div>
 
-        <button class="btn btn-outline-secondary rounded-pill px-3" @click="goBack">
-          返回
-        </button>
-      </div>
-
-      <div v-if="!activity" class="text-center py-5">
-        <div class="fw-bold mb-2">找不到這個活動</div>
-        <div class="text-muted mb-4">可能是活動不存在或已被移除。</div>
-        <button class="btn btn-gradient rounded-pill px-4" @click="goList">
-          回活動列表
-        </button>
-      </div>
-
-      <div v-else class="mt-4">
-        <div class="row g-4 align-items-start">
-          <div class="col-12 col-lg-4">
-            <div class="preview-card sticky-preview p-3 rounded-4 border shadow-sm">
-
-              <div
-                class="img-wrap rounded-4 overflow-hidden"
-                v-if="activity.image && String(activity.image).trim()"
-              >
-                <img :src="String(activity.image).trim()" :alt="activity.title" />
-              </div>
-
-              <div
-                v-else
-                class="img-wrap rounded-4 overflow-hidden d-flex align-items-center justify-content-center text-muted"
-              >
-                尚未設定封面圖片
-              </div>
-
-              <div class="mt-3">
-                <div class="text-muted small mb-1">標題</div>
-                <div class="fw-bold">{{ activity.title || "（尚未輸入）" }}</div>
-              </div>
-
-              <div class="mt-2">
-                <div class="text-muted small mb-1">敘述（摘要）</div>
-                <div class="small text-dark preline clamp-3">
-                  {{ activity.description || "（尚未輸入）" }}
-                </div>
-              </div>
-
-              <div class="mt-2">
-                <div class="text-muted small mb-1">地點</div>
-                <div>{{ activity.location || "（尚未選擇）" }}</div>
-              </div>
-
-              <div class="mt-2">
-                <div class="text-muted small mb-1">時間</div>
-                <div class="small">
-                  {{ activity.startAt }} ～ {{ activity.endAt }}
-                </div>
-              </div>
-
-              <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
-                <span class="badge-pill badge-pill--hot">
-                  {{ activity.category || "未選擇類型" }}
-                </span>
-
-                <span class="text-muted small">
-                  已報名 <b class="text-dark">{{ activity.joined }}</b> /
-                  <b class="text-dark">{{ activity.need }}</b>
-                </span>
-
-                <span v-if="activity.isJoinedByMe" class="badge-pill badge-pill--joined">
-                  你已報名
-                </span>
-                <span v-else-if="isFull(activity)" class="badge-pill badge-pill--full">
-                  額滿
-                </span>
-              </div>
-
-              <!-- 小進度條 -->
-              <div class="mt-3">
-                <div class="d-flex justify-content-between small text-muted mb-1">
-                  <span>報名進度</span>
-                  <span>{{ progressPct }}%</span>
-                </div>
-                <div class="progress rounded-pill" style="height: 10px">
-                  <div class="progress-bar" role="progressbar" :style="{ width: progressPct + '%' }"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-12 col-lg-8">
-            <div class="action-card p-4 rounded-4 border shadow-sm">
-              <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-                <div>
-                  <div class="fw-bold fs-5">{{ activity.title }}</div>
-                  <div class="text-muted mt-1">
-                    剩餘名額：<b class="text-dark">{{ remaining }}</b>
-                    <span class="ms-2">｜</span>
-                    已報名：<b class="text-dark">{{ activity.joined }}</b>/<b class="text-dark">{{ activity.need }}</b>
+        <div v-else class="row g-0 h-100">
+          
+          <div class="col-lg-4 bg-light p-4 p-xl-5 border-end border-light-subtle position-relative">
+            <div class="position-sticky">
+              <h5 class="fw-bold text-dark mb-4"><i class="bi bi-eye text-primary me-2"></i>活動摘要</h5>
+              
+              <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                
+                <div class="position-relative" style="height: 240px; background: #e9ecef;">
+                  <img v-if="activity.image" :src="activity.image" class="w-100 h-100 object-fit-cover" :alt="activity.title">
+                  <div v-else class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                    <i class="bi bi-image display-4 text-black-50 opacity-25 mb-2"></i>
+                  </div>
+                  
+                  <div class="position-absolute top-0 start-0 p-3 z-1 d-flex gap-2 flex-wrap">
+                    <span class="badge rounded-pill px-3 py-1 shadow-sm text-white fw-normal" 
+                          style="background-color: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25);">
+                      {{ activity.category || "未選擇" }}
+                    </span>
+                    
+                    <span v-if="activity.isJoinedByMe" class="badge bg-danger rounded-pill px-3 py-1 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i>已報名</span>
+                    <span v-else-if="isFull(activity)" class="badge bg-secondary rounded-pill px-3 py-1 shadow-sm">額滿</span>
                   </div>
                 </div>
 
-                <div class="d-flex gap-2 flex-wrap">
-                  <button class="btn btn-outline-secondary rounded-pill px-3" @click="copyLink">
-                    複製連結
-                  </button>
-                </div>
-              </div>
+                <div class="card-body p-4 d-flex flex-column">
+                  <h5 class="fw-bolder text-dark mb-3">{{ activity.title }}</h5>
+                  
+                  <div class="d-flex flex-column gap-2 text-muted small fw-bold mb-3">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-clock text-primary me-2 fs-6"></i>
+                      <span class="text-truncate">{{ activity.startAt.replace("T", " ") }}</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-geo-alt text-primary me-2 fs-6"></i>
+                      <span class="text-truncate">{{ activity.location }}</span>
+                    </div>
+                  </div>
 
-              <div class="mt-3 d-flex gap-2 flex-wrap">
-                <button
-                  class="btn rounded-pill px-4 btn-lgish"
-                  :class="
-                    activity.isJoinedByMe
-                      ? 'btn-outline-danger'
-                      : isFull(activity)
-                        ? 'btn-full'
-                        : 'btn-gradient'
-                  "
-                  :disabled="!activity.isJoinedByMe && isFull(activity)"
-                  @click="toggleJoin"
-                >
-                  {{
-                    activity.isJoinedByMe
-                      ? "取消報名"
-                      : isFull(activity)
-                        ? "已額滿"
-                        : "報名"
-                  }}
-                </button>
+                  <p class="text-muted small mb-0 lh-lg" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line;">
+                    {{ activity.description || "無詳細說明" }}
+                  </p>
+                  
+                  <div class="mt-3 pt-3 border-top border-light-subtle d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-bold">報名人數</span>
+                    <span class="fw-bolder fs-6" :class="isFull(activity) ? 'text-danger' : 'text-primary'">{{ activity.joined }} / {{ activity.need }} 人</span>
+                  </div>
 
-                <button class="btn btn-outline-secondary rounded-pill px-4 btn-lgish" @click="goList">
-                  回列表
-                </button>
-              </div>
-
-              <div v-if="!activity.isJoinedByMe && isFull(activity)" class="mt-3 text-muted small">
-                此活動目前已額滿，你可以回列表看看其他活動。
-              </div>
-              <div v-else-if="activity.isJoinedByMe" class="mt-3 text-muted small">
-                你已完成報名，若無法出席可按「取消報名」釋出名額。
-              </div>
-            </div>
-
-            <!-- 內容卡：敘述 -->
-            <div class="content-card p-4 rounded-4 border shadow-sm mt-4">
-              <div class="fw-bold mb-2">活動敘述</div>
-              <div class="text-muted small mb-3">在這裡放集合方式、費用、注意事項、需要自備的物品等。</div>
-
-              <div class="preline">
-                {{ activity.description || "（尚未輸入活動敘述）" }}
-              </div>
-            </div>
-
-            <!-- 基本資訊 -->
-            <div class="content-card p-4 rounded-4 border shadow-sm mt-4">
-              <div class="fw-bold mb-3">基本資訊</div>
-
-              <div class="row gy-3">
-                <div class="col-12 col-md-6">
-                  <div class="label">類型</div>
-                  <div class="value">{{ activity.category }}</div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <div class="label">地點</div>
-                  <div class="value">{{ activity.location }}</div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <div class="label">開始時間</div>
-                  <div class="value">{{ activity.startAt }}</div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <div class="label">結束時間</div>
-                  <div class="value">{{ activity.endAt }}</div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <div class="label">名額上限</div>
-                  <div class="value">{{ activity.need }}</div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <div class="label">目前已報名</div>
-                  <div class="value">{{ activity.joined }}</div>
+                  <div class="mt-2">
+                    <div class="progress rounded-pill shadow-sm" style="height: 6px; background-color: #ffeef0;">
+                      <div class="progress-bar bg-primary rounded-pill" role="progressbar" :style="{ width: progressPct + '%' }"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- /右 -->
+
+          <div class="col-lg-8 p-4 p-xl-5 bg-white d-flex flex-column">
+            
+            <div class="mb-4 pb-3 border-bottom border-light-subtle d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <h3 class="fw-bolder mb-0 text-gradient"><i class="bi bi-info-circle-fill me-2"></i>活動詳情</h3>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-light text-muted fw-bold rounded-pill px-3 border border-light-subtle shadow-sm small" @click="copyLink">
+                  <i class="bi bi-link-45deg me-1 fs-5 align-middle"></i> 連結
+                </button>
+                <button class="btn btn-outline-light text-muted fw-bold rounded-pill px-3 border border-light-subtle shadow-sm small" @click="copySummary">
+                  <i class="bi bi-clipboard me-1"></i> 複製資訊
+                </button>
+              </div>
+            </div>
+
+            <div class="flex-grow-1 d-flex flex-column">
+              <div class="row g-4 mb-4">
+                
+                <div class="col-12">
+                  <h5 class="fw-bold text-dark mb-3"><i class="bi bi-card-text text-primary me-2"></i>活動內容</h5>
+                  <div class="p-4 bg-light rounded-4 border border-light-subtle text-dark lh-lg" style="white-space: pre-line; font-size: 0.95rem;">
+                    {{ activity.description || "主辦人尚未填寫詳細內容。" }}
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-4 border border-light-subtle d-flex align-items-center gap-3 h-100">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm text-primary flex-shrink-0" style="width: 45px; height: 45px; font-size: 1.2rem;">
+                      <i class="bi bi-clock"></i>
+                    </div>
+                    <div>
+                      <div class="text-muted small fw-bold mb-1">開始時間</div>
+                      <div class="fw-bold text-dark">{{ activity.startAt.replace("T", " ") }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-4 border border-light-subtle d-flex align-items-center gap-3 h-100">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm text-primary flex-shrink-0" style="width: 45px; height: 45px; font-size: 1.2rem;">
+                      <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                      <div class="text-muted small fw-bold mb-1">結束時間</div>
+                      <div class="fw-bold text-dark">{{ activity.endAt.replace("T", " ") }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-4 border border-light-subtle d-flex align-items-center gap-3 h-100">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm text-primary flex-shrink-0" style="width: 45px; height: 45px; font-size: 1.2rem;">
+                      <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <div>
+                      <div class="text-muted small fw-bold mb-1">活動地點</div>
+                      <div class="fw-bold text-dark">{{ activity.location }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="p-3 bg-light rounded-4 border border-light-subtle d-flex align-items-center gap-3 h-100">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm text-primary flex-shrink-0" style="width: 45px; height: 45px; font-size: 1.2rem;">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div>
+                      <div class="text-muted small fw-bold mb-1">剩餘名額</div>
+                      <div class="fw-bold text-dark">{{ remaining }} 人 <span class="text-muted fw-normal ms-1">(上限 {{ activity.need }} 人)</span></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="mt-auto pt-4 border-top border-light-subtle d-flex gap-3 justify-content-between align-items-center flex-wrap">
+                
+                <div class="text-muted small fw-bold d-none d-md-block">
+                  <span v-if="activity.isJoinedByMe"><i class="bi bi-check-circle-fill text-danger me-1"></i>你已報名此活動</span>
+                  <span v-else-if="isFull(activity)"><i class="bi bi-exclamation-circle-fill text-secondary me-1"></i>活動已額滿，下次請早！</span>
+                  <span v-else>名額有限，趕快報名加入我們吧！</span>
+                </div>
+                
+                <div class="d-flex gap-3 w-100 justify-content-md-end" style="max-width: 300px;">
+                  <button 
+                    class="btn rounded-pill px-5 fw-bold shadow-sm flex-grow-1 text-nowrap"
+                    :class="activity.isJoinedByMe ? 'btn-outline-danger bg-white' : (isFull(activity) ? 'btn-secondary text-white border-0 opacity-50' : 'btn-primary')"
+                    :disabled="!activity.isJoinedByMe && isFull(activity)"
+                    @click="toggleJoin"
+                  >
+                    {{ activity.isJoinedByMe ? '取消報名' : (isFull(activity) ? '已額滿' : '立即報名') }}
+                    <i v-if="!activity.isJoinedByMe && !isFull(activity)" class="bi bi-person-plus-fill ms-1"></i>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
-      <!-- /兩欄 -->
+
     </div>
   </div>
 </template>
 
 <style scoped>
-.panel {
-  background: #fff;
+.custom-back-btn {
+  position: absolute !important;
+  left: 0px !important;
+  top: 0px; 
+  z-index: 1050;
 }
 
-.title-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-size: 18px;
-  font-weight: 800;
-  color: #fff;
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.22);
+@media (max-width: 1400px) {
+  .custom-back-btn {
+    left: 20px !important;
+    top: 20px;
+  }
 }
 
-.subtitle {
-  font-size: 15px;
+@media (max-width: 991.98px) {
+  .col-lg-4 .position-sticky {
+    position: relative !important;
+    top: 0 !important;
+  }
 }
 
-/* 左卡 */
-.preview-card {
-  background: #fff;
-  
+@media (max-width: 767.98px) {
+  .custom-back-btn {
+    left: 15px !important;
+    top: 15px;
+  }
 }
-.sticky-preview {
-  position: sticky;
-  top: 24px;
-}
-
-.img-wrap {
-  height: 220px;
-  background: #f2f2f2;
-}
-.img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.preline {
-  white-space: pre-line;
-}
-
-.clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.badge-pill {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.badge-pill--hot {
-  color: #fff;
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-}
-.badge-pill--joined {
-  color: #fff;
-  background: #ff4d6d;
-}
-.badge-pill--full {
-  color: #5f6772;
-  background: #e9ecef;
-}
-
-/* 右側卡 */
-.action-card,
-.content-card {
-  background: #fff;
-}
-
-.label {
-  font-size: 0.9em;   
-  font-weight: 800;
-  color: #6c757d;
-  margin-bottom: 6px;
-}
-.value {
-  font-size: 1.05em;  
-  color: #111;
-}
-
-
-/* buttons */
-.btn-lgish {
-  font-size: 15px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.btn-gradient {
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  color: #fff;
-  border: none;
-}
-.btn-gradient:hover {
-  opacity: 0.92;
-}
-
-.btn-full {
-  background: #eef0f3;
-  color: #8a8f98;
-  border: none;
-  cursor: not-allowed;
-}
-
-.detail-page {
-  font-size: 19px; 
-}
-
 </style>

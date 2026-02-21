@@ -43,7 +43,7 @@ import OAuthCard from '@/components/OAuthCard.vue'
       </div>
 
       <div class="d-grid gap-3 mb-4">
-        <RouterLink to="/login" class="btn btn-primary btn-lg shadow-sm">
+        <RouterLink to="/login" class="btn btn-primary fs-5 shadow-sm">
           返回登入頁 <i class="bi bi-arrow-right-short ms-1"></i>
         </RouterLink>
       </div>

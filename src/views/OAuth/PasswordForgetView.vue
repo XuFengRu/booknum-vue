@@ -9,7 +9,7 @@ const email = ref('')
 const handleReset = () => {
     console.log(`正在發送信件給: ${email.value}`)
     setTimeout(() => {
-        router.push('/forget-password/confirmation') // 請確認路由與您設定的相符
+        router.push('/forget-password/confirmation')
     }, 1000)
 }
 </script>
@@ -42,7 +42,7 @@ const handleReset = () => {
         </div>
 
         <div class="d-grid gap-3 mb-4">
-          <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+          <button type="submit" class="btn btn-primary fs-5 shadow-sm">
             發送重設信 <i class="bi bi-send-fill ms-2"></i>
           </button>
         </div>

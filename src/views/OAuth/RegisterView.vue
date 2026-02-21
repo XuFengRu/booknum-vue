@@ -2,7 +2,8 @@
 import { useRouter, RouterLink } from 'vue-router'
 import { ref } from 'vue'
 import OAuthCard from '@/components/OAuthCard.vue'
-
+import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
+import 'element-plus/dist/index.css'
 const router = useRouter()
 
 const formData = ref({
@@ -16,7 +17,7 @@ const formData = ref({
 
 const handleRegister = () => {
     console.log('註冊資料:', formData.value)    
-    router.push('/register-success') // 確保此處的路由對應你設定的路徑
+    router.push('/register-success')
 }
 </script>
 
@@ -81,11 +82,10 @@ const handleRegister = () => {
           <div class="col-md-6 mb-3">
             <label class="form-label">性別</label>
             <div class="input-group-custom mb-0">
-              <select v-model="formData.gender" class="form-select" required>
-                <option value="" selected disabled>請選擇</option>
-                <option value="M">男</option>
-                <option value="F">女</option>
-              </select>
+              <el-select v-model="formData.gender" placeholder="請選擇" size="large" style="width: 100%;">
+                <el-option label="男" value="M" />
+                <el-option label="女" value="F" />
+              </el-select>
               <i class="bi bi-gender-ambiguous"></i>
             </div>
           </div>
@@ -93,14 +93,22 @@ const handleRegister = () => {
           <div class="col-md-6 mb-3">
             <label class="form-label">生日</label>
             <div class="input-group-custom mb-0">
-              <input type="date" v-model="formData.birthday" class="form-control" required>
+              <el-date-picker
+                v-model="formData.birthday"
+                type="date"
+                placeholder="選擇生日"
+                format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD"
+                size="large"
+                style="width: 100%;"
+              />
               <i class="bi bi-calendar-event"></i>
             </div>
           </div>
         </div>
 
         <div class="d-grid mt-2 mb-4">
-          <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+          <button type="submit" class="btn btn-primary fs-5 shadow-sm">
             立即註冊 <i class="bi bi-arrow-right-short ms-1"></i>
           </button>
         </div>

@@ -1,170 +1,127 @@
 <script setup>
 import { ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import DatingCard from '@/components/datingCard.vue'
 
 const selectedUser = ref(null)
 
 const users = [
   {
-    name: "小璇",
-    age: 24,
-    location: "台中市",
-    job: "插畫家",
-    hobbies: ["繪畫", "甜點", "音樂"],
-    intro: "喜歡畫畫和甜點，常常在咖啡廳裡找靈感。",
-    avatar:
-      "https://tse1.explicit.bing.net/th/id/OIP.oNhqGpeiNEpFUwK_c2khawHaKz?rs=1&pid=ImgDetMain&o=7&rm=3",
+    name: '小雅',
+    age: 25,
+    location: '台北市',
+    job: '平面設計師',
+    hobbies: ['看展', '下午茶', '攝影', '底片相機'],
+    intro: '喜歡用鏡頭記錄生活，週末常常在各大美術館或文青咖啡廳出沒。個性比較慢熟，但熟了之後是個會陪你瘋到底的女孩。',
+    avatar: '/images/Girlfriend1.jpg',
   },
   {
-    name: "阿琦",
-    age: 27,
-    location: "高雄市",
-    job: "攝影師",
-    hobbies: ["攝影", "旅行", "籃球"],
-    intro: "喜歡捕捉生活的瞬間，也愛運動和旅行。",
-    avatar: "https://p6.itc.cn/q_70/images03/20220830/f5a9acf9df9f481a8d44e55441eaeb46.jpeg",
+    name: 'Bella',
+    age: 28,
+    location: '台中市',
+    job: '時尚模特兒',
+    hobbies: ['健身', '品酒', '高爾夫', '皮拉提斯'],
+    intro: '平時工作節奏快，希望休假時能找個人一起享受微醺的週末夜晚。喜歡保持自律的生活，如果你也愛運動，那就太棒了！',
+    avatar: '/images/Girlfriend2.jpg',
   },
 ];
-
 
 function openProfile(index) {
   selectedUser.value = index
 }
 
+function handleAction() {
+  selectedUser.value = null
+}
 </script>
 
 <template>
-  <div class="innercontainer">
+  <div class="w-100 fade-in-up">
 
-
-    <main class="likes-page">
-      <!-- 列表頁 -->
-      <template v-if="selectedUser === null">
-        <h1 class="text-gradient">心動對象</h1>
-        <p class="summary">
-          目前有 <span class="text-primary">{{ users.length }}</span> 個心動對象
+    <template v-if="selectedUser === null">
+      <div class="mb-4 text-center">
+        <h2 class="fw-bold text-gradient mb-2">心動對象</h2>
+        <p class="text-muted">
+          目前有 <span class="fw-bolder text-primary fs-5 mx-1">{{ users.length }}</span> 個心動對象
         </p>
+      </div>
 
-        <div class="card-grid">
-          <div
-            v-for="(user, index) in users"
-            :key="index"
-            class="preview-card"
-          >
-            <img :src="user.avatar" class="avatar" />
-            <h4 class="name-age">{{ user.name }} {{ user.age }}</h4>
+      <div v-if="users.length === 0" class="text-center py-5 my-5 fade-in-up">
+        <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border" 
+             style="width: 100px; height: 100px; color: var(--text-muted);">
+          <i class="bi bi-inbox display-4"></i>
+        </div>
+        <h4 class="fw-bold text-muted mb-3">目前還沒有心動對象</h4>
+        <p class="text-muted mb-4">去首頁多滑幾張卡片，將喜歡的人加入心動清單吧！</p>
+        
+        <RouterLink to="/member/dating" class="btn btn-primary rounded-pill fw-bold shadow-sm fs-5">
+          <i class="bi bi-search-heart me-2"></i>去配對看看
+        </RouterLink>
+      </div>
 
-            <!-- 底部資訊區塊 -->
-            <div class="card-footer">
-              <p class="location">{{ user.location }}</p>
+      <div class="row g-4">
+        <div v-for="(user, index) in users" :key="index" class="col-6 col-md-4 col-xl-3">
+          
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
+               @click="openProfile(index)">
+            <div class="ratio image-ratio">
+              <img :src="user.avatar" class="w-100 h-100 object-fit-cover transition-all" :alt="user.name">
             </div>
-            <button
-              @click="openProfile(index)"
-              class="view-btn-top btn-outline-primary"
-            >
-              <i class="bi bi-eye"></i>
-            </button>
+            
+            <div class="position-absolute bottom-0 start-0 w-100 p-3 overlay-gradient">
+              <h5 class="fw-bold text-white mb-1">{{ user.name }} <span class="fs-6 fw-normal text-white-50">{{ user.age }}</span></h5>
+              <p class="text-white-50 small mb-0"><i class="bi bi-geo-alt-fill me-1"></i>{{ user.location }}</p>
+            </div>
           </div>
-        </div>
-      </template>
 
-      <!-- 單一卡片頁 -->
-      <template v-else>
-        <button @click="selectedUser = null" class="back btn-outline-primary">
-          <i class="bi-x"></i> 返回
-        </button>
-        <div class="profile-page">
-          <DatingCard :person="users[selectedUser]" :is-action="false" />
         </div>
-      </template>
-    </main>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="d-flex justify-content-center align-items-center w-100 fade-in-up" style="min-height: 70vh;">
+        
+        <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1400px;">
+          
+          <button @click="selectedUser = null" 
+                  class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
+                  title="返回列表">
+            <i class="bi bi-arrow-left"></i>
+          </button>
+          
+          <DatingCard :person="users[selectedUser]" @like="handleAction" @reject="handleAction" />
+        
+        </div>
+      </div>
+    </template>
+
   </div>
 </template>
 
 <style scoped>
-.innercontainer {
-  display: flex;
-  height: 100vh;
+.image-ratio {
+  --bs-aspect-ratio: 133%;
 }
-.likes-page {
-  flex: 1;
-  text-align: center;
-    padding: 0.5rem;
-}
-.summary {
-  margin-bottom: 1rem;
-}
-.card-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.preview-card {
-  width: 210px;
-  height: 280px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 1px 5px #6e6b6b;
-  position: relative;
-  overflow: hidden;
-  text-align: center;
-}
-
-.avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-}
-
-.card-footer {
-  position: absolute;
-  bottom: 0px;
-  left: 10px;
-  right: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.name-age {
-  position: absolute;
-  bottom: 32px;
-  left: 10px;
-  color: white;
-  text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-}
-
-.location {
-  font-size: 0.9rem;
-  color: white;
-  text-shadow: 0 0 7px rgba(0, 0, 0, 0.6);
-}
-
-/* 查看按鈕 */
-.view-btn-top {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  border: none;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
+.cursor-pointer {
   cursor: pointer;
-
 }
-
-.profile-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.user-card img {
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-
-.back {
-  margin-bottom: 1rem;
-  border-radius: 6px;
-  
+.user-card:hover img {
+  transform: scale(1.08);
+}
+.overlay-gradient {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+}
+.custom-back-btn {
+  position: absolute !important;
+  left: 50px !important;
+  z-index: 1050;
+}
+@media (max-width: 767.98px) {
+  .custom-back-btn {
+    left: 10px !important;
+  }
 }
 </style>

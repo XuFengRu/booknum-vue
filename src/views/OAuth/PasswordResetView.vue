@@ -4,22 +4,17 @@ import { useRouter } from 'vue-router'
 import OAuthCard from '@/components/OAuthCard.vue'
 
 const router = useRouter()
-
-// 定義表單狀態
 const newPassword = ref('')
 const confirmPassword = ref('')
-const isError = ref(false) // 用於模擬連結失效的情境 (設為 true 即可看見錯誤樣式)
+const isError = ref(false)
 
 const handleResetSubmit = () => {
-    // 密碼一致性檢查
     if (newPassword.value !== confirmPassword.value) {
         alert('密碼與確認密碼不符')
         return
     }
 
     console.log('提交新密碼:', newPassword.value)
-    
-    // 模擬成功後跳轉回登入頁
     router.push('/login')
 }
 </script>
@@ -67,7 +62,7 @@ const handleResetSubmit = () => {
         </div>
 
         <div class="d-grid mt-4">
-          <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+          <button type="submit" class="btn btn-primary fs-5 shadow-sm">
             確認重設 <i class="bi bi-check-circle-fill ms-2"></i>
           </button>
         </div>

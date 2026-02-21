@@ -6,9 +6,7 @@ const router = useRouter();
 const keyword = ref("");
 
 const STORAGE_KEY = "activities_v1";
-
 const CURRENT_USER = { id: 83, name: "Arille.M" };
-
 const showMine = ref(false);
 
 const seedActivities = [
@@ -23,8 +21,7 @@ const seedActivities = [
     startAt: "2026/02/03 19:00",
     endAt: "2026/02/03 21:00",
     location: "台北市 信義區",
-    image:
-      "https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80",
   },
   {
     id: 2,
@@ -37,8 +34,7 @@ const seedActivities = [
     startAt: "2026/02/08 09:00",
     endAt: "2026/02/08 12:00",
     location: "台北市 信義區",
-    image:
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80",
   },
   {
     id: 3,
@@ -51,9 +47,8 @@ const seedActivities = [
     startAt: "2026/02/12 19:30",
     endAt: "2026/02/12 22:30",
     location: "新北市 板橋區",
-    image:
-      "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab4?w=1200&q=80",
-  },
+    image: "https://images.unsplash.com/photo-1511882150382-421056c89033?w=1200&q=80",
+    },
 ];
 
 function loadActivities() {
@@ -88,10 +83,8 @@ function refreshFromStorage() {
 
 window.addEventListener("focus", refreshFromStorage);
 
-
 const filtered = computed(() => {
   const k = keyword.value.trim().toLowerCase();
-
   let list = activities.value;
 
   if (showMine.value) {
@@ -120,12 +113,10 @@ function isFull(a) {
 
 function toggleJoin(a) {
   a.joinedUsers = Array.isArray(a.joinedUsers) ? a.joinedUsers : [];
-
   const uid = CURRENT_USER.id;
   const idx = a.joinedUsers.findIndex((u) => u.id === uid);
 
   if (a.isJoinedByMe) {
-    // 取消報名前確認
     const ok = window.confirm("確定要取消報名嗎？");
     if (!ok) return;
 
@@ -133,7 +124,6 @@ function toggleJoin(a) {
     a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
     a.isJoinedByMe = false;
   } else {
-    // 報名前確認
     const ok = window.confirm("確定要報名這個活動嗎？");
     if (!ok) return;
 
@@ -146,341 +136,140 @@ function toggleJoin(a) {
   saveActivities(activities.value);
 }
 
-
 function toggleMine() {
   showMine.value = !showMine.value;
 }
 </script>
 
 <template>
-  <div class="container py-4 activity-page">
-    <div class="activity-panel p-4 rounded-4 border shadow-sm">
-      <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
-        <div>
-          <div class="d-flex align-items-center gap-2 flex-wrap">
-            <div class="title-pill">
-              <i class="fa-solid fa-flag me-2"></i>
-              熱門揪團
-            </div>
-          </div>
+  <div class="w-100 fade-in-up">
+    
+    <div class="position-relative d-flex justify-content-center w-100 mb-4 mb-xl-3" style="max-width: 1440px; margin: 0 auto;">
+      
+      <div class="text-center">
+        <h2 class="fw-bolder text-gradient mb-2">熱門揪團</h2>
+        <p class="text-muted">探索周邊活動，與志同道合的新朋友一起玩樂</p>
+      </div>
+      
+      <button @click="goCreate" 
+              class="btn btn-light shadow-sm btn-circle btn-circle-md custom-create-btn d-flex align-items-center justify-content-center" 
+              title="建立活動">
+        <i class="bi bi-plus-lg d-block" style="line-height: 0; font-size: 1.6rem;"></i>
+      </button>
 
-          <div class="text-muted subtitle mt-2">
-            用關鍵字搜尋標題 / 地點 / 類型，快速找到你要的活動
-          </div>
+    </div>
+
+    <div class="mx-auto" style="max-width: 1000px;">
+      
+      <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-center mb-4">
+        
+        <div class="input-group-custom flex-grow-1 w-100 mb-0">
+          <input v-model="keyword" type="text" class="form-control bg-white shadow-sm border-0" 
+                 style="border-radius: 50rem; height: 50px; padding-left: 48px;" 
+                 :placeholder="showMine ? '在我的報名中搜尋...' : '搜尋活動標題、地點或類型...'" />
+          <i class="bi bi-search"></i>
         </div>
-
-        <!-- 右上角：我的報名 -->
-        <button
-          class="btn rounded-pill px-3 btn-lgish btn-mine"
-          :class="showMine ? 'btn-mine--on' : 'btn-mine--off'"
-          @click="toggleMine"
-        >
-          <i class="fa-regular fa-bookmark me-2"></i>
+        
+        <button class="btn rounded-pill px-4 fw-bold shadow-sm flex-shrink-0 transition-all" 
+                :class="showMine ? 'btn-primary' : 'btn-light border border-light-subtle text-muted'" 
+                style="height: 50px;"
+                @click="toggleMine">
           {{ showMine ? "全部活動" : "我的報名" }}
         </button>
       </div>
 
-      <!-- 搜尋 -->
-      <div class="mt-3">
-        <input
-          v-model="keyword"
-          class="form-control search-input"
-          :placeholder="showMine ? '在我的報名中搜尋...' : '輸入關鍵字...'"
-        />
-      </div>
+      <div class="d-flex flex-column gap-4">
+        
+        <div v-for="a in filtered" :key="a.id" class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white" style="--glass-bg: rgba(255, 255, 255, 0.95);">
+          <div class="row g-0 h-100">
+            
+            <div class="col-md-4 col-lg-4">
+              <img :src="a.image" :alt="a.title" class="w-100 h-100 object-fit-cover" style="min-height: 240px; object-position: center;" />
+            </div>
 
-      <!-- 列表 -->
-      <div class="row g-3 mt-2">
-        <div v-for="a in filtered" :key="a.id" class="col-12">
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden activity-card">
-            <div class="row g-0">
-              <!-- 圖片 -->
-              <div class="col-12 col-md-4">
-                <div class="img-wrap">
-                  <img :src="a.image" :alt="a.title" />
+            <div class="col-md-8 col-lg-8 p-4 d-flex flex-column">
+              
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge bg-light text-dark border border-light-subtle rounded-pill px-3 py-1">{{ a.category }}</span>
+                  <span v-if="a.isJoinedByMe" class="badge bg-danger rounded-pill px-3 py-1 shadow-sm"><i class="bi bi-check-circle-fill me-1"></i>已報名</span>
+                  <span v-else-if="isFull(a)" class="badge bg-secondary rounded-pill px-3 py-1 shadow-sm">額滿</span>
+                </div>
+                <div class="text-muted small fw-bold text-nowrap mt-1">
+                  報名人數: <span :class="isFull(a) ? 'text-danger' : 'text-primary'">{{ a.joined }}</span> / {{ a.need }}
                 </div>
               </div>
 
-              <!-- 內容 -->
-              <div class="col-12 col-md-8">
-                <div class="card-body p-3 p-md-4">
-                  <div class="d-flex justify-content-between align-items-start gap-3">
-                    <div class="flex-grow-1">
-                      <h5 class="fw-bold mb-2 text-dark title-text">
-                        {{ a.title }}
-                      </h5>
+              <h4 class="fw-bolder text-dark mb-3">{{ a.title }}</h4>
 
-                      <div class="text-muted meta-text mb-2">
-                        類型：{{ a.category }}
-                        <span class="ms-2">
-                          已報名
-                          <b class="text-dark">{{ a.joined }}</b>
-                          /
-                          <b class="text-dark">{{ a.need }}</b>
-                        </span>
-
-                        <span
-                          v-if="a.isJoinedByMe"
-                          class="ms-2 badge-pill badge-pill--hot"
-                        >
-                          你已報名
-                        </span>
-
-                        <span
-                          v-else-if="isFull(a)"
-                          class="ms-2 badge-pill badge-pill--full"
-                        >
-                          額滿
-                        </span>
-                      </div>
-
-                      <div class="row gy-2 info-text text-dark">
-                        <div class="col-12 col-lg-6">
-                          <i class="fa-regular fa-clock me-2 text-muted"></i>
-                          {{ a.startAt }} ～ {{ a.endAt }}
-                        </div>
-                        <div class="col-12 col-lg-6">
-                          <i class="fa-solid fa-location-dot me-2 text-muted"></i>
-                          {{ a.location }}
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- 按鈕 -->
-                    <div class="d-flex flex-column flex-sm-row gap-2 align-items-start">
-                      <button
-                        class="btn btn-outline-primary rounded-pill px-3 btn-lgish"
-                        @click="goDetail(a.id)"
-                      >
-                        查看
-                      </button>
-
-                      <button
-                        class="btn rounded-pill px-3 btn-lgish"
-                        :class="
-                          a.isJoinedByMe
-                            ? 'btn-outline-danger'
-                            : isFull(a)
-                              ? 'btn-full'
-                              : 'btn-gradient'
-                        "
-                        :disabled="!a.isJoinedByMe && isFull(a)"
-                        @click="toggleJoin(a)"
-                      >
-                        {{
-                          a.isJoinedByMe
-                            ? '取消報名'
-                            : isFull(a)
-                              ? '已額滿'
-                              : '報名'
-                        }}
-                      </button>
-                    </div>
-                  </div>
+              <div class="row g-3 text-muted small fw-bold mb-4">
+                <div class="col-sm-6 d-flex align-items-center">
+                  <i class="bi bi-clock text-primary me-2"></i>
+                  {{ a.startAt }}
+                </div>
+                <div class="col-sm-6 d-flex align-items-center">
+                  <i class="bi bi-geo-alt text-primary me-2"></i>
+                  {{ a.location }}
                 </div>
               </div>
-              <!-- /內容 -->
+
+              <div class="mt-auto d-flex gap-2 justify-content-end pt-3 border-top border-light-subtle">
+                <button class="btn btn-light rounded-pill px-4 fw-bold border border-light-subtle shadow-sm" @click="goDetail(a.id)">
+                  查看詳情
+                </button>
+                <button
+                  class="btn rounded-pill px-4 fw-bold shadow-sm"
+                  :class="a.isJoinedByMe ? 'btn-outline-danger bg-white' : (isFull(a) ? 'btn-secondary text-white border-0 opacity-50' : 'btn-primary')"
+                  :disabled="!a.isJoinedByMe && isFull(a)"
+                  @click="toggleJoin(a)"
+                >
+                  {{ a.isJoinedByMe ? '取消報名' : (isFull(a) ? '已額滿' : '立即報名') }}
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
 
-        <div v-if="filtered.length === 0" class="col-12">
-          <div class="text-center text-muted py-5 empty-text">
-            {{ showMine ? "你目前還沒有報名任何活動" : "目前沒有符合條件的活動" }}
+        <div v-if="filtered.length === 0" class="text-center py-5 my-4 fade-in-up">
+          <div class="icon-circle bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border border-light-subtle" style="width: 100px; height: 100px; color: var(--text-muted);">
+            <i class="bi bi-search display-4"></i>
           </div>
+          <h4 class="fw-bold text-dark mb-2">找不到相關活動</h4>
+          <p class="text-muted">{{ showMine ? "您目前還沒有報名任何活動" : "目前沒有符合條件的活動，試試看其他關鍵字吧！" }}</p>
         </div>
+
       </div>
     </div>
-
-    <!-- 右下角 + -->
-    <RouterLink
-      :to="{ name: 'member-group-create' }"
-      class="fab-create"
-      aria-label="建立活動"
-    >
-      +
-    </RouterLink>
   </div>
 </template>
 
 <style scoped>
-.activity-page {
-  color: #111;
-}
-.activity-panel {
-  background: #fff;
-}
-
-.title-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 12px 22px;              
-  border-radius: 999px;
-  font-size: 20px;                 
-  font-weight: 900;                
-  letter-spacing: 0.5px;           
-  color: #fff;
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  box-shadow:
-    0 10px 24px rgba(255, 77, 109, 0.35), 
-    0 0 0 4px rgba(255, 77, 109, 0.12);   
+.custom-create-btn {
+  position: absolute !important;
+  right: 15px !important;
+  top: 5px;
+  z-index: 1050;
+  transition: all 0.3s ease;
 }
 
-.subtitle {
-  font-size: 15px;
-}
-
-.btn-mine {
-  border: 0;
-  font-weight: 800;
-  font-size: 15px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
-  white-space: nowrap;
-}
-
-.btn-mine--off {
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  color: #fff;
-  border: none;
-  box-shadow: 0 8px 18px rgba(255, 77, 109, 0.22);
-}
-
-.btn-mine--off:hover {
-  opacity: 0.92;
-}
-
-.btn-mine--on {
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  color: #fff;
-  border: none;
-  box-shadow: 0 12px 26px rgba(255, 77, 109, 0.35);
-  transform: translateY(-1px);
-}
-
-.btn-mine--on:hover {
-  opacity: 0.92;
-}
-
-/* 搜尋 */
-.search-input {
-  border-radius: 14px;
-  padding: 14px 16px;
-  font-size: 16px;
-}
-
-/* 圖片 */
-.img-wrap {
-  height: 230px;
-  width: 100%;
-  overflow: hidden;
-  background: #f2f2f2;
-}
-.img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* 卡片 */
-.activity-card {
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.activity-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-}
-
-/* 內容字 */
-.title-text {
-  font-size: 20px;
-}
-.meta-text {
-  font-size: 15px;
-}
-.info-text {
-  font-size: 15px;
-}
-.empty-text {
-  font-size: 16px;
-}
-
-/* 按鈕 */
-.btn-lgish {
-  font-size: 15px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-.btn-gradient {
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  color: #fff;
-  border: none;
-}
-.btn-gradient:hover {
-  opacity: 0.92;
-}
-
-.btn-full {
-  background: #eef0f3;
-  color: #8a8f98;
-  border: none;
-  cursor: not-allowed;
-}
-
-.badge-pill {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
-  vertical-align: middle;
-}
-.badge-pill--hot {
-  color: #fff;
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-}
-.badge-pill--full {
-  color: #5f6772;
-  background: #e9ecef;
-}
-
-.fab-create {
-  position: fixed;
-  right: 112px;
-  bottom: 32px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 0;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 1;
-  color: #fff;
-
-  background: linear-gradient(135deg, #ff4d6d, #ff914d);
-  box-shadow: 0 12px 28px rgba(255, 77, 109, 0.35);
-
-  z-index: 9999;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-  text-decoration: none;
-}
-.fab-create:hover {
+.custom-create-btn:hover {
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 16px 36px rgba(255, 77, 109, 0.45);
 }
-.fab-create:active {
-  transform: scale(0.95);
+
+@media (max-width: 1400px) {
+  .custom-create-btn {
+    right: 30px !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .custom-create-btn {
+    right: 15px !important;
+    top: 0px;
+  }
+  .card img {
+    height: 200px !important;
+  }
 }
 </style>

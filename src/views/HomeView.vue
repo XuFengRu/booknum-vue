@@ -4,7 +4,6 @@ import { RouterLink } from 'vue-router'
 import MemberCard from '@/components/MemberCard.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 
-// --- 1. Navbar 滾動變色邏輯 (完全對應 home.html 裡的 script) ---
 const handleScroll = () => {
   const navbar = document.getElementById('mainNavbar')
   if (!navbar) return
@@ -26,7 +25,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
 
-// --- 2. 會員卡片資料與篩選 ---
 const currentFilter = ref('all')
 
 const setFilter = (category) => {
@@ -49,7 +47,6 @@ const filteredMembers = computed(() => {
   return members.filter(member => member.category === currentFilter.value)
 })
 
-// --- 3. 評論資料 ---
 const reviews = [
   { id: 1, review: "原本只是想找人陪我參加婚禮，沒想到遇到這麼聊得來的朋友！BOOK仁的審核機制讓人很安心。", name: "Sarah Chen", job: "上班族", avatar: "S" },
   { id: 2, review: "透過揪團功能認識了一群喜歡登山的夥伴，週末終於不用宅在家了！", name: "Marcus Wang", job: "工程師", avatar: "M" },
@@ -77,7 +74,7 @@ const reviews = [
             <a href="#contact" class="nav-link">聯絡我們</a>
           </div>
           <div class="ms-auto pe-2">
-            <RouterLink to="/login" class="btn btn-primary text-white rounded-pill px-4 fw-bold shadow-sm">
+            <RouterLink to="/login" class="btn btn-primary text-white rounded-pill fw-bold shadow-sm">
               <i class="bi bi-box-arrow-in-right me-1"></i> 開始尋找
             </RouterLink>
           </div>
@@ -100,9 +97,8 @@ const reviews = [
               全台最大的社交媒合平台。無論是出租男女友、尋找心動配對，還是週末揪團活動，BOOK仁都能為您找到最合適的夥伴。
             </p>
             <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-              <a href="#collections" class="btn btn-primary btn-lg rounded-pill px-5 text-white">尋找命定</a>
-              <a href="#featured" class="btn btn-light btn-lg rounded-pill px-5 text-muted border" 
-                 style="background: rgba(255,255,255,0.6) !important;">熱門揪團</a>
+              <a href="#collections" class="btn btn-primary rounded-pill fs-5">熱門推薦</a>
+              <a href="#featured" class="btn btn-light rounded-pill fs-5">會員權益</a>
             </div>
 
             <div class="d-flex gap-5 mt-5 justify-content-center justify-content-lg-start">
@@ -153,11 +149,11 @@ const reviews = [
           <p class="text-muted">發現您感興趣的對象與活動</p>
 
           <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
-            <button class="btn btn-outline-light rounded-pill px-4" :class="{ active: currentFilter === 'all' }" @click="setFilter('all')">全部</button>
-            <button class="btn btn-outline-light rounded-pill px-4" :class="{ active: currentFilter === 'women' }" @click="setFilter('women')">出租女友</button>
-            <button class="btn btn-outline-light rounded-pill px-4" :class="{ active: currentFilter === 'men' }" @click="setFilter('men')">出租男友</button>
-            <button class="btn btn-outline-light rounded-pill px-4" :class="{ active: currentFilter === 'accessories' }" @click="setFilter('accessories')">揪團活動</button>
-            <button class="btn btn-outline-light rounded-pill px-4" :class="{ active: currentFilter === 'limited' }" @click="setFilter('limited')">限定企劃</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'all' }" @click="setFilter('all')">全部</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'women' }" @click="setFilter('women')">出租女友</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'men' }" @click="setFilter('men')">出租男友</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'accessories' }" @click="setFilter('accessories')">揪團活動</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'limited' }" @click="setFilter('limited')">限定企劃</button>
           </div>
         </div>
 
@@ -214,7 +210,7 @@ const reviews = [
                 </div>
               </div>
 
-              <a href="#collections" class="btn btn-primary btn-lg rounded-pill px-5 text-white shadow-lg fs-6 fw-bold">了解會員權益</a>
+              <a href="#collections" class="btn btn-light rounded-pill text-white shadow-lg fs-6 fw-bold">了解會員權益</a>
             </div>
           </div>
           <div class="col-lg-6 order-lg-2 order-1">
@@ -287,7 +283,7 @@ const reviews = [
                   <label class="form-label text-muted small fw-bold">訊息內容</label>
                   <textarea class="form-control" required style="height: 150px;"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary text-white w-100 py-3 rounded-pill fw-bold shadow-sm form-submit-btn fs-5">發送訊息</button>
+                <button type="submit" class="btn btn-primary text-white w-100 rounded-pill fs-5">發送訊息</button>
               </form>
             </div>
           </div>
