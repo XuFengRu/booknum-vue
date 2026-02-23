@@ -89,7 +89,7 @@ function handleAction() {
             <i class="bi bi-arrow-left"></i>
           </button>
           
-          <DatingCard :person="users[selectedUser]" @like="handleAction" @reject="handleAction" />
+          <DatingCard :person="users[selectedUser]" @like="handleAction" @reject="handleAction" :showActions="false"/>
         
         </div>
       </div>
