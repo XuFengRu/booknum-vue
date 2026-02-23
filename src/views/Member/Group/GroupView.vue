@@ -5,84 +5,104 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const keyword = ref("");
 
-const STORAGE_KEY = "activities_v1";
+/** ===== API 設定 ===== */
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "https://localhost:7091";
+
+/** ===== 模擬登入使用者 ===== */
 const CURRENT_USER = { id: 83, name: "Arille.M" };
-const showMine = ref(false);
 
-const seedActivities = [
-  {
-    id: 1,
-    title: "一起吃拉麵（新宿）",
-    category: "吃飯",
-    need: 8,
-    joined: 6,
-    isJoinedByMe: false,
-    joinedUsers: [], 
-    startAt: "2026/02/03 19:00",
-    endAt: "2026/02/03 21:00",
-    location: "台北市 信義區",
-    image: "https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80",
-  },
-  {
-    id: 2,
-    title: "周末爬山（象山）",
-    category: "運動",
-    need: 10,
-    joined: 2,
-    isJoinedByMe: true,
-    joinedUsers: [], 
-    startAt: "2026/02/08 09:00",
-    endAt: "2026/02/08 12:00",
-    location: "台北市 信義區",
-    image: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80",
-  },
-  {
-    id: 3,
-    title: "桌遊之夜（狼人殺）",
-    category: "桌遊",
-    need: 10,
-    joined: 10,
-    isJoinedByMe: false,
-    joinedUsers: [], 
-    startAt: "2026/02/12 19:30",
-    endAt: "2026/02/12 22:30",
-    location: "新北市 板橋區",
-    image: "https://images.unsplash.com/photo-1511882150382-421056c89033?w=1200&q=80",
-    },
-];
+/** ===== 本地暫存報名狀態 ===== */
+const JOINED_KEY = `joined_activity_ids_user_${CURRENT_USER.id}_v1`;
+const joinedIds = ref(new Set());
 
-function loadActivities() {
+function loadJoinedIds() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem(JOINED_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    joinedIds.value = new Set(Array.isArray(arr) ? arr : []);
   } catch {
-    return [];
+    joinedIds.value = new Set();
   }
 }
-
-function saveActivities(list) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+function saveJoinedIds() {
+  localStorage.setItem(JOINED_KEY, JSON.stringify([...joinedIds.value]));
 }
 
+/** ===== 畫面資料 ===== */
 const activities = ref([]);
+const showMine = ref(false);
 
-onMounted(() => {
-  const list = loadActivities();
-  if (!Array.isArray(list) || list.length === 0) {
-    saveActivities(seedActivities);
-    activities.value = seedActivities;
-  } else {
-    activities.value = list;
+/** ===== 工具：時間格式 ===== */
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+function formatDateTime(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return String(iso);
+  return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())} ${pad2(
+    d.getHours()
+  )}:${pad2(d.getMinutes())}`;
+}
+
+/** ===== fetch 包裝 ===== */
+async function fetchJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+  return await res.json();
+}
+
+/** ===== 取得分類 ===== */
+async function fetchCategoryMap() {
+  const list = await fetchJson(`${API_BASE}/api/ActivityCategory`);
+  const map = new Map();
+  for (const c of list) {
+    map.set(Number(c.categoryId), c.categoryName);
+  }
+  return map;
+}
+
+/** ===== 取得活動 ===== */
+async function fetchActivities() {
+  const categoryMap = await fetchCategoryMap();
+  const list = await fetchJson(`${API_BASE}/api/Activity`);
+
+  activities.value = list.map((x) => {
+    const id = Number(x.activityId);
+    const isJoinedByMe = joinedIds.value.has(id);
+
+    return {
+      id,
+      title: x.title ?? "",
+      category:
+        categoryMap.get(Number(x.categoryId)) ?? `分類#${x.categoryId}`,
+      need: Number(x.maxPeople ?? 0),
+      joined: 0, // 後端目前沒有 joined 欄位
+      isJoinedByMe,
+      joinedUsers: [],
+      startAt: formatDateTime(x.startAt),
+      endAt: formatDateTime(x.endAt),
+      location: x.location ?? "",
+      image:
+        "https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80",
+    };
+  });
+}
+
+/** ===== 初始化 ===== */
+onMounted(async () => {
+  loadJoinedIds();
+  try {
+    await fetchActivities();
+  } catch (err) {
+    console.error("API 讀取失敗:", err);
   }
 });
 
-function refreshFromStorage() {
-  const list = loadActivities();
-  if (Array.isArray(list)) activities.value = list;
-}
-
-window.addEventListener("focus", refreshFromStorage);
-
+/** ===== 搜尋 ===== */
 const filtered = computed(() => {
   const k = keyword.value.trim().toLowerCase();
   let list = activities.value;
@@ -92,48 +112,47 @@ const filtered = computed(() => {
   }
 
   if (!k) return list;
+
   return list.filter((a) =>
     [a.title, a.location, a.category].some((v) =>
-      String(v).toLowerCase().includes(k)
+      String(v ?? "").toLowerCase().includes(k)
     )
   );
 });
 
+/** ===== 跳頁 ===== */
 function goCreate() {
   router.push({ name: "member-group-create" });
 }
-
 function goDetail(id) {
   router.push({ name: "member-group-detail", params: { id } });
 }
 
+/** ===== 報名（前端暫存） ===== */
 function isFull(a) {
   return (Number(a.joined) || 0) >= (Number(a.need) || 0);
 }
 
 function toggleJoin(a) {
-  a.joinedUsers = Array.isArray(a.joinedUsers) ? a.joinedUsers : [];
-  const uid = CURRENT_USER.id;
-  const idx = a.joinedUsers.findIndex((u) => u.id === uid);
+  const id = Number(a.id);
 
   if (a.isJoinedByMe) {
     const ok = window.confirm("確定要取消報名嗎？");
     if (!ok) return;
 
-    if (idx !== -1) a.joinedUsers.splice(idx, 1);
-    a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
     a.isJoinedByMe = false;
+    joinedIds.value.delete(id);
   } else {
     const ok = window.confirm("確定要報名這個活動嗎？");
     if (!ok) return;
 
     if (isFull(a)) return;
-    if (idx === -1) a.joinedUsers.push({ id: uid, name: CURRENT_USER.name });
-    a.joined = (Number(a.joined) || 0) + 1;
+
     a.isJoinedByMe = true;
+    joinedIds.value.add(id);
   }
 
-  saveActivities(activities.value);
+  saveJoinedIds();
 }
 
 function toggleMine() {
