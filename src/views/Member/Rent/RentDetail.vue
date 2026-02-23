@@ -67,13 +67,19 @@ function goToPayment() {
 function addToCart() {
   if (validateBooking()) {
     cart.addItem({
-      name, description, price, image,
-      startDate: startDate.value, endDate: endDate.value,
-      hours: hours.value, totalAmount: totalAmount.value
+      name,
+      description,
+      price: priceNumber, // 🚩 改成數字
+      image,
+      startDate: startDate.value,
+      endDate: endDate.value,
+      hours: hours.value,
+      totalAmount: totalAmount.value
     });
     router.push({ name: 'member-rent-cart' });
   }
 }
+
 
 function addExtra() { alert("加購方案功能尚未完成 🚧"); }
 function goBack() { router.back(); }
