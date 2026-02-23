@@ -56,7 +56,7 @@ function updateProfile(newData) {
 }
 
 onMounted(() => {
-  loadProfile(1)
+  loadProfile(11)
 })
 </script>
 
