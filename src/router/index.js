@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import Swal from 'sweetalert2'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,7 @@ const router = createRouter({
       path: '/member',
       component: () => import('../layout/MemberLayout.vue'), // 會員後台外框
       redirect: '/member/dating', 
+      meta: { requiresAuth: true },
       children: [
         // --- 交友配對 (Dating) ---
         { path: 'dating', name: 'member-dating', component: () => import('../views/Member/Dating/DatingView.vue') },
@@ -80,5 +82,73 @@ const router = createRouter({
     return { top: 0 }
   }
 })
+
+// Navigation Guard
+router.beforeEach((to, from, next) => {
+  if (to.path.startsWith('/member')) {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      Swal.fire({
+        icon: 'warning',
+        title: '未登入',
+        text: '請先登入後再進行操作',
+        confirmButtonText: '確定',
+        confirmButtonColor: '#0d6efd'
+      }).then(() => {
+        next('/login');
+      });
+      return; // 必須 return，否則會繼續執行最後面的 next()
+    }
+    // 判斷是否過期
+    try {
+      // JWT 格式為 header.payload.signature，取中間的 payload
+      const payloadBase64Url = token.split('.')[1];
+      // Base64 編碼
+      const payloadBase64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(window.atob(payloadBase64));
+      // 現在時間的 Unix  (秒)
+      const currentTime = Math.floor(Date.now() / 1000);
+
+      if (payload.exp < currentTime) {
+        // Token 已過期
+        // alert('登入已過期，請重新登入！');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        Swal.fire({
+          icon: 'warning',
+          title: '登入已過期',
+          text: '您的登入狀態已失效，請重新登入！',
+          confirmButtonText: '確定',
+          confirmButtonColor: '#ffc107'
+        }).then(() => {
+          next('/login');
+        });
+        return;
+      }
+    } catch (e) {
+      // 解析失敗代表 Token 格式錯誤
+      console.error("Token 解析失敗", e);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+
+      Swal.fire({
+        icon: 'error',
+        title: '登入無效',
+        text: '憑證出現異常，請重新登入！',
+        confirmButtonText: '確定',
+        confirmButtonColor: '#dc3545'
+      }).then(() => {
+        next('/login');
+      });
+      return;
+    }
+  }
+
+  next(); // pass
+});
 
 export default router

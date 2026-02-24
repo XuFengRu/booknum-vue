@@ -1,11 +1,51 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { usedatingRead } from '@/stores/datingRead'
+import Swal from 'sweetalert2'
 
 const route = useRoute()
+const router = useRouter()
 const datingReadStore = usedatingRead()
 const isSidebarOpen = ref(false)
+// Storage 中讀取登入者的資料
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+const currentUserName = ref(storedUser.name || '會員')
+// 登出
+const handleLogout = () => {
+  Swal.fire({
+    title: '確定要登出嗎？',
+    icon: 'question',
+    iconColor: '#dc3545',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545', // 紅色警告色
+    cancelButtonColor: '#6c757d',  // 灰色取消色
+    confirmButtonText: '確認',
+    cancelButtonText: '取消',
+    reverseButtons: true // 讓確認按鈕在右邊
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 使用者點擊確認後才清除資料
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('user')
+      
+      // 右上角顯示成功 Toast
+      Swal.fire({
+        icon: 'success',
+        title: '您已成功登出！',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true
+      })
+
+      router.push('/login')
+    }
+  })
+}
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value
@@ -131,7 +171,11 @@ const isActiveService = (path) => route.path.includes(path)
                     <li><RouterLink class="dropdown-item py-2" to="/member/profile"><i class="bi bi-person me-2"></i>個人資料</RouterLink></li>
                     <li><RouterLink class="dropdown-item py-2" to="/member/security"><i class="bi bi-shield-lock me-2"></i>帳號安全</RouterLink></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><RouterLink class="dropdown-item text-danger py-2" to="/login"><i class="bi bi-box-arrow-right me-2"></i>登出</RouterLink></li>
+                    <li>
+                      <a href="#" class="dropdown-item text-danger py-2" @click.prevent="handleLogout">
+                        <i class="bi bi-box-arrow-right me-2"></i>登出
+                      </a>
+                    </li>
                 </ul>
             </div>
         </div>
