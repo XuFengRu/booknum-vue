@@ -6,9 +6,10 @@ import OAuthCard from '@/components/OAuthCard.vue'
 import Swal from 'sweetalert2'
 const router = useRouter()
 
-const email = ref('')
-const password = ref('')
+const email = ref('user7@test.com')
+const password = ref('000')
 const rememberMe = ref(false)
+
 
 const handleLogin = async () => {
   // console.log("帳號:", email.value, "密碼:", password.value);
@@ -86,7 +87,8 @@ const handleLogin = async () => {
     <form @submit.prevent="handleLogin">
       
       <div class="input-group-custom">
-<input type="email" v-model="email" class="form-control" placeholder="電子信箱" required autofocus>        <i class="bi bi-envelope"></i>
+        <input type="email" v-model="email" class="form-control" placeholder="電子信箱" required autofocus>
+        <i class="bi bi-envelope"></i>
       </div>
 
       <div class="input-group-custom">
