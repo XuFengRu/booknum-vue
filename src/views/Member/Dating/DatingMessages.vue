@@ -1,11 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { usedatingRead } from '@/stores/datingRead'
+import { ref, onMounted } from 'vue'
 import ChatBox from '@/components/datingChatBox.vue'
 import axios from 'axios'
 import * as signalR from '@microsoft/signalr'
 
-const datingRead = usedatingRead()
+const conversations = ref([])   // ✅ 直接用 ref 管理，不再用 Pinia
 const selectedChat = ref(null)
 const isMobile = ref(false)
 const connection = ref(null)
@@ -35,16 +34,15 @@ onMounted(async () => {
 
   // 監聽訊息推播
   connection.value.on("ReceiveMessage", (message) => {
-    const chat = datingRead.conversations.find(c => c.id === message.matchedId)
+    const chat = conversations.value.find(c => c.id === message.matchedId)
     if (chat) {
       chat.messages.push({
-        chatId: message.chatId, // 🔥 加上 chatId
+        chatId: message.chatId,
         from: message.senderId === userId ? '我' : chat.name,
         text: message.message,
         time: new Date(message.sendAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       })
 
-      // ✅ 只有接收者才更新未讀數
       if (message.receiverId === userId) {
         chat.unreadCount = message.unreadCount
       }
@@ -53,7 +51,7 @@ onMounted(async () => {
 
   // 監聽未讀重置
   connection.value.on("ResetUnread", (data) => {
-    const chat = datingRead.conversations.find(c => c.id === data.roomId)
+    const chat = conversations.value.find(c => c.id === data.roomId)
     if (chat) {
       chat.unreadCount = data.unreadCount
     }
@@ -61,34 +59,33 @@ onMounted(async () => {
 
   // 監聽解除配對
   connection.value.on("UnMatched", (data) => {
-    datingRead.conversations = datingRead.conversations.filter(c => c.id !== data.roomId)
+    conversations.value = conversations.value.filter(c => c.id !== data.roomId)
   })
 
   // 監聽新聊天室建立
   connection.value.on("ChatRoomCreated", (data) => {
-    datingRead.conversations.push({
+    conversations.value.push({
       id: data.roomId,
-      name: data.user1Notification?.message || data.user2Notification?.message,
-      avatar: "/images/default-avatar.png",
+      name: data.otherUserNickname,
+      avatar: data.otherUserPhoto || "/images/default-avatar.png",
       messages: [],
       unreadCount: 0
     })
-      // 🔥 觸發全域事件
-  window.dispatchEvent(new CustomEvent("match-success", {
-    detail: { userName: data.otherUserNickname }
-  }))
 
+    window.dispatchEvent(new CustomEvent("match-success", {
+      detail: { userName: data.otherUserNickname }
+    }))
   })
 
   // 撈聊天室清單
   const res = await axios.get(`https://localhost:7091/api/MatchChat/list/${userId}`)
-  datingRead.conversations = res.data.map(c => ({
+  conversations.value = res.data.map(c => ({
     id: c.roomId,
     name: c.otherUserNickname,
     avatar: c.otherUserPhoto,
     otherUserId: c.otherUserId,
     messages: c.lastMessage ? [{
-      chatId: c.lastMessageId, // 🔥 確保有 chatId
+      chatId: c.lastMessageId,
       text: c.lastMessage,
       time: new Date(c.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }] : [],
@@ -98,15 +95,10 @@ onMounted(async () => {
 
 function openChat(chat) {
   selectedChat.value = chat
-  datingRead.markAsRead(chat.id)
-
-  // ✅ 先清零前端未讀數
   chat.unreadCount = 0
 
-  // 加入聊天室群組
   connection.value.invoke("JoinRoom", chat.id.toString())
 
-  // 撈聊天室訊息
   axios.get(`https://localhost:7091/api/MatchChat/${chat.id}?userId=${userId}`)
     .then(res => {
       chat.messages = res.data.map(m => ({
@@ -139,10 +131,6 @@ function getLastMessage(chat) {
   let text = chat.messages[chat.messages.length - 1].text
   return text.length > 15 ? text.slice(0, 15) + '...' : text
 }
-
-const totalUnread = computed(() => {
-  return datingRead.conversations.reduce((sum, chat) => sum + chat.unreadCount, 0)
-})
 </script>
 
 <template>
@@ -156,7 +144,7 @@ const totalUnread = computed(() => {
 
         <div class="flex-grow-1 overflow-auto p-2">
           <div
-            v-for="chat in datingRead.conversations"
+            v-for="chat in conversations"
             :key="chat.id"
             class="chat-list-item d-flex align-items-center p-3 mb-2 rounded-4 transition-all"
             :class="{ 'active': selectedChat?.id === chat.id }"
@@ -203,6 +191,7 @@ const totalUnread = computed(() => {
     </div>
   </div>
 </template>
+
 
 
 <style scoped>

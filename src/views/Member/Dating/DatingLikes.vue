@@ -108,6 +108,11 @@ onMounted(async () => {
           </div>
         </div>
       </div>
+
+      <!-- 新增提醒字 -->
+      <div class="text-center mt-5 fade-in-up" v-if="users.length >= 1">
+        <p class="text-muted small">提醒：若沒有回應，對方將在 28 天後回歸人海</p>
+      </div>
     </template>
 
     <template v-else>

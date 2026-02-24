@@ -63,13 +63,14 @@ async function nextPerson(isLiked) {
       })
     } catch (err) {
       console.error("互動紀錄失敗:", err)
+      if (err.response?.data?.message) {
+        message.value = err.response.data.message
+        showCard.value = false
+      } else {
+        message.value = '互動失敗，請稍後再試'
+        showCard.value = false
+      }
     }
-  }
-
-  if (matchCount.value >= 5) {
-    showCard.value = false
-    message.value = '今日配對已達上限'
-    return
   }
 
   // 下一個候選人

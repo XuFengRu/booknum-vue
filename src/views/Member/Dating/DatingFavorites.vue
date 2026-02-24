@@ -6,6 +6,7 @@ import DatingCard from '@/components/datingCard.vue'
 
 const selectedUser = ref(null)
 const users = ref([]) // API 填充
+const isPremium = ref(false) // 新增 Premium 狀態
 
 function openProfile(index) {
   selectedUser.value = index
@@ -31,6 +32,7 @@ onMounted(async () => {
       userId: c.userId,
       probability: c.probability
     }))
+    isPremium.value = res.data.isPremium // 後端回傳的 Premium 狀態
   } catch (err) {
     console.error("載入 ILike API 失敗:", err)
   }
@@ -64,7 +66,9 @@ onMounted(async () => {
       <div class="row g-4">
         <div v-for="(user, index) in users" :key="index" class="col-6 col-md-4 col-xl-3">
           
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
+          <!-- Premium 顯示高清 -->
+          <div v-if="isPremium"
+               class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
                @click="openProfile(index)">
             <div class="ratio image-ratio">
               <img :src="user.avatar" class="w-100 h-100 object-fit-cover transition-all" :alt="user.name">
@@ -76,7 +80,29 @@ onMounted(async () => {
             </div>
           </div>
 
+          <!-- 非 Premium 模糊化 -->
+          <div v-else class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative bg-dark user-card">
+            <div class="ratio image-ratio">
+              <img :src="user.avatar" class="w-100 h-100 object-fit-cover blur-img" alt="locked">
+            </div>
+            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-3 locked-overlay">            
+              <div class="gem-icon-wrapper mb-3">
+                <i class="bi bi-gem display-4 text-warning" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></i>
+              </div>
+              <h5 class="fw-bold text-white text-shadow mb-2">升級 Premium</h5>
+              <p class="text-white text-shadow mb-4 px-2">解鎖心動對象，不再錯過任何緣分。</p>
+              <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning rounded-pill fw-bold shadow-lg fs-5">
+                立即解鎖
+              </RouterLink>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      <!-- 新增提醒字 -->
+      <div class="text-center mt-5 fade-in-up" v-if="users.length >= 1">
+        <p class="text-muted small">提醒：若沒有互動，心動對象將在 28 天後回歸人海</p>
       </div>
     </template>
 
@@ -115,6 +141,17 @@ onMounted(async () => {
 }
 .overlay-gradient {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
+}
+.blur-img {
+  filter: blur(18px) brightness(1.3) contrast(0.8);
+  transform: scale(1.2);
+}
+.locked-overlay {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+}
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 .custom-back-btn {
   position: absolute !important;
