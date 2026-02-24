@@ -73,6 +73,11 @@ onMounted(async () => {
       messages: [],
       unreadCount: 0
     })
+      // 🔥 觸發全域事件
+  window.dispatchEvent(new CustomEvent("match-success", {
+    detail: { userName: data.otherUserNickname }
+  }))
+
   })
 
   // 撈聊天室清單

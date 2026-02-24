@@ -34,7 +34,7 @@ const cities = [
   '連江縣',
 ]
 
-// 🔥 興趣清單
+// 興趣清單
 const hobbyOptions = ref([])
 
 const form = ref({

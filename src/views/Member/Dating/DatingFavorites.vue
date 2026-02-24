@@ -18,7 +18,7 @@ function handleAction() {
 // 我喜歡誰
 onMounted(async () => {
   try {
-    const userId = 4 // 改成目前登入者的 ID
+    const userId = 6 // 改成目前登入者的 ID
     const res = await axios.get(`https://localhost:7091/api/MatchLikes/ILike/${userId}`)
     users.value = res.data.candidates.map(c => ({
       name: c.nickname,

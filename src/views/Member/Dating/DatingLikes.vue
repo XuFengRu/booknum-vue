@@ -25,7 +25,7 @@ function handleReject(person) {
 // 誰喜歡我
 onMounted(async () => {
   try {
-    const userId = 2 // 改成目前登入者的 ID
+    const userId = 6 // 改成目前登入者的 ID
     const res = await axios.get(`https://localhost:7091/api/MatchLikes/WhoLikesMe/${userId}`)
     users.value = res.data.candidates.map(c => ({
       name: c.nickname,
