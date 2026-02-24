@@ -1,76 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import axios from 'axios'
 import DatingCard from '@/components/datingCard.vue'
 
 const isPremium = ref(false)
 const selectedUser = ref(null)
-
-const users = [
-  {
-    name: '小雅',
-    age: 25,
-    location: '台北市',
-    job: '平面設計師',
-    hobbies: ['看展', '下午茶', '攝影', '底片相機'],
-    intro: '喜歡用鏡頭記錄生活，週末常常在各大美術館或文青咖啡廳出沒。個性比較慢熟，但熟了之後是個會陪你瘋到底的女孩。',
-    avatar: '/images/Girlfriend1.jpg',
-  },
-  {
-    name: 'Bella',
-    age: 28,
-    location: '台中市',
-    job: '時尚模特兒',
-    hobbies: ['健身', '品酒', '高爾夫', '皮拉提斯'],
-    intro: '平時工作節奏快，希望休假時能找個人一起享受微醺的週末夜晚。喜歡保持自律的生活，如果你也愛運動，那就太棒了！',
-    avatar: '/images/Girlfriend2.jpg',
-  },
-  {
-    name: '恩熙',
-    age: 24,
-    location: '高雄市',
-    job: '咖啡廳店長',
-    hobbies: ['烘焙', '旅行', '音樂', '手作'],
-    intro: '自己經營一家小咖啡廳，雖然忙碌但每天都很充實。假日的樂趣是開發新甜點，想找個能一起分享咖啡香與療癒時光的人。',
-    avatar: '/images/Girlfriend3.jpg',
-  },
-  {
-    name: '小琪',
-    age: 22,
-    location: '新北市',
-    job: '大學生',
-    hobbies: ['桌遊', '電影', '密室逃脫', '動漫'],
-    intro: '超愛玩桌遊跟劇本殺！個性活潑開朗，腦袋裡裝著各種天馬行空的想法。如果你也是遊戲咖，我們絕對可以玩在一塊！',
-    avatar: '/images/Girlfriend4.jpg',
-  },
-  {
-    name: '萱萱',
-    age: 26,
-    location: '台北市',
-    job: '行銷企劃',
-    hobbies: ['逛街', '美食', '探店', '看劇'],
-    intro: '標準的吃貨一枚，手機裡存了滿滿的美食清單，從路邊攤到米其林都愛。誰要陪我一起去把清單上的餐廳都踩點一遍？',
-    avatar: '/images/Girlfriend5.jpg',
-  },
-  {
-    name: '舒華',
-    age: 26,
-    location: '桃園市',
-    job: '歌手、舞者',
-    hobbies: ['旅行', '戲劇', '韓文', '舞蹈', '閱讀', '作曲'],
-    intro: '哈囉！我是舒華。平時在舞台上享受唱歌與跳舞的熱情，偶爾也會跨足主持和作曲。私底下的我隨性直率，期待能遇見一個可以陪我到處吃喝玩樂、一起分享生活趣事的人！',
-    avatar: '/images/Girlfriend6.jpg',
-  },
-  {
-    name: '芷瑜',
-    age: 27,
-    location: '台南市',
-    job: '自由插畫家',
-    hobbies: ['畫畫', '底片相機', '看海', '爵士樂'],
-    intro: '喜歡海浪的聲音和底片洗出來的驚喜感。是個內心世界很豐富的浪漫主義者，希望能遇到一個願意聽我分享日常瑣事與靈感的人。',
-    avatar: '/images/Girlfriend7.jpg',
-  }
-]
+const users = ref([]) //  API 填
 
 function openProfile(index) {
   selectedUser.value = index
@@ -85,6 +21,27 @@ function handleReject(person) {
   console.log('Rejected:', person?.name)
   selectedUser.value = null 
 }
+
+// 誰喜歡我
+onMounted(async () => {
+  try {
+    const userId = 2 // 改成目前登入者的 ID
+    const res = await axios.get(`https://localhost:7091/api/MatchLikes/WhoLikesMe/${userId}`)
+    users.value = res.data.candidates.map(c => ({
+      name: c.nickname,
+      age: c.age,
+      location: c.currentCity,
+      job: c.job,
+      hobbies: c.hobbies,
+      intro: c.bio,
+      avatar: c.photo,
+      userId: c.userId,
+      probability: c.probability
+    }))
+  } catch (err) {
+    console.error("載入 WhoLikesMe API 失敗:", err)
+  }
+})
 </script>
 
 <template>

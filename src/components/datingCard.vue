@@ -5,7 +5,6 @@ defineProps({
     required: true,
   },
   showActions: {
-    // 新增的控制參數
     type: Boolean,
     default: true,
   },
@@ -117,6 +116,15 @@ defineEmits(['like', 'reject'])
 .btn-like:hover i {
   opacity: 1 !important;
   color: var(--bs-primary) !important;
+}
+
+.card-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 7;     
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-wrap;
+
 }
 
 @media (max-width: 767.98px) {

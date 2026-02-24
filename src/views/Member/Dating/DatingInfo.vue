@@ -6,12 +6,12 @@ import DatingEdit from '@/components/datingEdit.vue'
 const isEditing = ref(false)
 const person = ref(null)
 
-// 🔥 新增：興趣 ID -> 名稱 對照表
+//興趣 ID -> 名稱
 const hobbyMap = ref({})
 
 async function loadProfile(userId) {
   try {
-    // 同時抓 個人資料 + 興趣清單
+    // 同時抓個人資料、興趣清單
     const [profileRes, hobbyRes] = await Promise.all([
       axios.get(`https://localhost:7091/api/matchinfo/${userId}`),
       axios.get('https://localhost:7091/api/matchinfo/hobbies'),
@@ -19,7 +19,7 @@ async function loadProfile(userId) {
 
     const data = profileRes.data
 
-    // 🔥 建立 ID -> 名稱 對照表
+    //ID -> 名稱
     hobbyMap.value = hobbyRes.data.reduce((acc, h) => {
       acc[h.hobbyId] = h.hobbyName
       return acc
@@ -33,7 +33,7 @@ async function loadProfile(userId) {
       job: data.job,
       avatar: data.photo,
 
-      // 🔥 改成存 HobbyId
+      //存 HobbyId
       hobbies: Array.isArray(data.hobbies) ? data.hobbies.map((h) => h.hobbyId) : [],
 
       intro: data.bio,
@@ -192,7 +192,7 @@ onMounted(() => {
 <style scoped>
 .text-truncate-multiline {
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: pre-wrap;

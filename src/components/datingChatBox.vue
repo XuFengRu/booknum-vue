@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, nextTick } from 'vue'
+import axios from 'axios'
 
 const props = defineProps({
   chat: Object,
@@ -8,12 +9,23 @@ const props = defineProps({
 const newMessage = ref('')
 const messagesContainer = ref(null)
 
-function sendMessage() {
+//目前暫時先用 4
+const userId = 4
+
+async function sendMessage() {
   if (newMessage.value.trim() !== '') {
-    const now = new Date()
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-    props.chat.messages.push({ from: '我', text: newMessage.value.trim(), time })
-    newMessage.value = ''
+    try {
+      await axios.post("https://localhost:7091/api/MatchChat", {
+        matchedId: props.chat.id,
+        senderId: userId,              
+        receiverId: props.chat.otherUserId, 
+        message: newMessage.value.trim()
+      })
+      // 等待 SignalR 推播，不需要自己 push
+      newMessage.value = ''
+    } catch (err) {
+      console.error("送訊息失敗:", err)
+    }
   }
 }
 
@@ -76,7 +88,6 @@ watch(
         />
         <button 
           @click="sendMessage" 
-          
           class="btn btn-primary btn-circle btn-circle-sm flex-shrink-0"
           :disabled="!newMessage.trim()"
         >

@@ -96,7 +96,7 @@ async function submitForm() {
       Photo: form.value.avatar,
       Job: form.value.job,
 
-      // 🔥 傳 HobbyId
+      // 傳 HobbyId
       Hobbies: form.value.hobbies.map((id) => ({ HobbyId: id })),
 
       GenderPrefer:

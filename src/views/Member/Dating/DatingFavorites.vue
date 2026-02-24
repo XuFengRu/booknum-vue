@@ -1,30 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import axios from 'axios'
 import DatingCard from '@/components/datingCard.vue'
 
 const selectedUser = ref(null)
-
-const users = [
-  {
-    name: '小雅',
-    age: 25,
-    location: '台北市',
-    job: '平面設計師',
-    hobbies: ['看展', '下午茶', '攝影', '底片相機'],
-    intro: '喜歡用鏡頭記錄生活，週末常常在各大美術館或文青咖啡廳出沒。個性比較慢熟，但熟了之後是個會陪你瘋到底的女孩。',
-    avatar: '/images/Girlfriend1.jpg',
-  },
-  {
-    name: 'Bella',
-    age: 28,
-    location: '台中市',
-    job: '時尚模特兒',
-    hobbies: ['健身', '品酒', '高爾夫', '皮拉提斯'],
-    intro: '平時工作節奏快，希望休假時能找個人一起享受微醺的週末夜晚。喜歡保持自律的生活，如果你也愛運動，那就太棒了！',
-    avatar: '/images/Girlfriend2.jpg',
-  },
-];
+const users = ref([]) // API 填充
 
 function openProfile(index) {
   selectedUser.value = index
@@ -33,6 +14,27 @@ function openProfile(index) {
 function handleAction() {
   selectedUser.value = null
 }
+
+// 我喜歡誰
+onMounted(async () => {
+  try {
+    const userId = 4 // 改成目前登入者的 ID
+    const res = await axios.get(`https://localhost:7091/api/MatchLikes/ILike/${userId}`)
+    users.value = res.data.candidates.map(c => ({
+      name: c.nickname,
+      age: c.age,
+      location: c.currentCity,
+      job: c.job,
+      hobbies: c.hobbies,
+      intro: c.bio,
+      avatar: c.photo,
+      userId: c.userId,
+      probability: c.probability
+    }))
+  } catch (err) {
+    console.error("載入 ILike API 失敗:", err)
+  }
+})
 </script>
 
 <template>
