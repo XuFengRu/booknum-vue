@@ -7,8 +7,13 @@ export const useCartStore = defineStore('cart', () => {
 
   const itemCount = computed(() => items.value.length)
 
+  // 加入商品時強制轉型，避免 price / hours 是字串
   function addItem(item) {
-    items.value.push(item)
+    items.value.push({
+      ...item,
+      price: Number(item.price) || 0,
+      hours: Number(item.hours) || 1
+    })
   }
 
   function clearCart() {
