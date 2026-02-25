@@ -70,12 +70,12 @@ async function handleFileUpload(event) {
     const res = await axios.post("https://localhost:7091/api/matchinfo/upload-photo", formData, {
       headers: { "Content-Type": "multipart/form-data" }
     })
-    form.value.avatar = res.data.path 
+    form.value.avatar = res.data.path  // ✅ 有人臉 → 保留
   } catch (err) {
-    console.error("上傳失敗:", err)
+    form.value.avatar = form.value.avatar             // ❌ 沒有人臉 → 清空
+    alert(err.response?.data || "照片上傳失敗")
   }
 }
-
 async function submitForm() {
   if (
     !form.value.name ||

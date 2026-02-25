@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed,onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { usedatingRead } from '@/stores/datingRead'
 import Swal from 'sweetalert2'
+import * as signalR from '@microsoft/signalr'
 import DatingSuccessModal from '@/components/datingSuccessModal.vue'
 
 const route = useRoute()
@@ -96,12 +97,29 @@ const currentMenu = computed(() => {
 
 const isActiveService = (path) => route.path.includes(path)
 
-const datingModal = ref(null)
+// 模擬目前登入使用者 ID
+const userId = 6
+const successModal = ref(null)
 
-window.addEventListener("match-success", (e) => {
-  console.log("事件觸發:", e.detail.userName)
-  datingModal.value?.show(e.detail.userName)
+onMounted(async () => {
+  // 建立 SignalR 連線
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl('https://localhost:7091/chatHub')
+    .withAutomaticReconnect()
+    .build()
+
+  await connection.start()
+  await connection.invoke('JoinUser', userId.toString())
+
+  // 監聽配對成功事件
+  connection.on('ChatRoomCreated', (data) => {
+    // 呼叫 DatingSuccessModal 的 show 方法
+    if (successModal.value) {
+      successModal.value.show()
+    }
+  })
 })
+
 </script>
 
 <template>
@@ -192,7 +210,7 @@ window.addEventListener("match-success", (e) => {
       <div class="fade-in-up">
         <RouterView />
       </div>
-      <DatingSuccessModal ref="datingModal" />
+      <DatingSuccessModal ref="successModal" />
     </main>
   </div>
 </template>

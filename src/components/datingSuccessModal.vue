@@ -3,7 +3,7 @@
     <div v-if="visible" class="custom-backdrop">
       <div class="custom-modal">
         <h5>配對成功！</h5>
-        <p>你和 {{ userName }} 已成功配對，可以開始聊天囉！</p>
+        <p>你有新的配對，快去聊天室開始聊天吧！</p>
         <button class="btn btn-primary" @click="close">知道了</button>
       </div>
     </div>
@@ -16,8 +16,7 @@ import { ref } from 'vue'
 const visible = ref(false)
 const userName = ref('')
 
-function show(name) {
-  userName.value = name
+function show() {
   visible.value = true
 }
 

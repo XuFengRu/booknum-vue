@@ -29,15 +29,6 @@ async function handleLike(person) {
       isLiked: true,
       score: person.probability,
     })
-
-    if (res.data?.isMatchSuccess) {
-      window.dispatchEvent(
-        new CustomEvent('match-success', {
-          detail: { userName: person.name },
-        }),
-      )
-    }
-
     selectedUser.value = null
   } catch (err) {
     console.error('互動失敗:', err)

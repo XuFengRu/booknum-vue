@@ -14,7 +14,7 @@ function checkMobile() {
   isMobile.value = window.innerWidth <= 992
 }
 
-// 🕒 格式化訊息時間 (新版跨日判斷)
+// 格式化訊息時間
 function formatMessageTime(sendAt) {
   const msgDate = new Date(sendAt)
   const now = new Date()
@@ -25,7 +25,7 @@ function formatMessageTime(sendAt) {
   if (isSameDay) {
     return msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   } else if (diffDays === 1 || msgDate.getDate() !== now.getDate()) {
-    // ✅ 不管是否滿 24 小時，只要日期不同就顯示「昨天」
+    //不管是否滿 24 小時，只要日期不同就顯示「昨天」
     return '昨天'
   } else if (diffDays < 7) {
     return `${diffDays}天前`
@@ -54,7 +54,7 @@ onMounted(async () => {
         chatId: message.chatId,
         from: message.senderId === userId ? '我' : chat.name,
         text: message.message,
-        sendAt: message.sendAt, // ✅ 保留原始時間
+        sendAt: message.sendAt, 
       })
       if (message.receiverId === userId) chat.unreadCount = message.unreadCount
     }
@@ -90,7 +90,7 @@ onMounted(async () => {
           {
             chatId: c.lastMessageId,
             text: c.lastMessage,
-            sendAt: c.lastTime, // ✅ 保留原始時間
+            sendAt: c.lastTime, 
           },
         ]
       : [],
@@ -108,7 +108,7 @@ function openChat(chat) {
       chatId: m.chatId,
       from: m.senderId === userId ? '我' : chat.name,
       text: m.message,
-      sendAt: m.sendAt, // ✅ 保留原始時間
+      sendAt: m.sendAt, 
     }))
   })
 }
