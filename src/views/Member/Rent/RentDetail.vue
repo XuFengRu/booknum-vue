@@ -2,7 +2,6 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCartStore } from "@/stores/cart";
-// 💡 引入 Element Plus 的 DatePicker
 import { ElDatePicker } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -10,26 +9,27 @@ const route = useRoute();
 const router = useRouter();
 const cart = useCartStore();
 
-const name = route.params.name;
-const description = route.query.description;
-const price = route.query.price; 
-const image = route.query.image;
+const props = defineProps({
+  name: String
+});
 
-const priceNumber = parseInt(price.replace(/[^0-9]/g, ""), 10);
+const description = route.query.description || "";
+const price = route.query.price || "0";
+const image = route.query.image || "";
+
+const priceNumber = parseInt(String(price).replace(/[^0-9]/g, ""), 10) || 0;
+
 const startDate = ref("");
 const endDate = ref("");
 
-// 💡 替換原本的 minDate，改用 Element Plus 的 disabled-date 函式
 const disabledStartDate = (time) => {
   const min = new Date();
-  // 限制只能選 7 天後的日期
-  min.setDate(min.getDate() + 6); 
+  min.setDate(min.getDate() + 6);
   return time.getTime() < min.getTime();
 };
 
 const disabledEndDate = (time) => {
   if (startDate.value) {
-    // 結束日期的面板，不能早於選擇的開始日期
     const startDay = new Date(startDate.value);
     startDay.setHours(0, 0, 0, 0);
     return time.getTime() < startDay.getTime();
@@ -43,7 +43,7 @@ const hours = computed(() => {
   const end = new Date(endDate.value);
   const diffMs = end - start;
   if (diffMs <= 0) return 0;
-  return Math.floor(diffMs / (1000 * 60 * 60)); 
+  return Math.floor(diffMs / (1000 * 60 * 60));
 });
 
 const totalAmount = computed(() => hours.value * priceNumber);
@@ -60,36 +60,67 @@ function validateBooking() {
   return true;
 }
 
-function goToPayment() {
-  if (validateBooking()) router.push({ name: 'member-rent-payment' });
-}
-
+// 加入購物車 → 記錄訂單，然後返回尋找出租
 function addToCart() {
   if (validateBooking()) {
+    const rentId = crypto.randomUUID(); // ✅ 穩定唯一識別碼
     cart.addItem({
-      name,
+      id: rentId,
+      name: props.name,
       description,
-      price: priceNumber, // 🚩 改成數字
+      price: priceNumber,
       image,
       startDate: startDate.value,
       endDate: endDate.value,
       hours: hours.value,
-      totalAmount: totalAmount.value
+      totalAmount: totalAmount.value,
+      type: "租賃人"
     });
-    router.push({ name: 'member-rent-cart' });
+    alert("已加入購物車！");
+    router.push({ name: "rent-detail" });
   }
 }
 
+function goToPayment() {
+  if (validateBooking()) {
+    const rentId = crypto.randomUUID(); // ✅ 穩定唯一識別碼
+    cart.addItem({
+      id: rentId,
+      name: props.name,
+      description,
+      price: priceNumber,
+      image,
+      startDate: startDate.value,
+      endDate: endDate.value,
+      hours: hours.value,
+      totalAmount: totalAmount.value,
+      type: "租賃人"
+    });
+    router.push({ name: "member-rent-cart" });
+  }
+}
 
-function addExtra() { alert("加購方案功能尚未完成 🚧"); }
-function goBack() { router.back(); }
+// 改這裡：帶上租人的 id
+function addExtra() {
+  const rent = cart.items.find(i => i.type === "租賃人" && i.name === props.name);
+  if (!rent) {
+    alert("請先建立租賃預約！");
+    return;
+  }
+  router.push({ 
+    name: "member-rent-add", 
+    query: { parentId: rent.id }   // ✅ 帶上租人的 id
+  });
+}
+
+function goBack() {
+  router.back();
+}
 </script>
 
 <template>
   <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
-    
     <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1440px;">
-      
       <button @click="goBack" 
               class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
               title="返回列表">
@@ -98,7 +129,6 @@ function goBack() { router.back(); }
 
       <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto" style="max-width: 1300px; height: 650px;">
         <div class="row g-0 h-100">
-          
           <div class="col-lg-4 h-100 position-relative">
             <img :src="image" :alt="name" class="w-100 h-100 object-fit-cover" style="object-position: center;" />
           </div>
@@ -172,14 +202,13 @@ function goBack() { router.back(); }
               </div>
               <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold" @click="goToPayment">立即結帳</button>
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 /* 💡 Element Plus 的細節覆寫：確保與 input-group-custom 高度及圓角完美契合 */

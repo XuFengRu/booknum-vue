@@ -10,14 +10,27 @@ defineOptions({
 const router = useRouter();
 const cart = useCartStore();
 
-// 計算總金額，確保 price / hours 都是數字
+// 計算總金額
 const totalPrice = computed(() =>
   cart.items.reduce((sum, item) => sum + Number(item.price) * (Number(item.hours) || 1), 0)
 );
 
-// 移除單一項目
-function removeItem(index) {
-  cart.items.splice(index, 1);
+// 分組：每個租人 + 對應的加購方案
+const groupedCart = computed(() => {
+  return cart.items
+    .filter(i => i.type === "租賃人")
+    .map(rent => ({
+      rent,
+      extras: cart.items.filter(extra => extra.type === "加購方案" && extra.parentId === rent.id)
+    }));
+});
+
+// 移除單一約會（租人 + 加購）
+function removeItem(rentId) {
+  const confirmDelete = confirm("確定刪除該約會？");
+  if (confirmDelete) {
+    cart.items = cart.items.filter(item => item.id !== rentId && item.parentId !== rentId);
+  }
 }
 
 // 清空購物車
@@ -28,12 +41,10 @@ function clearCart() {
   }
 }
 
-// 前往付款：跳轉到 Payment.vue
+// 前往付款
 function goToPayment() {
   const orderNo = 'ORDER-' + Date.now();
   const amount = totalPrice.value || 0;
-
-  console.log("🛒 goToPayment triggered, orderNo:", orderNo, "amount:", amount);
 
   router.push({
     path: '/member/rent/payment',
@@ -55,40 +66,68 @@ function goToPayment() {
 
     <div v-if="cart.items.length > 0" class="row g-4">
       <div class="col-lg-8">
-        <div class="d-flex flex-column gap-3">
-          <div v-for="(item, index) in cart.items" :key="index"
-               class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="row g-0 align-items-center p-3 p-md-4 bg-white">
-              <div class="col-auto">
-                <img :src="item.image" :alt="item.name"
-                     class="rounded-4 object-fit-cover shadow-sm"
-                     style="width: 110px; height: 110px; object-position: center;"/>
-              </div>
-              <div class="col px-4 d-flex flex-column justify-content-center">
-                <h5 class="fw-bolder text-dark mb-2">{{ item.name }}</h5>
-                <p class="text-muted small mb-2 fw-bold">
-                  單價：NT$ {{ Number(item.price).toLocaleString() }} / 小時
-                </p>
-                <div>
+        <div class="d-flex flex-column gap-4">
+
+          <!-- 每一筆租賃人 + 加購方案 -->
+          <div v-for="group in groupedCart" :key="group.rent.id">
+            <!-- 租人卡片 -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
+              <div class="row g-0 align-items-center p-3 p-md-4 bg-white">
+                <div class="col-auto">
+                  <img :src="group.rent.image" :alt="group.rent.name"
+                       class="rounded-4 object-fit-cover shadow-sm"
+                       style="width: 110px; height: 110px; object-position: center;"/>
+                </div>
+                <div class="col px-4 d-flex flex-column justify-content-center">
+                  <h5 class="fw-bolder text-dark mb-2">{{ group.rent.name }}</h5>
+                  <p class="text-muted small mb-2 fw-bold">
+                    單價：NT$ {{ Number(group.rent.price).toLocaleString() }} / 小時
+                  </p>
                   <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill shadow-sm">
-                    預約時數：{{ Number(item.hours) }} 小時
+                    預約時數：{{ Number(group.rent.hours) }} 小時
                   </span>
                 </div>
-              </div>
-              <div class="col-auto text-end ps-3 d-flex flex-column align-items-end justify-content-between h-100">
-                <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0"
-                        title="刪除項目" @click="removeItem(index)">
-                  <i class="bi bi-trash-fill"></i>
-                </button>
-                <h5 class="fw-bolder text-gradient mb-0">
-                  NT$ {{ (Number(item.price) * Number(item.hours)).toLocaleString() }}
-                </h5>
+                <div class="col-auto text-end ps-3 d-flex flex-column align-items-end justify-content-between h-100">
+                  <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0"
+                          title="刪除約會" @click="removeItem(group.rent.id)">
+                    <i class="bi bi-trash-fill"></i>
+                  </button>
+                  <h5 class="fw-bolder text-gradient mb-0">
+                    NT$ {{ (Number(group.rent.price) * Number(group.rent.hours)).toLocaleString() }}
+                  </h5>
+                </div>
               </div>
             </div>
+
+            <!-- 該租人對應的加購方案 -->
+            <div v-for="extra in group.extras" :key="extra.id"
+                 class="card border-0 shadow-sm rounded-4 overflow-hidden ms-5">
+              <div class="row g-0 align-items-center p-3 p-md-4 bg-white">
+                <div class="col px-4 d-flex flex-column justify-content-center">
+                  <h6 class="fw-bolder text-dark mb-2">{{ extra.name }}</h6>
+                  <p class="text-muted small mb-2 fw-bold">
+                    單價：NT$ {{ Number(extra.price).toLocaleString() }} / 小時
+                  </p>
+                  <span class="badge bg-warning bg-opacity-10 text-warning px-3 py-2 rounded-pill shadow-sm">
+                    加購時數：{{ Number(extra.hours) }} 小時
+                  </span>
+                </div>
+                <div class="col-auto text-end ps-3 d-flex flex-column align-items-end justify-content-between h-100">
+                  <h6 class="fw-bolder text-gradient mb-0">
+                    NT$ {{ (Number(extra.price) * Number(extra.hours)).toLocaleString() }}
+                  </h6>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分隔線 -->
+            <hr class="border border-2 border-primary my-4">
           </div>
+
         </div>
       </div>
 
+      <!-- 訂單摘要 -->
       <div class="col-lg-4">
         <div class="card border-0 shadow-sm rounded-4 p-4 p-xl-5 position-sticky" style="top: 100px;">
           <h5 class="fw-bolder text-dark mb-4">
@@ -117,6 +156,7 @@ function goToPayment() {
       </div>
     </div>
 
+    <!-- 空購物車 -->
     <div v-else class="text-center py-5 my-5 fade-in-up">
       <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border"
            style="width: 100px; height: 100px; color: var(--text-muted);">

@@ -18,12 +18,13 @@ const paymentMethods = ref([
 const selectedMethod = ref(paymentMethods.value[0]);
 const form = ref({ name: "", email: "", cardNumber: "" });
 
-// 從 CartPage 傳來的訂單資料
-const orderNo = route.query.orderNo || "";
+// 🚩 生成合法的商店訂單編號（僅英文字母 + 底線）
+const orderNo = "ORDER_" + new Date().getTime().toString().slice(-8);
+
 const amountRaw = route.query.amount;
 let amount = 0;
 
-// 🚩 強化防護：檢查 amountRaw 是否為有效數字
+// 檢查 amountRaw 是否為有效數字
 if (amountRaw && !isNaN(Number(amountRaw))) {
   amount = parseInt(amountRaw, 10);
 } else {
@@ -58,41 +59,17 @@ async function submitPayment() {
     cardNumber: form.value.cardNumber
   };
 
-  console.log("🔎 送出的 JSON:", payload, "amount 型別:", typeof payload.amount);
+  console.log("🔎 送出的 JSON:", payload);
 
   try {
-    const res = await axios.post('https://localhost:7196/Payment/CreateOrder', payload);
-    console.log("✅ 後端回傳:", res.data);
+    // 呼叫後端，後端會回 HTML form
+    const res = await axios.post('https://localhost:7091/Payment/CreateOrder', payload);
 
-    const data = {
-      MerchantID: res.data.merchantID,
-      TradeInfo: res.data.tradeInfo,
-      TradeSha: res.data.tradeSha,
-      Version: res.data.version
-    };
+    console.log("✅ 後端回傳 HTML form");
 
-    console.log("🔎 準備送出的表單資料:", data);
-
-    if (!data.MerchantID || !data.TradeInfo || !data.TradeSha || !data.Version) {
-      alert("後端回傳資料不完整，請檢查 CreateOrder 方法");
-      return;
-    }
-
-    const formEl = document.createElement('form');
-    formEl.method = 'post';
-    formEl.action = 'https://ccore.newebpay.com/MPG/mpg_gateway';
-
-    Object.keys(data).forEach(key => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = key;
-      input.value = data[key];
-      formEl.appendChild(input);
-    });
-
-    document.body.appendChild(formEl);
-    console.log("✅ Form ready, submitting...");
-    formEl.submit();
+    // 直接渲染 HTML，讓瀏覽器自動送出表單
+    const newWindow = window.open("", "_self");
+    newWindow.document.write(res.data);
   } catch (err) {
     console.error("❌ 付款失敗:", err);
     alert("付款流程發生錯誤，請稍後再試");
