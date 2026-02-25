@@ -12,7 +12,7 @@ const matchCount = ref(0)
 const message = ref('')
 
 // 模擬目前登入使用者 ID
-const userId = 6
+const userId = 10
 
 // 候選人
 async function Candidate() {
@@ -53,14 +53,21 @@ async function nextPerson(isLiked) {
   if (person.value[currentIndex.value]) {
     const candidate = person.value[currentIndex.value]
 
-    // 互動
     try {
-      await axios.post("/match/interact", {
+      const res = await axios.post("/match/interact", {
         likerUserId: userId,
         likedUserId: candidate.userId,
         isLiked: isLiked,
         score: candidate.probability
       })
+
+      // ✅ 如果後端回傳「配對成功」，就觸發事件
+      if (res.data?.isMatchSuccess) {
+        window.dispatchEvent(new CustomEvent("match-success", {
+          detail: { userName: candidate.name }
+        }))
+      }
+
     } catch (err) {
       console.error("互動紀錄失敗:", err)
       if (err.response?.data?.message) {
@@ -102,7 +109,7 @@ async function nextPerson(isLiked) {
         <i class="bi bi-emoji-frown display-4"></i>
       </div>
       <h3 class="fw-bold text-gradient mb-3">{{ message }}</h3>
-      <p class="text-muted">請稍後再嘗試，或升級 Premium 解鎖更多配對！</p>
+      <p class="text-muted">請稍後再嘗試！</p>
       
       <button class="btn btn-outline-secondary rounded-pill mt-3 btn-sm" @click="matchCount = 0; currentIndex = 0; message = ''">
         重新測試 (開發用)

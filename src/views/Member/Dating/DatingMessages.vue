@@ -4,16 +4,34 @@ import ChatBox from '@/components/datingChatBox.vue'
 import axios from 'axios'
 import * as signalR from '@microsoft/signalr'
 
-const conversations = ref([])   // ✅ 直接用 ref 管理，不再用 Pinia
+const conversations = ref([])
 const selectedChat = ref(null)
 const isMobile = ref(false)
 const connection = ref(null)
-
-// 🔥 用參數控制，目前暫時先用 4
-const userId = 4
+const userId = 6
 
 function checkMobile() {
   isMobile.value = window.innerWidth <= 992
+}
+
+// 🕒 格式化訊息時間 (新版跨日判斷)
+function formatMessageTime(sendAt) {
+  const msgDate = new Date(sendAt)
+  const now = new Date()
+
+  const isSameDay = msgDate.toDateString() === now.toDateString()
+  const diffDays = Math.floor((now - msgDate) / (1000 * 60 * 60 * 24))
+
+  if (isSameDay) {
+    return msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  } else if (diffDays === 1 || msgDate.getDate() !== now.getDate()) {
+    // ✅ 不管是否滿 24 小時，只要日期不同就顯示「昨天」
+    return '昨天'
+  } else if (diffDays < 7) {
+    return `${diffDays}天前`
+  } else {
+    return msgDate.toLocaleDateString([], { year: 'numeric', month: '2-digit', day: '2-digit' })
+  }
 }
 
 onMounted(async () => {
@@ -21,105 +39,78 @@ onMounted(async () => {
   checkMobile()
   document.body.style.overflow = 'hidden'
 
-  // 建立 SignalR 連線
   connection.value = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:7091/chatHub")
+    .withUrl('https://localhost:7091/chatHub')
     .withAutomaticReconnect()
     .build()
 
   await connection.value.start()
+  await connection.value.invoke('JoinUser', userId.toString())
 
-  // 加入使用者群組
-  await connection.value.invoke("JoinUser", userId.toString())
-
-  // 監聽訊息推播
-  connection.value.on("ReceiveMessage", (message) => {
-    const chat = conversations.value.find(c => c.id === message.matchedId)
+  connection.value.on('ReceiveMessage', (message) => {
+    const chat = conversations.value.find((c) => c.id === message.matchedId)
     if (chat) {
       chat.messages.push({
         chatId: message.chatId,
         from: message.senderId === userId ? '我' : chat.name,
         text: message.message,
-        time: new Date(message.sendAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        sendAt: message.sendAt, // ✅ 保留原始時間
       })
-
-      if (message.receiverId === userId) {
-        chat.unreadCount = message.unreadCount
-      }
+      if (message.receiverId === userId) chat.unreadCount = message.unreadCount
     }
   })
 
-  // 監聽未讀重置
-  connection.value.on("ResetUnread", (data) => {
-    const chat = conversations.value.find(c => c.id === data.roomId)
-    if (chat) {
-      chat.unreadCount = data.unreadCount
-    }
+  connection.value.on('ResetUnread', (data) => {
+    const chat = conversations.value.find((c) => c.id === data.roomId)
+    if (chat) chat.unreadCount = data.unreadCount
   })
 
-  // 監聽解除配對
-  connection.value.on("UnMatched", (data) => {
-    conversations.value = conversations.value.filter(c => c.id !== data.roomId)
+  connection.value.on('UnMatched', (data) => {
+    conversations.value = conversations.value.filter((c) => c.id !== data.roomId)
   })
 
-  // 監聽新聊天室建立
-  connection.value.on("ChatRoomCreated", (data) => {
+  connection.value.on('ChatRoomCreated', (data) => {
     conversations.value.push({
       id: data.roomId,
       name: data.otherUserNickname,
-      avatar: data.otherUserPhoto || "/images/default-avatar.png",
+      avatar: data.otherUserPhoto || '/images/default-avatar.png',
       messages: [],
-      unreadCount: 0
+      unreadCount: 0,
     })
-
-    window.dispatchEvent(new CustomEvent("match-success", {
-      detail: { userName: data.otherUserNickname }
-    }))
   })
 
-  // 撈聊天室清單
   const res = await axios.get(`https://localhost:7091/api/MatchChat/list/${userId}`)
-  conversations.value = res.data.map(c => ({
+  conversations.value = res.data.map((c) => ({
     id: c.roomId,
     name: c.otherUserNickname,
     avatar: c.otherUserPhoto,
     otherUserId: c.otherUserId,
-    messages: c.lastMessage ? [{
-      chatId: c.lastMessageId,
-      text: c.lastMessage,
-      time: new Date(c.lastTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }] : [],
-    unreadCount: c.unreadCount
+    messages: c.lastMessage
+      ? [
+          {
+            chatId: c.lastMessageId,
+            text: c.lastMessage,
+            sendAt: c.lastTime, // ✅ 保留原始時間
+          },
+        ]
+      : [],
+    unreadCount: c.unreadCount,
   }))
 })
 
 function openChat(chat) {
   selectedChat.value = chat
   chat.unreadCount = 0
+  connection.value.invoke('JoinRoom', chat.id.toString())
 
-  connection.value.invoke("JoinRoom", chat.id.toString())
-
-  axios.get(`https://localhost:7091/api/MatchChat/${chat.id}?userId=${userId}`)
-    .then(res => {
-      chat.messages = res.data.map(m => ({
-        chatId: m.chatId,
-        from: m.senderId === userId ? '我' : chat.name,
-        text: m.message,
-        time: new Date(m.sendAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }))
-
-      const lastReadMessageId = chat.messages.length > 0 
-        ? chat.messages[chat.messages.length - 1].chatId 
-        : 0
-
-      axios.post("https://localhost:7091/api/MatchChat/read/reset", {
-        roomId: chat.id,
-        userId: userId,
-        lastReadMessageId: lastReadMessageId
-      }).catch(err => {
-        console.error("重置未讀失敗:", err)
-      })
-    })
+  axios.get(`https://localhost:7091/api/MatchChat/${chat.id}?userId=${userId}`).then((res) => {
+    chat.messages = res.data.map((m) => ({
+      chatId: m.chatId,
+      from: m.senderId === userId ? '我' : chat.name,
+      text: m.message,
+      sendAt: m.sendAt, // ✅ 保留原始時間
+    }))
+  })
 }
 
 function backToList() {
@@ -136,9 +127,14 @@ function getLastMessage(chat) {
 <template>
   <div class="card glass-skin border-0 rounded-4 chat-container overflow-hidden fade-in-up">
     <div class="row g-0 h-100">
-      
-      <div class="col-12 col-lg-4 h-100 d-flex flex-column chat-sidebar" v-if="!isMobile || !selectedChat">
-        <div class="p-3 border-bottom d-flex align-items-center flex-shrink-0" style="height: 80px; border-color: rgba(255,255,255,0.4) !important;">
+      <div
+        class="col-12 col-lg-4 h-100 d-flex flex-column chat-sidebar"
+        v-if="!isMobile || !selectedChat"
+      >
+        <div
+          class="p-3 border-bottom d-flex align-items-center flex-shrink-0"
+          style="height: 80px; border-color: rgba(255, 255, 255, 0.4) !important"
+        >
           <h4 class="fw-bold mb-0 text-gradient text-truncate">我的訊息</h4>
         </div>
 
@@ -147,20 +143,35 @@ function getLastMessage(chat) {
             v-for="chat in conversations"
             :key="chat.id"
             class="chat-list-item d-flex align-items-center p-3 mb-2 rounded-4 transition-all"
-            :class="{ 'active': selectedChat?.id === chat.id }"
+            :class="{ active: selectedChat?.id === chat.id }"
             @click="openChat(chat)"
           >
             <div class="position-relative me-3 flex-shrink-0">
-              <img :src="chat.avatar" class="rounded-circle object-fit-cover shadow-sm border border-2 border-white" width="56" height="56" alt="avatar" />
-              <span v-if="chat.unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white">
+              <img
+                :src="chat.avatar"
+                class="rounded-circle object-fit-cover shadow-sm border border-2 border-white"
+                width="56"
+                height="56"
+                alt="avatar"
+              />
+              <span
+                v-if="chat.unreadCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white"
+              >
                 {{ chat.unreadCount }}
               </span>
             </div>
-            
+
             <div class="flex-grow-1 min-w-0">
               <div class="d-flex justify-content-between align-items-center mb-1">
                 <h6 class="mb-0 fw-bold text-dark text-truncate">{{ chat.name }}</h6>
-                <small class="text-muted ms-2 flex-shrink-0">{{ chat.messages[chat.messages.length - 1]?.time }}</small>
+                <small class="text-muted ms-2 flex-shrink-0">
+                  {{
+                    chat.messages[chat.messages.length - 1]?.sendAt
+                      ? formatMessageTime(chat.messages[chat.messages.length - 1].sendAt)
+                      : ''
+                  }}
+                </small>
               </div>
               <p class="mb-0 small text-muted text-truncate">{{ getLastMessage(chat) }}</p>
             </div>
@@ -178,7 +189,7 @@ function getLastMessage(chat) {
         <div class="flex-grow-1 overflow-hidden d-flex flex-column" v-if="selectedChat">
           <ChatBox :chat="selectedChat" class="flex-grow-1" />
         </div>
-        
+
         <div v-else class="h-100 d-flex align-items-center justify-content-center text-center p-5">
           <div class="text-muted opacity-50">
             <i class="bi bi-chat-heart-fill display-1 mb-3 d-block"></i>
@@ -187,12 +198,9 @@ function getLastMessage(chat) {
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
-
-
 
 <style scoped>
 .chat-container {

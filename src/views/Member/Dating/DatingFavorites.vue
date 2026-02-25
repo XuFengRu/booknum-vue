@@ -1,15 +1,35 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import axios from 'axios'
 import DatingCard from '@/components/datingCard.vue'
 
 const selectedUser = ref(null)
 const users = ref([]) // API 填充
-const isPremium = ref(false) // 新增 Premium 狀態
+
+// 分頁控制
+const currentPage = ref(1)
+const pageSize = 4
+
+const pagedUsers = computed(() => {
+  const start = (currentPage.value - 1) * pageSize
+  return users.value.slice(start, start + pageSize)
+})
+
+function nextPage() {
+  if (currentPage.value * pageSize < users.value.length) {
+    currentPage.value++
+  }
+}
+
+function prevPage() {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
 
 function openProfile(index) {
-  selectedUser.value = index
+  selectedUser.value = (currentPage.value - 1) * pageSize + index
 }
 
 function handleAction() {
@@ -32,7 +52,6 @@ onMounted(async () => {
       userId: c.userId,
       probability: c.probability
     }))
-    isPremium.value = res.data.isPremium // 後端回傳的 Premium 狀態
   } catch (err) {
     console.error("載入 ILike API 失敗:", err)
   }
@@ -40,6 +59,7 @@ onMounted(async () => {
 </script>
 
 <template>
+  <div class="user-list-container">
   <div class="w-100 fade-in-up">
 
     <template v-if="selectedUser === null">
@@ -51,7 +71,7 @@ onMounted(async () => {
       </div>
 
       <div v-if="users.length === 0" class="text-center py-5 my-5 fade-in-up">
-        <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border" 
+        <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border"  
              style="width: 100px; height: 100px; color: var(--text-muted);">
           <i class="bi bi-inbox display-4"></i>
         </div>
@@ -64,11 +84,9 @@ onMounted(async () => {
       </div>
 
       <div class="row g-4">
-        <div v-for="(user, index) in users" :key="index" class="col-6 col-md-4 col-xl-3">
-          
-          <!-- Premium 顯示高清 -->
-          <div v-if="isPremium"
-               class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
+        <div v-for="(user, index) in pagedUsers" :key="index" class="col-6 col-md-4 col-xl-3">
+          <!-- 直接顯示卡片 -->
+          <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative user-card cursor-pointer"
                @click="openProfile(index)">
             <div class="ratio image-ratio">
               <img :src="user.avatar" class="w-100 h-100 object-fit-cover transition-all" :alt="user.name">
@@ -79,25 +97,18 @@ onMounted(async () => {
               <p class="text-white-50 small mb-0"><i class="bi bi-geo-alt-fill me-1"></i>{{ user.location }}</p>
             </div>
           </div>
-
-          <!-- 非 Premium 模糊化 -->
-          <div v-else class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 position-relative bg-dark user-card">
-            <div class="ratio image-ratio">
-              <img :src="user.avatar" class="w-100 h-100 object-fit-cover blur-img" alt="locked">
-            </div>
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-3 locked-overlay">            
-              <div class="gem-icon-wrapper mb-3">
-                <i class="bi bi-gem display-4 text-warning" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></i>
-              </div>
-              <h5 class="fw-bold text-white text-shadow mb-2">升級 Premium</h5>
-              <p class="text-white text-shadow mb-4 px-2">解鎖心動對象，不再錯過任何緣分。</p>
-              <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning rounded-pill fw-bold shadow-lg fs-5">
-                立即解鎖
-              </RouterLink>
-            </div>
-          </div>
-
         </div>
+      </div>
+
+      <!-- 分頁控制 -->
+      <div class="d-flex justify-content-center align-items-center mt-4" v-if="users.length > pageSize">
+        <button class="btn btn-light rounded-pill me-2" @click="prevPage" :disabled="currentPage === 1">
+          上一頁
+        </button>
+        <span class="mx-3 text-muted small">第 {{ currentPage }} / {{ Math.ceil(users.length / pageSize) }} 頁</span>
+        <button class="btn btn-light rounded-pill" @click="nextPage" :disabled="currentPage * pageSize >= users.length">
+          下一頁
+        </button>
       </div>
 
       <!-- 新增提醒字 -->
@@ -111,8 +122,8 @@ onMounted(async () => {
         
         <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1400px;">
           
-          <button @click="selectedUser = null" 
-                  class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
+          <button @click="selectedUser = null"  
+                  class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn"  
                   title="返回列表">
             <i class="bi bi-arrow-left"></i>
           </button>
@@ -123,6 +134,7 @@ onMounted(async () => {
       </div>
     </template>
 
+  </div>
   </div>
 </template>
 
@@ -142,17 +154,6 @@ onMounted(async () => {
 .overlay-gradient {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.3) 60%, transparent 100%);
 }
-.blur-img {
-  filter: blur(18px) brightness(1.3) contrast(0.8);
-  transform: scale(1.2);
-}
-.locked-overlay {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(2px);
-}
-.text-shadow {
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-}
 .custom-back-btn {
   position: absolute !important;
   left: 50px !important;
@@ -161,6 +162,11 @@ onMounted(async () => {
 @media (max-width: 767.98px) {
   .custom-back-btn {
     left: 10px !important;
+  }
+  .user-list-container {
+    max-height: calc(100vh - 200px); /* 視需求調整 */
+    overflow-y: auto;
+    overflow-x: hidden; /* ✅ 禁止橫向捲動 */
   }
 }
 </style>

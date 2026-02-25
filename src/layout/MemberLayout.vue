@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { usedatingRead } from '@/stores/datingRead'
 import Swal from 'sweetalert2'
+import DatingSuccessModal from '@/components/datingSuccessModal.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -94,6 +95,13 @@ const currentMenu = computed(() => {
 })
 
 const isActiveService = (path) => route.path.includes(path)
+
+const datingModal = ref(null)
+
+window.addEventListener("match-success", (e) => {
+  console.log("事件觸發:", e.detail.userName)
+  datingModal.value?.show(e.detail.userName)
+})
 </script>
 
 <template>
@@ -184,6 +192,7 @@ const isActiveService = (path) => route.path.includes(path)
       <div class="fade-in-up">
         <RouterView />
       </div>
+      <DatingSuccessModal ref="datingModal" />
     </main>
   </div>
 </template>

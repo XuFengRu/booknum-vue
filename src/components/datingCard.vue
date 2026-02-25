@@ -18,7 +18,7 @@ defineEmits(['like', 'reject'])
     <button
       v-if="showActions"
       class="btn btn-light btn-circle btn-circle-lg flex-shrink-0 btn-reject"
-      @click="$emit('reject')"
+      @click="$emit('reject', person)"
       title="跳過"
     >
       <i class="bi bi-x-lg text-danger opacity-75"></i>
@@ -87,7 +87,7 @@ defineEmits(['like', 'reject'])
     <button
       v-if="showActions"
       class="btn btn-light btn-circle btn-circle-lg flex-shrink-0 btn-like"
-      @click="$emit('like')"
+      @click="$emit('like', person)"
       title="喜歡"
     >
       <i class="bi bi-heart-fill text-danger opacity-75"></i>
