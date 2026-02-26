@@ -61,6 +61,7 @@ const router = createRouter({
         { path: 'dating/info', name: 'member-info', component: () => import('../views/Member/Dating/DatingInfo.vue') },
 
         // --- 出租男女友 (Rent) ---
+        { path: 'rent/add', name: 'member-rent-add', component: () => import('../views/Member/Rent/Add.vue') },
         { path: 'rent', name: 'member-rent', component: () => import('../views/Member/Rent/RentView.vue') },
         { path: 'rent/payment', name: 'member-rent-payment', component: () => import('../views/Member/Rent/Payment.vue') },
         { path: 'rent/cart', name: 'member-rent-cart', component: () => import('../views/Member/Rent/cart.vue') },
