@@ -1,79 +1,76 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+
+// 準備取得 JWT Token 的輔助函式
+const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token');
 
 const formData = ref({
-  name: '張小明',
-  gender: 'M',
-  birthday: '1990-05-15',
-  phone: '0912345678',
-  email: 'xiaoming@example.com',
-  lastLogin: '2026-02-20 09:30',
-  lastIp: '192.168.1.100',
+    name: '',
+    gender: '',
+    birthday: '',
+    phone: '',
+    email: '',
+    lastLogin: '',
+    lastIp: ''
 })
 
-const isPremium = ref(false)
-const premiumExpiryDate = ref('無')
-const autoRenew = ref(false)   // 紀錄是否自動續訂
-const router = useRouter()
+const isPremium = ref(true)
+const premiumExpiryDate = ref('2026-12-31')
+const isSubmitting = ref(false)
 
-const userId = 6
-
+// 🌟 1. 畫面載入時：自動抓取會員資料
 onMounted(async () => {
-  try {
-    const res = await axios.get(`https://localhost:7091/api/MatchPremium/check/${userId}`)
-    if (res.data?.endAt) {
-      const endDate = new Date(res.data.endAt)   // ✅ 改用 new Date()
-      const now = new Date()
-
-      isPremium.value = endDate > now
-      premiumExpiryDate.value = res.data.endAt.split('T')[0]
-      autoRenew.value = res.data.autoRenew === true
-    } else {
-      isPremium.value = false
-      premiumExpiryDate.value = '無'
-      autoRenew.value = false
+    try {
+        const response = await axios.get('/Member/Profile', {
+            headers: { Authorization: `Bearer ${getToken()}` } // 帶上 JWT 鑰匙
+        })
+        formData.value = response.data
+    } catch (error) {
+        console.error("無法取得會員資料", error)
+        Swal.fire({ icon: 'error', title: '讀取失敗', text: '無法取得個人資料，請重新登入' })
     }
-  } catch (err) {
-    console.error('載入 Premium 狀態失敗:', err)
-  }
 })
 
-function goPremiumPage() {
-  router.push({ name: 'member-bookpremium' })
-}
+// 🌟 2. 儲存變更
+const handleSave = async () => {
+    if (isSubmitting.value) return
+    isSubmitting.value = true
 
-async function cancelPremium() {
-  try {
-    const res = await axios.post(`https://localhost:7091/api/MatchPremium/cancel`, userId, {
-      headers: { 'Content-Type': 'application/json' },
-    })
-    alert(res.data.message)
+    try {
+        Swal.fire({ title: '儲存中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
 
-    // 更新狀態
-    autoRenew.value = false
+        await axios.put('/Member/Profile', {
+            name: formData.value.name,
+            phone: formData.value.phone,
+            gender: formData.value.gender,
+            birthday: formData.value.birthday
+        }, {
+            headers: { Authorization: `Bearer ${getToken()}` } // 一樣要帶上鑰匙
+        })
 
-    // 再呼叫一次 check API，確保 EndAt 與 isPremium 最新
-    const checkRes = await axios.get(`https://localhost:7091/api/MatchPremium/check/${userId}`)
-    if (checkRes.data?.endAt) {   // ✅ 改成小寫
-      const endDate = new Date(checkRes.data.endAt)
-      const now = new Date()
-      isPremium.value = endDate > now
-      premiumExpiryDate.value = checkRes.data.endAt.split('T')[0]   // ✅ 保留到期日
-      autoRenew.value = checkRes.data.autoRenew === true
-    } else {
-      isPremium.value = false
-      premiumExpiryDate.value = '無'
+        // 更新 Storage 裡的名字，讓右上角的名稱跟著變
+        const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (userStr) {
+            let userObj = JSON.parse(userStr);
+            userObj.name = formData.value.name;
+            if (localStorage.getItem('user')) localStorage.setItem('user', JSON.stringify(userObj));
+            if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(userObj));
+        }
+
+        Swal.fire({ icon: 'success', title: '儲存成功', text: '個人資料已更新', confirmButtonColor: '#0d6efd' })
+        
+        // 強制重新整理頁面以更新 Layout 的名字 (或可搭配 Vuex/Pinia，這裡用重整最簡單)
+        setTimeout(() => location.reload(), 1500)
+    } catch (error) {
+        Swal.fire({ icon: 'error', title: '儲存失敗', text: '資料更新失敗，請稍後再試' })
+    } finally {
+        isSubmitting.value = false
     }
-  } catch (err) {
-    console.error('取消訂閱失敗:', err)
-    alert('取消訂閱失敗')
-  }
 }
-
 </script>
 
 <template>
@@ -153,10 +150,10 @@ async function cancelPremium() {
           </div>
 
           <div class="d-flex gap-3 mt-auto pt-4 border-top border-light-subtle">
-            <button class="btn btn-light rounded-pill flex-fill text-nowrap fw-bold">取消</button>
-            <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm">
-              儲存變更
-            </button>
+              <button class="btn btn-light rounded-pill flex-fill text-nowrap fw-bold">取消</button>
+              <button @click="handleSave" :disabled="isSubmitting" class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm">
+                 {{ isSubmitting ? '儲存中...' : '儲存變更' }}
+              </button>
           </div>
         </div>
 

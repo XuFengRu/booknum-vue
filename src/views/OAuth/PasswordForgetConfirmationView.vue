@@ -1,11 +1,45 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
+
+const route = useRoute()
+const userEmail = ref(route.query.email || '') 
+
+const handleResend = async () => {
+    if (!userEmail.value) {
+        Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊，請返回上一步重新輸入' })
+        return
+    }
+
+    try {
+        Swal.fire({
+            title: '重新發送中...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading() }
+        })
+
+        const response = await axios.post('/Auth/ForgotPassword', {
+            email: userEmail.value
+        })
+
+        Swal.fire({
+            icon: 'success',
+            title: '已重新發送',
+            text: response.data.message || '請再次檢查您的信箱（包含垃圾郵件匣）',
+            confirmButtonColor: '#0d6efd'
+        })
+    } catch (error) {
+        const errorMsg = error.response?.data?.message || '系統忙碌中，請稍後再試'
+        Swal.fire({ icon: 'error', title: '發送失敗', text: errorMsg })
+    }
+}
 </script>
 
 <template>
   <OAuthCard>
-    
     <template #left-side>
       <i class="bi bi-envelope-heart-fill floating-obj fs-1" style="left: 20%; animation-duration: 15s;"></i>
       <i class="bi bi-send-fill floating-obj fs-3" style="left: 60%; animation-duration: 12s; animation-delay: 2s;"></i>
@@ -21,7 +55,6 @@ import OAuthCard from '@/components/OAuthCard.vue'
     </template>
 
     <div style="max-width: 450px; margin: 0 auto;">
-      
       <div class="text-center text-lg-start mb-4">
         <h2 class="fw-bold text-gradient mb-2">請查收信件</h2>
         <p class="text-muted">重設密碼的步驟已發送至您的信箱。</p>
@@ -51,11 +84,9 @@ import OAuthCard from '@/components/OAuthCard.vue'
       <div class="text-center border-top border-secondary border-opacity-10 pt-3">
         <p class="text-muted small opacity-75 mb-0">
           沒收到信？請檢查垃圾郵件夾，或 
-          <a href="#" class="fw-bold text-gradient text-decoration-none">重新發送</a>
+          <a href="#" @click.prevent="handleResend" class="fw-bold text-gradient text-decoration-none">重新發送</a>
         </p>
       </div>
-
     </div>
-
   </OAuthCard>
 </template>

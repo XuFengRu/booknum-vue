@@ -1,21 +1,79 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
 
 const router = useRouter()
+const route = useRoute()
+
 const newPassword = ref('')
 const confirmPassword = ref('')
 const isError = ref(false)
+const token = ref('')
+const isSubmitting = ref(false) // 防連點狀態
 
-const handleResetSubmit = () => {
+onMounted(() => {
+    token.value = route.query.token
+    if (!token.value) {
+        isError.value = true
+    }
+})
+
+const handleResetSubmit = async () => {
+    if (isSubmitting.value) return;
+
+    // 防呆：檢查密碼是否一致
     if (newPassword.value !== confirmPassword.value) {
-        alert('密碼與確認密碼不符')
+        Swal.fire({
+            icon: 'warning',
+            title: '密碼不一致',
+            text: '兩次輸入的密碼不相同，請重新確認',
+            confirmButtonColor: '#f8c471'
+        })
         return
     }
 
-    console.log('提交新密碼:', newPassword.value)
-    router.push('/login')
+    // 防呆：同步註冊時的密碼強度規定
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(newPassword.value)) {
+        Swal.fire({ 
+            icon: 'warning', 
+            title: '密碼強度不足', 
+            text: '新密碼必須至少 8 個字元，且同時包含「英文字母」與「數字」',
+            confirmButtonColor: '#f8c471' 
+        })
+        return;
+    }
+
+    isSubmitting.value = true; // 鎖定按鈕
+
+    try {
+        const response = await axios.post('/Auth/ResetPassword', {
+            token: token.value,
+            newPassword: newPassword.value
+        })
+
+        await Swal.fire({
+            icon: 'success',
+            title: '重設成功',
+            text: response.data.message || '密碼已成功更新！請使用新密碼登入。',
+            confirmButtonColor: '#0d6efd'
+        })
+        
+        router.push('/login')
+        
+    } catch (error) {
+        if (error.response && error.response.data) {
+            Swal.fire({ icon: 'error', title: '重設失敗', text: error.response.data.message, confirmButtonColor: '#dc3545' })
+            isError.value = true
+        } else {
+            Swal.fire({ icon: 'error', title: '連線失敗', text: '請檢查您的網路狀態', confirmButtonColor: '#dc3545' })
+        }
+    } finally {
+        isSubmitting.value = false;
+    }
 }
 </script>
 
@@ -62,8 +120,10 @@ const handleResetSubmit = () => {
         </div>
 
         <div class="d-grid mt-4">
-          <button type="submit" class="btn btn-primary fs-5 shadow-sm">
-            確認重設 <i class="bi bi-check-circle-fill ms-2"></i>
+          <button type="submit" class="btn btn-primary fs-5 shadow-sm" :disabled="isSubmitting">
+            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ isSubmitting ? '處理中...' : '確認重設' }}
+            <i v-if="!isSubmitting" class="bi bi-check-circle-fill ms-2"></i>
           </button>
         </div>
       </form>

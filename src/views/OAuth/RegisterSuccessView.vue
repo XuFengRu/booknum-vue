@@ -1,15 +1,37 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
+
+const route = useRoute()
+const userEmail = ref(route.query.email || '') // 🌟 抓取 Email
+
+const handleResend = async () => {
+    if (!userEmail.value) {
+        Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊' })
+        return
+    }
+
+    try {
+        Swal.fire({ title: '發送中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
+
+        const response = await axios.post('/Auth/ResendVerifyEmail', { email: userEmail.value })
+
+        Swal.fire({ icon: 'success', title: '已重新發送', text: response.data.message })
+    } catch (error) {
+        const errorMsg = error.response?.data?.message || '發送失敗'
+        Swal.fire({ icon: 'error', title: '錯誤', text: errorMsg })
+    }
+}
 </script>
 
 <template>
   <OAuthCard>
-    
     <template #left-side>
       <i class="bi bi-heart-fill floating-obj fs-3" style="left: 15%; animation-delay: 0s;"></i>
       <i class="bi bi-envelope-check-fill floating-obj fs-2" style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
-
       <div class="position-relative z-2 text-center">
         <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
           <i class="bi bi-check-lg fs-1" style="color: var(--bs-primary);"></i>
@@ -21,7 +43,6 @@ import OAuthCard from '@/components/OAuthCard.vue'
     </template>
 
     <div style="max-width: 450px; margin: 0 auto;">
-      
       <div class="text-center text-lg-start mb-4">
         <h2 class="fw-bold text-gradient mb-2">註冊成功！</h2>
         <p class="text-muted">您的帳號已建立，請完成最後驗證。</p>
@@ -51,11 +72,9 @@ import OAuthCard from '@/components/OAuthCard.vue'
       <div class="text-center border-top border-secondary border-opacity-10 pt-3">
         <p class="text-muted small opacity-75 mb-0">
           沒收到信？請檢查垃圾郵件夾，或 
-          <a href="#" class="fw-bold text-gradient text-decoration-none">重新發送</a>
+          <a href="#" @click.prevent="handleResend" class="fw-bold text-gradient text-decoration-none">重新發送</a>
         </p>
       </div>
-
     </div>
-
   </OAuthCard>
 </template>

@@ -13,6 +13,7 @@ const isSidebarOpen = ref(false)
 // Storage 中讀取登入者的資料
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
 const currentUserName = ref(storedUser.name || '會員')
+const currentUserPhoto = ref(storedUser.photo || null)
 // 登出
 const handleLogout = () => {
   Swal.fire({
@@ -189,8 +190,11 @@ onMounted(async () => {
 
             <div class="dropdown">
                 <button class="bg-white bg-opacity-75 border border-white shadow-sm rounded-pill d-flex align-items-center gap-2 ps-3 pe-1 py-1 transition-all" data-bs-toggle="dropdown" style="backdrop-filter: blur(10px);">
-                  <span class="fw-bold text-dark small text-nowrap">UserName</span>
-                  <img src="/images/Girlfriend1.jpg" class="rounded-circle border border-2 border-white" width="36" height="36" alt="User">
+                  <span class="fw-bold text-dark small text-nowrap">{{ currentUserName }}</span>
+                  <img v-if="currentUserPhoto" :src="currentUserPhoto" class="rounded-circle border border-2 border-white bg-white" width="36" height="36" style="object-fit: cover;" alt="User">
+                  <div v-else class="rounded-circle border border-2 border-white bg-light d-flex justify-content-center align-items-center text-secondary" style="width: 36px; height: 36px;">
+                      <i class="bi bi-person-fill fs-5"></i>
+                  </div>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 mt-2">
                     <li><RouterLink class="dropdown-item py-2" to="/member/profile"><i class="bi bi-person me-2"></i>個人資料</RouterLink></li>

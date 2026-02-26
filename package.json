@@ -21,7 +21,8 @@
     "pinia": "^3.0.4",
     "sweetalert2": "^11.26.20",
     "vue": "^3.5.27",
-    "vue-router": "^5.0.1"
+    "vue-router": "^5.0.1",
+    "vue3-google-login": "^2.0.37"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
