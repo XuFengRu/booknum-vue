@@ -36,9 +36,14 @@ const router = createRouter({
       component: () => import('../views/OAuth/RegisterView.vue'),
     },
     {
-      path: '/register/success',
+      path: '/register-success',
       name: 'register-success',
       component: () => import('../views/OAuth/RegisterSuccessView.vue'),
+    },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('../views/OAuth/VerifyEmailView.vue'),
     },
     // ★★★★★★★ 設定各自路由 ★★★★★★★
 {

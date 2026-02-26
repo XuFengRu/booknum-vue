@@ -1,11 +1,59 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import Swal from 'sweetalert2'
+
+const router = useRouter()
+const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token');
 
 const pwForm = ref({
     current: '',
     new: '',
     confirm: ''
 })
+
+// 🌟 處理停用或刪除 (兩者都是設為 Status = 0)
+const handleDeactivate = (actionType) => {
+    const title = actionType === 'disable' ? '確定要停用帳戶嗎？' : '確定要永久刪除帳戶嗎？';
+    const text = actionType === 'disable' ? '停用後您的檔案將不會被其他人看見。' : '系統會將您的狀態設為刪除，此操作無法復原。';
+    const confirmBtnText = actionType === 'disable' ? '確認停用' : '確認刪除';
+
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: confirmBtnText,
+        cancelButtonText: '取消',
+        reverseButtons: true
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            try {
+                Swal.fire({ title: '處理中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
+
+                // 呼叫 API 將 Status 設為 0
+                await axios.post('/Member/Deactivate', {}, {
+                    headers: { Authorization: `Bearer ${getToken()}` }
+                })
+
+                await Swal.fire({ icon: 'success', title: '操作成功', text: '您的帳號已成功停用/刪除，即將登出。', confirmButtonColor: '#0d6efd' })
+
+                // 清除本地儲存並登出
+                localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                sessionStorage.removeItem('token')
+                sessionStorage.removeItem('user')
+                
+                router.push('/login')
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: '操作失敗', text: '系統忙碌中，請稍後再試。' })
+            }
+        }
+    })
+}
 </script>
 
 <template>
@@ -100,7 +148,7 @@ const pwForm = ref({
                       <h6 class="fw-bold mb-1 text-dark">停用帳戶</h6>
                       <small class="text-muted">暫時停用您的帳戶 (Status = 0)</small>
                   </div>
-                  <button class="btn btn-outline-danger fw-bold rounded-pill px-4">停用</button>
+                  <button @click="handleDeactivate('disable')" class="btn btn-outline-danger fw-bold rounded-pill px-4">停用</button>
               </div>
 
               <div class="d-flex justify-content-between align-items-center">
@@ -108,7 +156,7 @@ const pwForm = ref({
                       <h6 class="fw-bold mb-1 text-dark">刪除帳戶</h6>
                       <small class="text-muted">永久刪除您的帳戶和所有資料</small>
                   </div>
-                  <button class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm">刪除帳戶</button>
+                  <button @click="handleDeactivate('delete')" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm">刪除帳戶</button>
               </div>
           </div>
 

@@ -1,20 +1,76 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
+// 準備取得 JWT Token 的輔助函式
+const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token');
+
 const formData = ref({
-    name: '張小明',
-    gender: 'M',
-    birthday: '1990-05-15',
-    phone: '0912345678',
-    email: 'xiaoming@example.com',
-    lastLogin: '2026-02-20 09:30',
-    lastIp: '192.168.1.100'
+    name: '',
+    gender: '',
+    birthday: '',
+    phone: '',
+    email: '',
+    lastLogin: '',
+    lastIp: ''
 })
 
 const isPremium = ref(true)
 const premiumExpiryDate = ref('2026-12-31')
+const isSubmitting = ref(false)
+
+// 🌟 1. 畫面載入時：自動抓取會員資料
+onMounted(async () => {
+    try {
+        const response = await axios.get('/Member/Profile', {
+            headers: { Authorization: `Bearer ${getToken()}` } // 帶上 JWT 鑰匙
+        })
+        formData.value = response.data
+    } catch (error) {
+        console.error("無法取得會員資料", error)
+        Swal.fire({ icon: 'error', title: '讀取失敗', text: '無法取得個人資料，請重新登入' })
+    }
+})
+
+// 🌟 2. 儲存變更
+const handleSave = async () => {
+    if (isSubmitting.value) return
+    isSubmitting.value = true
+
+    try {
+        Swal.fire({ title: '儲存中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
+
+        await axios.put('/Member/Profile', {
+            name: formData.value.name,
+            phone: formData.value.phone,
+            gender: formData.value.gender,
+            birthday: formData.value.birthday
+        }, {
+            headers: { Authorization: `Bearer ${getToken()}` } // 一樣要帶上鑰匙
+        })
+
+        // 更新 Storage 裡的名字，讓右上角的名稱跟著變
+        const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (userStr) {
+            let userObj = JSON.parse(userStr);
+            userObj.name = formData.value.name;
+            if (localStorage.getItem('user')) localStorage.setItem('user', JSON.stringify(userObj));
+            if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(userObj));
+        }
+
+        Swal.fire({ icon: 'success', title: '儲存成功', text: '個人資料已更新', confirmButtonColor: '#0d6efd' })
+        
+        // 強制重新整理頁面以更新 Layout 的名字 (或可搭配 Vuex/Pinia，這裡用重整最簡單)
+        setTimeout(() => location.reload(), 1500)
+    } catch (error) {
+        Swal.fire({ icon: 'error', title: '儲存失敗', text: '資料更新失敗，請稍後再試' })
+    } finally {
+        isSubmitting.value = false
+    }
+}
 </script>
 
 <template>
@@ -76,7 +132,9 @@ const premiumExpiryDate = ref('2026-12-31')
 
           <div class="d-flex gap-3 mt-auto pt-4 border-top border-light-subtle">
               <button class="btn btn-light rounded-pill flex-fill text-nowrap fw-bold">取消</button>
-              <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm">儲存變更</button>
+              <button @click="handleSave" :disabled="isSubmitting" class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm">
+                 {{ isSubmitting ? '儲存中...' : '儲存變更' }}
+              </button>
           </div>
 
         </div>
