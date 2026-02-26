@@ -4,6 +4,7 @@ import { useRouter, RouterLink } from 'vue-router'
 import axios from 'axios'
 import OAuthCard from '@/components/OAuthCard.vue'
 import Swal from 'sweetalert2'
+import { GoogleLogin } from 'vue3-google-login'
 const router = useRouter()
 
 const email = ref('user7@test.com')
@@ -45,7 +46,7 @@ const getGeolocation = async () => {
                 console.warn('使用者拒絕或無法取得定位', error)
                 resolve({ lat: null, lng: null, city: null })
             },
-            { timeout: 1000 } // 最多等 5 秒
+            { timeout: 5000 } // 最多等 5 秒
         )
     })
 }
@@ -115,6 +116,47 @@ const handleLogin = async () => {
         isSubmitting.value = false // 解除按鈕鎖定
     }
 }
+// 處理 Google 登入回傳
+const handleGoogleCallback = async (response) => {
+    isSubmitting.value = true
+    Swal.fire({ title: 'Google 驗證中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
+    
+    // 一樣先抓取經緯度
+    const locationInfo = await getGeolocation()
+
+    try {
+        const res = await axios.post('/Auth/GoogleLogin', {
+            credential: response.credential, // Google 給的憑證
+            latitude: locationInfo.lat,
+            longitude: locationInfo.lng,
+            currentCity: locationInfo.city
+        })
+
+        if (res.data.isRegistered === false) {
+            // 沒註冊跳轉到註冊頁，並把 Email 跟 Name 帶過去
+            Swal.close()
+            router.push({
+                path: '/register',
+                query: { 
+                    email: res.data.email, 
+                    name: res.data.name 
+                }
+            })
+        } else {
+            // 已經註冊
+            const { token, user, message } = res.data
+            localStorage.setItem('token', token) 
+            localStorage.setItem('user', JSON.stringify(user))
+
+            Swal.fire({ icon: 'success', title: message, toast: true, position: 'top-end', showConfirmButton: false, timer: 1500, timerProgressBar: true })
+            router.push('/member')
+        }
+    } catch (error) {
+        Swal.fire({ icon: 'error', title: '登入失敗', text: error.response?.data?.message || 'Google 登入發生錯誤' })
+    } finally {
+        isSubmitting.value = false
+    }
+}
 </script>
 
 <template>
@@ -177,7 +219,8 @@ const handleLogin = async () => {
       </div>
 
       <div class="d-flex justify-content-center gap-3 mb-4">
-        <button type="button" class="btn btn-social"><i class="bi bi-google text-danger"></i></button>
+        <GoogleLogin :callback="handleGoogleCallback" type="icon" shape="circle" />
+        <!-- <button type="button" class="btn btn-social"><i class="bi bi-google text-danger"></i></button> -->
         <button type="button" class="btn btn-social"><i class="bi bi-facebook text-primary"></i></button>
       </div>
     </form>

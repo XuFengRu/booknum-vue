@@ -7,22 +7,20 @@ import OAuthCard from '@/components/OAuthCard.vue'
 
 const router = useRouter()
 const email = ref('')
+const isSubmitting = ref(false) // 🌟 把防連點狀態移到前面宣告
+
 const handleReset = async () => {
+    // 1. 如果正在送出中，就不理會連續點擊
     if (isSubmitting.value) return 
 
-    // 🌟 新增防呆：檢查 Email 格式
+    // 2. 🌟 新增防呆：檢查 Email 格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email.value)) {
         Swal.fire({ icon: 'warning', title: '格式錯誤', text: '請輸入有效的電子信箱格式', confirmButtonColor: '#f8c471' })
         return
     }
 
-const isSubmitting = ref(false) // 防連點狀態
-
-const handleReset = async () => {
-    // 如果正在送出中，就不理會連續點擊
-    if (isSubmitting.value) return 
-    isSubmitting.value = true // 鎖定按鈕
+    isSubmitting.value = true // 3. 檢查都通過後，鎖定按鈕
 
     try {
         const response = await axios.post('/Auth/ForgotPassword', {
@@ -47,11 +45,10 @@ const handleReset = async () => {
             Swal.fire({ icon: 'error', title: '系統錯誤', text: '系統忙碌中，請稍後再試' })
         }
     } finally {
-        isSubmitting.value = false
+        isSubmitting.value = false // 4. 無論成功失敗，最後解除鎖定
     }
 }
 </script>
-
 
 
 <template>

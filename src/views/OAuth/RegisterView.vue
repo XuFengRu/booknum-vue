@@ -1,6 +1,6 @@
 <script setup>
-import { useRouter, RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { useRouter, useRoute, RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import Swal from 'sweetalert2' 
 import OAuthCard from '@/components/OAuthCard.vue'
@@ -8,6 +8,7 @@ import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 const router = useRouter()
+const route = useRoute() // 抓取網址參數用
 const isSubmitting = ref(false) 
 
 const formData = ref({
@@ -18,6 +19,11 @@ const formData = ref({
     phone: '',
     gender: '',
     birthday: ''
+})
+
+onMounted(() => {
+    if (route.query.email) formData.value.email = route.query.email
+    if (route.query.name) formData.value.name = route.query.name
 })
 
 const handleRegister = async () => {
@@ -73,6 +79,7 @@ const handleRegister = async () => {
         isSubmitting.value = false;
     }
 }
+
 </script>
 
 <template>
