@@ -21,43 +21,10 @@ function openProfile(index) {
 }
 
 const currentUserId = 6 // 改成目前登入者的 ID
-async function handleLike(person) {
+
+async function fetchUsers() {
   try {
-    const res = await axios.post('/match/interact', {
-      likerUserId: currentUserId,
-      likedUserId: person.userId,
-      isLiked: true,
-      score: person.probability,
-    })
-    selectedUser.value = null
-  } catch (err) {
-    console.error('互動失敗:', err)
-  }
-}
-
-async function handleReject(person) {
-  try {
-    const res = await axios.post('/match/interact', {
-      likerUserId: currentUserId,
-      likedUserId: person.userId,
-      isLiked: false,
-      score: person.probability,
-    })
-
-    console.log('Rejected:', person?.name)
-
-    selectedUser.value = null
-  } catch (err) {
-    console.error('互動紀錄失敗:', err)
-  }
-}
-
-onMounted(async () => {
-  try {
-    const userId = currentUserId // 改成目前登入者的 ID
-
-    // 查詢喜歡我的人
-    const res = await axios.get(`https://localhost:7091/api/MatchLikes/WhoLikesMe/${userId}`)
+    const res = await axios.get(`https://localhost:7091/api/MatchLikes/WhoLikesMe/${currentUserId}`)
     users.value = res.data.candidates.map((c) => ({
       name: c.nickname,
       age: c.age,
@@ -70,14 +37,46 @@ onMounted(async () => {
       probability: c.probability,
     }))
 
-    // 查詢 Premium 狀態 (直接用 isActive API)
-    const premiumRes = await axios.get(`https://localhost:7091/api/MatchPremium/isActive/${userId}`)
+    const premiumRes = await axios.get(`https://localhost:7091/api/MatchPremium/isActive/${currentUserId}`)
     isPremium.value = premiumRes.data === true
     console.log('Premium 狀態:', isPremium.value)
   } catch (err) {
     console.error('載入 API 失敗:', err)
   }
-})
+}
+
+async function handleLike(person) {
+  try {
+    await axios.post('/match/interact', {
+      likerUserId: currentUserId,
+      likedUserId: person.userId,
+      isLiked: true,
+      score: person.probability,
+    })
+    selectedUser.value = null
+    await fetchUsers() // 互動完重新載入
+  } catch (err) {
+    console.error('互動失敗:', err)
+  }
+}
+
+async function handleReject(person) {
+  try {
+    await axios.post('/match/interact', {
+      likerUserId: currentUserId,
+      likedUserId: person.userId,
+      isLiked: false,
+      score: person.probability,
+    })
+    console.log('Rejected:', person?.name)
+    selectedUser.value = null
+    await fetchUsers() // 互動完重新載入
+  } catch (err) {
+    console.error('互動紀錄失敗:', err)
+  }
+}
+
+onMounted(fetchUsers)
 </script>
 
 <template>
