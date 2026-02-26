@@ -2,95 +2,97 @@
 import { useRouter, useRoute, RouterLink } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import Swal from 'sweetalert2' 
+import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
 import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 const router = useRouter()
 const route = useRoute() // 抓取網址參數用
-const isSubmitting = ref(false) 
+const isSubmitting = ref(false)
 
 const formData = ref({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    name: '',
-    phone: '',
-    gender: '',
-    birthday: ''
+  email: '',
+  password: '',
+  confirmPassword: '',
+  name: '',
+  phone: '',
+  gender: '',
+  birthday: ''
 })
 
 onMounted(() => {
-    if (route.query.email) formData.value.email = route.query.email
-    if (route.query.name) formData.value.name = route.query.name
+  if (route.query.email) formData.value.email = route.query.email
+  if (route.query.name) formData.value.name = route.query.name
 })
 
 const handleRegister = async () => {
-    if (isSubmitting.value) return;
+  if (isSubmitting.value) return;
 
-    // 防呆：檢查兩次密碼是否一致
-    if (formData.value.password !== formData.value.confirmPassword) {
-        Swal.fire({ icon: 'warning', title: '密碼不一致', text: '請確認兩次輸入的密碼相同', confirmButtonColor: '#f8c471' })
-        return;
-    }
+  // 防呆：檢查兩次密碼是否一致
+  if (formData.value.password !== formData.value.confirmPassword) {
+    Swal.fire({ icon: 'warning', title: '密碼不一致', text: '請確認兩次輸入的密碼相同', confirmButtonColor: '#f8c471' })
+    return;
+  }
 
-    // 防呆：檢查密碼強度 (至少8碼，包含英文字母與數字)
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(formData.value.password)) {
-        Swal.fire({ 
-            icon: 'warning', 
-            title: '密碼強度不足', 
-            text: '密碼必須至少 8 個字元，且同時包含「英文字母」與「數字」',
-            confirmButtonColor: '#f8c471' 
-        })
-        return;
-    }
+  // 防呆：檢查密碼強度 (至少8碼，包含英文字母與數字)
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  if (!passwordRegex.test(formData.value.password)) {
+    Swal.fire({
+      icon: 'warning',
+      title: '密碼強度不足',
+      text: '密碼必須至少 8 個字元，且同時包含「英文字母」與「數字」',
+      confirmButtonColor: '#f8c471'
+    })
+    return;
+  }
 
-    // 防呆：檢查手機號碼格式 (台灣手機號碼 09 開頭，共 10 碼)
-    const phoneRegex = /^09\d{8}$/;
-    if (!phoneRegex.test(formData.value.phone)) {
-        Swal.fire({ icon: 'warning', title: '格式錯誤', text: '請輸入有效的手機號碼 (例如: 0912345678)' })
-        return;
-    }
+  // 防呆：檢查手機號碼格式 (台灣手機號碼 09 開頭，共 10 碼)
+  const phoneRegex = /^09\d{8}$/;
+  if (!phoneRegex.test(formData.value.phone)) {
+    Swal.fire({ icon: 'warning', title: '格式錯誤', text: '請輸入有效的手機號碼 (例如: 0912345678)' })
+    return;
+  }
 
-    isSubmitting.value = true;
+  isSubmitting.value = true;
 
-    try {
-        // 送出 API 前，把不需要傳給後端的 confirmPassword 剔除
-        const { confirmPassword, ...submitData } = formData.value;
-        const response = await axios.post('/Auth/Register', submitData)
+  try {
+    // 送出 API 前，把不需要傳給後端的 confirmPassword 剔除
+    const { confirmPassword, ...submitData } = formData.value;
+    const response = await axios.post('/Auth/Register', submitData)
 
-        await Swal.fire({
-            icon: 'success',
-            title: '註冊成功！',
-            text: '請至信箱收取驗證信，以啟用您的帳號。',
-            confirmButtonColor: '#0d6efd'
-        })
-        
-        router.push({
-            name: 'register-success',
-            query: { email: formData.value.email }
-        })
-    } catch (error) {
-        const errorMsg = error.response?.data?.message || '註冊失敗，請稍後再試'
-        Swal.fire({ icon: 'error', title: '錯誤', text: errorMsg })
-    } finally {
-        isSubmitting.value = false;
-    }
+    await Swal.fire({
+      icon: 'success',
+      title: '註冊成功！',
+      text: '請至信箱收取驗證信，以啟用您的帳號。',
+      confirmButtonColor: '#0d6efd'
+    })
+
+    router.push({
+      name: 'register-success',
+      query: { email: formData.value.email }
+    })
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || '註冊失敗，請稍後再試'
+    Swal.fire({ icon: 'error', title: '錯誤', text: errorMsg })
+  } finally {
+    isSubmitting.value = false;
+  }
 }
 
 </script>
 
 <template>
   <OAuthCard>
-    
+
     <template #left-side>
       <i class="bi bi-heart-fill floating-obj fs-3" style="left: 15%; animation-delay: 0s;"></i>
-      <i class="bi bi-person-plus-fill floating-obj fs-2" style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
+      <i class="bi bi-person-plus-fill floating-obj fs-2"
+        style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
 
       <div class="position-relative z-2">
-        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg"
+          style="width: 90px; height: 90px;">
           <i class="bi bi-person-heart fs-1" style="color: var(--bs-primary);"></i>
         </div>
         <h1 class="fs-1 fw-bolder mb-2">加入 BOOK仁</h1>
@@ -106,7 +108,7 @@ const handleRegister = async () => {
       </div>
 
       <form @submit.prevent="handleRegister">
-        
+
         <div class="mb-3">
           <label class="form-label">電子信箱</label>
           <div class="input-group-custom">
@@ -126,7 +128,8 @@ const handleRegister = async () => {
         <div class="mb-4">
           <label class="form-label">確認密碼</label>
           <div class="input-group-custom">
-            <input type="password" v-model="formData.confirmPassword" class="form-control" placeholder="請再次輸入密碼" required>
+            <input type="password" v-model="formData.confirmPassword" class="form-control" placeholder="請再次輸入密碼"
+              required>
             <i class="bi bi-check-circle"></i>
           </div>
         </div>
@@ -162,15 +165,8 @@ const handleRegister = async () => {
           <div class="col-md-6 mb-3">
             <label class="form-label">生日</label>
             <div class="input-group-custom mb-0">
-              <el-date-picker
-                v-model="formData.birthday"
-                type="date"
-                placeholder="選擇生日"
-                format="YYYY/MM/DD"
-                value-format="YYYY-MM-DD"
-                size="large"
-                style="width: 100%;"
-              />
+              <el-date-picker v-model="formData.birthday" type="date" placeholder="選擇生日" format="YYYY/MM/DD"
+                value-format="YYYY-MM-DD" size="large" style="width: 100%;" />
               <i class="bi bi-calendar-event"></i>
             </div>
           </div>
@@ -178,7 +174,8 @@ const handleRegister = async () => {
 
         <div class="d-grid mt-2 mb-4">
           <button type="submit" class="btn btn-primary fs-5 shadow-sm" :disabled="isSubmitting">
-            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
             {{ isSubmitting ? '註冊中...' : '立即註冊' }}
             <i v-if="!isSubmitting" class="bi bi-arrow-right-short ms-1"></i>
           </button>
@@ -187,7 +184,7 @@ const handleRegister = async () => {
 
       <div class="text-center">
         <p class="small text-muted mb-0">
-          已經有帳號了? 
+          已經有帳號了?
           <RouterLink to="/login" class="fw-bold ms-1 text-gradient text-decoration-none">直接登入</RouterLink>
         </p>
       </div>

@@ -32,8 +32,7 @@ import OAuthCard from '@/components/OAuthCard.vue'
             <div class="alert alert-primary border-0 rounded-4 p-4 mb-4 text-start"
                 style="background-color: rgba(25, 118, 210, 0.08);">
                 <div class="d-flex">
-                    <i class="bi bi-info-circle-fill me-3 fs-4"
-                        style="color: var(--brand-blue-adaptive);"></i>
+                    <i class="bi bi-info-circle-fill me-3 fs-4" style="color: var(--brand-blue-adaptive);"></i>
                     <div>
                         <h6 class="fw-bold mb-1" style="color: var(--brand-blue-adaptive);">沒收到信件?</h6>
                         <p class="mb-0 small text-muted">

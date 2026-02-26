@@ -18,8 +18,8 @@ const rentItems = ref([
 ]);
 
 function openBooking(item) {
-  router.push({ 
-    name: 'rent-detail', 
+  router.push({
+    name: 'rent-detail',
     params: { name: item.name },
     query: { description: item.description, price: item.price, image: item.image }
   });
@@ -28,7 +28,7 @@ function openBooking(item) {
 
 <template>
   <div class="w-100 fade-in-up">
-    
+
     <div class="mb-4 text-center">
       <h2 class="fw-bold text-gradient mb-2">出租清單</h2>
       <p class="text-muted">找到最適合你的專屬陪伴</p>
@@ -36,20 +36,17 @@ function openBooking(item) {
 
     <div class="row g-4">
       <div v-for="item in rentItems" :key="item.name" class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <MemberCard 
-          :image="item.image"
-          :name="item.name"
-          :specialty="item.description"
-        >
+        <MemberCard :image="item.image" :name="item.name" :specialty="item.description">
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h6 class="text-gradient fw-bold fs-5 mb-0 text-nowrap">{{ item.price }}</h6>
-            <button class="btn btn-primary rounded-pill px-3 px-xl-4 fw-bold shadow-sm flex-shrink-0 text-nowrap" @click="openBooking(item)">
+            <button class="btn btn-primary rounded-pill px-3 px-xl-4 fw-bold shadow-sm flex-shrink-0 text-nowrap"
+              @click="openBooking(item)">
               立即預約
             </button>
           </div>
         </MemberCard>
       </div>
     </div>
-    
+
   </div>
 </template>

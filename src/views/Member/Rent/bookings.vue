@@ -42,42 +42,41 @@ function viewDetail(id) {
 
 <template>
   <div class="w-100 fade-in-up">
-      <div class="mb-4 text-center">
+    <div class="mb-4 text-center">
       <h2 class="fw-bolder text-gradient mb-2">我的預約</h2>
       <p class="text-muted">管理您的專屬陪伴行程</p>
     </div>
 
     <div class="row g-4">
       <div v-for="booking in bookings" :key="booking.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
-        
-        <MemberCard 
-          :image="booking.image"
-          :name="booking.name"
-          :specialty="booking.description"
-          :tag="booking.status"
-          :tag-color="getStatusColor(booking.status)"
-        >
+
+        <MemberCard :image="booking.image" :name="booking.name" :specialty="booking.description" :tag="booking.status"
+          :tag-color="getStatusColor(booking.status)">
           <div class="d-flex flex-column gap-3">
             <div class="text-dark fw-bold d-flex align-items-center fs-6">
-              <i class="bi bi-clock-fill text-gradient me-2"></i> 
+              <i class="bi bi-clock-fill text-gradient me-2"></i>
               {{ booking.date }}
             </div>
 
             <div class="d-flex gap-2 mt-2">
               <template v-if="booking.status === '已取消'">
-                <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold px-2" @click="rebook(booking.id)">
+                <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold px-2"
+                  @click="rebook(booking.id)">
                   重新預約
                 </button>
-                <button class="btn btn-light rounded-pill flex-fill text-nowrap fw-bold px-2" @click="viewDetail(booking.id)">
+                <button class="btn btn-light rounded-pill flex-fill text-nowrap fw-bold px-2"
+                  @click="viewDetail(booking.id)">
                   詳情
                 </button>
               </template>
-              
+
               <template v-else>
-                <button class="btn btn-light border text-danger rounded-pill flex-fill text-nowrap fw-bold px-2" @click="cancelBooking(booking.id)">
+                <button class="btn btn-light border text-danger rounded-pill flex-fill text-nowrap fw-bold px-2"
+                  @click="cancelBooking(booking.id)">
                   取消
                 </button>
-                <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold px-2" @click="viewDetail(booking.id)">
+                <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold px-2"
+                  @click="viewDetail(booking.id)">
                   詳情
                 </button>
               </template>
@@ -87,6 +86,6 @@ function viewDetail(id) {
 
       </div>
     </div>
-    
+
   </div>
 </template>

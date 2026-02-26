@@ -104,14 +104,14 @@ async function fetchActivities() {
     // ✅ 從後端各種可能欄位抓「主辦人/建立者」
     const ownerId = Number(
       x.ownerId ??
-        x.OwnerId ??
-        x.hostUserId ??
-        x.HostUserId ??
-        x.createdBy ??
-        x.CreatedBy ??
-        x.userId ??
-        x.UserId ??
-        0
+      x.OwnerId ??
+      x.hostUserId ??
+      x.HostUserId ??
+      x.createdBy ??
+      x.CreatedBy ??
+      x.userId ??
+      x.UserId ??
+      0
     );
 
     const isJoinedByMe = joinedIds.value.has(id);
@@ -223,20 +223,16 @@ function toggleMine() {
 <template>
   <div class="glass-page w-100 fade-in-up">
     <!-- Title / Create -->
-    <div
-      class="position-relative d-flex justify-content-center w-100 mb-4 mb-xl-3"
-      style="max-width: 1440px; margin: 0 auto"
-    >
+    <div class="position-relative d-flex justify-content-center w-100 mb-4 mb-xl-3"
+      style="max-width: 1440px; margin: 0 auto">
       <div class="text-center">
         <h2 class="fw-bolder text-gradient mb-2">熱門揪團</h2>
         <p class="text-muted">探索周邊活動，與志同道合的新朋友一起玩樂</p>
       </div>
 
-      <button
-        @click="goCreate"
+      <button @click="goCreate"
         class="btn btn-light shadow-sm btn-circle btn-circle-md custom-create-btn d-flex align-items-center justify-content-center"
-        title="建立活動"
-      >
+        title="建立活動">
         <i class="bi bi-plus-lg d-block" style="line-height: 0; font-size: 1.6rem"></i>
       </button>
     </div>
@@ -246,22 +242,14 @@ function toggleMine() {
       <div class="glass-shell p-3 p-md-4 mb-4">
         <div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-center">
           <div class="input-group-custom flex-grow-1 w-100 mb-0">
-            <input
-              v-model="keyword"
-              type="text"
-              class="form-control glass-input border-0"
+            <input v-model="keyword" type="text" class="form-control glass-input border-0"
               style="border-radius: 50rem; height: 50px; padding-left: 48px"
-              :placeholder="showMine ? '在我的報名中搜尋...' : '搜尋活動標題、地點或類型...'"
-            />
+              :placeholder="showMine ? '在我的報名中搜尋...' : '搜尋活動標題、地點或類型...'" />
             <i class="bi bi-search"></i>
           </div>
 
-          <button
-            class="btn rounded-pill px-4 fw-bold shadow-sm flex-shrink-0 transition-all glass-toggle-btn"
-            :class="showMine ? 'btn-primary' : 'btn-light text-muted'"
-            style="height: 50px"
-            @click="toggleMine"
-          >
+          <button class="btn rounded-pill px-4 fw-bold shadow-sm flex-shrink-0 transition-all glass-toggle-btn"
+            :class="showMine ? 'btn-primary' : 'btn-light text-muted'" style="height: 50px" @click="toggleMine">
             {{ showMine ? "全部活動" : "我的報名" }}
           </button>
         </div>
@@ -269,12 +257,8 @@ function toggleMine() {
 
       <!-- List -->
       <div class="d-flex flex-column gap-4">
-        <div
-          v-for="a in filtered"
-          :key="a.id"
-          class="glass-card rounded-4 overflow-hidden"
-          :class="{ 'is-full-card': isFull(a) && !a.isJoinedByMe }"
-        >
+        <div v-for="a in filtered" :key="a.id" class="glass-card rounded-4 overflow-hidden"
+          :class="{ 'is-full-card': isFull(a) && !a.isJoinedByMe }">
           <div class="row g-0 h-100">
             <div class="col-md-4 col-lg-4">
               <div class="img-box">
@@ -328,44 +312,34 @@ function toggleMine() {
               </div>
 
               <div class="mt-auto d-flex gap-2 justify-content-end pt-3 border-top border-light-subtle">
-                <button
-                  class="btn btn-light rounded-pill px-4 fw-bold border border-light-subtle shadow-sm"
-                  @click="goDetail(a.id)"
-                >
+                <button class="btn btn-light rounded-pill px-4 fw-bold border border-light-subtle shadow-sm"
+                  @click="goDetail(a.id)">
                   查看詳情
                 </button>
 
-                <button
-                  class="btn rounded-pill px-4 fw-bold shadow-sm"
-                  :class="
-                    a.isJoinedByMe
-                      ? 'btn-outline-danger bg-white'
-                      : (isStarted(a) || isMyOwnActivity(a) || isFull(a))
+                <button class="btn rounded-pill px-4 fw-bold shadow-sm" :class="a.isJoinedByMe
+                    ? 'btn-outline-danger bg-white'
+                    : (isStarted(a) || isMyOwnActivity(a) || isFull(a))
                       ? 'btn-secondary text-white border-0 opacity-50'
                       : 'btn-primary'
-                  "
-                  :disabled="isStarted(a) || (!a.isJoinedByMe && (isMyOwnActivity(a) || isFull(a)))"
-                  :title="
-                    isStarted(a)
+                  " :disabled="isStarted(a) || (!a.isJoinedByMe && (isMyOwnActivity(a) || isFull(a)))" :title="isStarted(a)
                       ? startedText(a)
                       : isMyOwnActivity(a)
-                      ? '不能報名自己發布的活動'
-                      : (!a.isJoinedByMe && isFull(a))
-                      ? fullText(a)
-                      : ''
-                  "
-                  @click="toggleJoin(a)"
-                >
+                        ? '不能報名自己發布的活動'
+                        : (!a.isJoinedByMe && isFull(a))
+                          ? fullText(a)
+                          : ''
+                    " @click="toggleJoin(a)">
                   {{
                     isStarted(a)
                       ? "活動已開始"
                       : a.isJoinedByMe
-                      ? "取消報名"
-                      : isMyOwnActivity(a)
-                      ? "自己發布"
-                      : isFull(a)
-                      ? "人數已滿"
-                      : "立即報名"
+                        ? "取消報名"
+                        : isMyOwnActivity(a)
+                          ? "自己發布"
+                          : isFull(a)
+                            ? "人數已滿"
+                            : "立即報名"
                   }}
                 </button>
               </div>
@@ -377,8 +351,7 @@ function toggleMine() {
         <div v-if="filtered.length === 0" class="text-center py-5 my-4 fade-in-up">
           <div
             class="icon-circle glass-soft rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4"
-            style="width: 100px; height: 100px;"
-          >
+            style="width: 100px; height: 100px;">
             <i class="bi bi-search display-4"></i>
           </div>
           <h4 class="fw-bold text-dark mb-2">找不到相關活動</h4>
@@ -396,56 +369,56 @@ function toggleMine() {
 </template>
 
 <style scoped>
-.glass-shell{
+.glass-shell {
   border-radius: 2rem;
-  border: 1px solid rgba(255,255,255,.55);
-  background: rgba(255,255,255,.45);
+  border: 1px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .45);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   box-shadow:
-    0 18px 60px rgba(0,0,0,.10),
-    inset 0 1px 0 rgba(255,255,255,.55);
+    0 18px 60px rgba(0, 0, 0, .10),
+    inset 0 1px 0 rgba(255, 255, 255, .55);
 }
 
-.glass-card{
-  border: 1px solid rgba(255,255,255,.55);
-  background: rgba(255,255,255,.55);
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .55);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 12px 34px rgba(0,0,0,.08);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .08);
 }
 
-.glass-soft{
-  border: 1px solid rgba(255,255,255,.55);
-  background: rgba(255,255,255,.42);
+.glass-soft {
+  border: 1px solid rgba(255, 255, 255, .55);
+  background: rgba(255, 255, 255, .42);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 10px 26px rgba(0,0,0,.06);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .06);
 }
 
-.glass-input{
-  background: rgba(255,255,255,.55) !important;
+.glass-input {
+  background: rgba(255, 255, 255, .55) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 0 0 1px rgba(255,255,255,.55) inset, 0 10px 22px rgba(0,0,0,.06);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .55) inset, 0 10px 22px rgba(0, 0, 0, .06);
 }
 
-.glass-toggle-btn{
-  background: rgba(255,255,255,.55);
+.glass-toggle-btn {
+  background: rgba(255, 255, 255, .55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,.55);
+  border: 1px solid rgba(255, 255, 255, .55);
 }
 
-.badge-glasslight{
-  background: rgba(255,255,255,.55);
-  border: 1px solid rgba(255,255,255,.65);
+.badge-glasslight {
+  background: rgba(255, 255, 255, .55);
+  border: 1px solid rgba(255, 255, 255, .65);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #222;
 }
 
-.is-full-card{
+.is-full-card {
   opacity: .75;
 }
 
@@ -457,6 +430,7 @@ function toggleMine() {
   z-index: 1050;
   transition: all 0.3s ease;
 }
+
 .custom-create-btn:hover {
   transform: translateY(-2px) scale(1.05);
 }
@@ -472,23 +446,26 @@ function toggleMine() {
     right: 15px !important;
     top: 0px;
   }
+
   .glass-card img {
     height: 200px !important;
   }
 }
 
-.img-box{
+.img-box {
   height: 240px;
   width: 100%;
   overflow: hidden;
   border-radius: 0;
 }
 
-@media (max-width: 767.98px){
-  .img-box{ height: 200px; }
+@media (max-width: 767.98px) {
+  .img-box {
+    height: 200px;
+  }
 }
 
-.img-fill{
+.img-fill {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -496,13 +473,13 @@ function toggleMine() {
   display: block;
 }
 
-.img-empty{
+.img-empty {
   width: 100%;
   height: 100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(255,255,255,.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, .28);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }

@@ -6,35 +6,35 @@ import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
 
 const route = useRoute()
-const userEmail = ref(route.query.email || '') 
+const userEmail = ref(route.query.email || '')
 
 const handleResend = async () => {
-    if (!userEmail.value) {
-        Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊，請返回上一步重新輸入' })
-        return
-    }
+  if (!userEmail.value) {
+    Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊，請返回上一步重新輸入' })
+    return
+  }
 
-    try {
-        Swal.fire({
-            title: '重新發送中...',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading() }
-        })
+  try {
+    Swal.fire({
+      title: '重新發送中...',
+      allowOutsideClick: false,
+      didOpen: () => { Swal.showLoading() }
+    })
 
-        const response = await axios.post('/Auth/ForgotPassword', {
-            email: userEmail.value
-        })
+    const response = await axios.post('/Auth/ForgotPassword', {
+      email: userEmail.value
+    })
 
-        Swal.fire({
-            icon: 'success',
-            title: '已重新發送',
-            text: response.data.message || '請再次檢查您的信箱（包含垃圾郵件匣）',
-            confirmButtonColor: '#0d6efd'
-        })
-    } catch (error) {
-        const errorMsg = error.response?.data?.message || '系統忙碌中，請稍後再試'
-        Swal.fire({ icon: 'error', title: '發送失敗', text: errorMsg })
-    }
+    Swal.fire({
+      icon: 'success',
+      title: '已重新發送',
+      text: response.data.message || '請再次檢查您的信箱（包含垃圾郵件匣）',
+      confirmButtonColor: '#0d6efd'
+    })
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || '系統忙碌中，請稍後再試'
+    Swal.fire({ icon: 'error', title: '發送失敗', text: errorMsg })
+  }
 }
 </script>
 
@@ -45,7 +45,8 @@ const handleResend = async () => {
       <i class="bi bi-send-fill floating-obj fs-3" style="left: 60%; animation-duration: 12s; animation-delay: 2s;"></i>
 
       <div class="position-relative z-2 text-center">
-        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg"
+          style="width: 90px; height: 90px;">
           <i class="bi bi-send-check-fill fs-1" style="color: var(--bs-primary);"></i>
         </div>
         <h1 class="fs-1 fw-bolder mb-2">信件已發送</h1>
@@ -83,7 +84,7 @@ const handleResend = async () => {
 
       <div class="text-center border-top border-secondary border-opacity-10 pt-3">
         <p class="text-muted small opacity-75 mb-0">
-          沒收到信？請檢查垃圾郵件夾，或 
+          沒收到信？請檢查垃圾郵件夾，或
           <a href="#" @click.prevent="handleResend" class="fw-bold text-gradient text-decoration-none">重新發送</a>
         </p>
       </div>

@@ -54,7 +54,7 @@ onMounted(async () => {
         chatId: message.chatId,
         from: message.senderId === userId ? '我' : chat.name,
         text: message.message,
-        sendAt: message.sendAt, 
+        sendAt: message.sendAt,
       })
       if (message.receiverId === userId) chat.unreadCount = message.unreadCount
     }
@@ -87,12 +87,12 @@ onMounted(async () => {
     otherUserId: c.otherUserId,
     messages: c.lastMessage
       ? [
-          {
-            chatId: c.lastMessageId,
-            text: c.lastMessage,
-            sendAt: c.lastTime, 
-          },
-        ]
+        {
+          chatId: c.lastMessageId,
+          text: c.lastMessage,
+          sendAt: c.lastTime,
+        },
+      ]
       : [],
     unreadCount: c.unreadCount,
   }))
@@ -108,7 +108,7 @@ function openChat(chat) {
       chatId: m.chatId,
       from: m.senderId === userId ? '我' : chat.name,
       text: m.message,
-      sendAt: m.sendAt, 
+      sendAt: m.sendAt,
     }))
   })
 }
@@ -127,37 +127,21 @@ function getLastMessage(chat) {
 <template>
   <div class="card glass-skin border-0 rounded-4 chat-container overflow-hidden fade-in-up">
     <div class="row g-0 h-100">
-      <div
-        class="col-12 col-lg-4 h-100 d-flex flex-column chat-sidebar"
-        v-if="!isMobile || !selectedChat"
-      >
-        <div
-          class="p-3 border-bottom d-flex align-items-center flex-shrink-0"
-          style="height: 80px; border-color: rgba(255, 255, 255, 0.4) !important"
-        >
+      <div class="col-12 col-lg-4 h-100 d-flex flex-column chat-sidebar" v-if="!isMobile || !selectedChat">
+        <div class="p-3 border-bottom d-flex align-items-center flex-shrink-0"
+          style="height: 80px; border-color: rgba(255, 255, 255, 0.4) !important">
           <h4 class="fw-bold mb-0 text-gradient text-truncate">我的訊息</h4>
         </div>
 
         <div class="flex-grow-1 overflow-auto p-2">
-          <div
-            v-for="chat in conversations"
-            :key="chat.id"
+          <div v-for="chat in conversations" :key="chat.id"
             class="chat-list-item d-flex align-items-center p-3 mb-2 rounded-4 transition-all"
-            :class="{ active: selectedChat?.id === chat.id }"
-            @click="openChat(chat)"
-          >
+            :class="{ active: selectedChat?.id === chat.id }" @click="openChat(chat)">
             <div class="position-relative me-3 flex-shrink-0">
-              <img
-                :src="chat.avatar"
-                class="rounded-circle object-fit-cover shadow-sm border border-2 border-white"
-                width="56"
-                height="56"
-                alt="avatar"
-              />
-              <span
-                v-if="chat.unreadCount > 0"
-                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white"
-              >
+              <img :src="chat.avatar" class="rounded-circle object-fit-cover shadow-sm border border-2 border-white"
+                width="56" height="56" alt="avatar" />
+              <span v-if="chat.unreadCount > 0"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white">
                 {{ chat.unreadCount }}
               </span>
             </div>
@@ -207,24 +191,29 @@ function getLastMessage(chat) {
   height: calc(100vh - 140px);
   min-height: 450px;
 }
+
 @media (min-width: 992px) {
   .chat-sidebar {
     border-right: 1px solid rgba(255, 255, 255, 0.5);
   }
 }
+
 .chat-list-item {
   cursor: pointer;
   background: transparent;
   transition: all 0.3s ease;
 }
+
 .chat-list-item:hover {
   background: rgba(255, 255, 255, 0.6);
   transform: translateX(4px);
 }
+
 .chat-list-item.active {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
+
 .min-w-0 {
   min-width: 0;
 }

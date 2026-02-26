@@ -9,21 +9,21 @@ const route = useRoute()
 const userEmail = ref(route.query.email || '') // 🌟 抓取 Email
 
 const handleResend = async () => {
-    if (!userEmail.value) {
-        Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊' })
-        return
-    }
+  if (!userEmail.value) {
+    Swal.fire({ icon: 'warning', title: '無法發送', text: '遺失 Email 資訊' })
+    return
+  }
 
-    try {
-        Swal.fire({ title: '發送中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
+  try {
+    Swal.fire({ title: '發送中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
 
-        const response = await axios.post('/Auth/ResendVerifyEmail', { email: userEmail.value })
+    const response = await axios.post('/Auth/ResendVerifyEmail', { email: userEmail.value })
 
-        Swal.fire({ icon: 'success', title: '已重新發送', text: response.data.message })
-    } catch (error) {
-        const errorMsg = error.response?.data?.message || '發送失敗'
-        Swal.fire({ icon: 'error', title: '錯誤', text: errorMsg })
-    }
+    Swal.fire({ icon: 'success', title: '已重新發送', text: response.data.message })
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || '發送失敗'
+    Swal.fire({ icon: 'error', title: '錯誤', text: errorMsg })
+  }
 }
 </script>
 
@@ -31,9 +31,11 @@ const handleResend = async () => {
   <OAuthCard>
     <template #left-side>
       <i class="bi bi-heart-fill floating-obj fs-3" style="left: 15%; animation-delay: 0s;"></i>
-      <i class="bi bi-envelope-check-fill floating-obj fs-2" style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
+      <i class="bi bi-envelope-check-fill floating-obj fs-2"
+        style="left: 50%; animation-delay: 3s; animation-duration: 10s;"></i>
       <div class="position-relative z-2 text-center">
-        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg"
+          style="width: 90px; height: 90px;">
           <i class="bi bi-check-lg fs-1" style="color: var(--bs-primary);"></i>
         </div>
         <h1 class="fs-1 fw-bolder mb-2">歡迎加入</h1>
@@ -71,7 +73,7 @@ const handleResend = async () => {
 
       <div class="text-center border-top border-secondary border-opacity-10 pt-3">
         <p class="text-muted small opacity-75 mb-0">
-          沒收到信？請檢查垃圾郵件夾，或 
+          沒收到信？請檢查垃圾郵件夾，或
           <a href="#" @click.prevent="handleResend" class="fw-bold text-gradient text-decoration-none">重新發送</a>
         </p>
       </div>

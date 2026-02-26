@@ -32,14 +32,14 @@ const setFilter = (category) => {
 }
 
 const members = [
-  { id: 1, category: 'women', name: '氣質女神 - 小雅', image: '/images/Girlfriend1.jpg', tag: 'NEW ARRIVAL', tagColor: 'danger', specialty: '專長：看展、下午茶', price: '$600 / hr' },
-  { id: 2, category: 'limited', name: '高冷御姐 - Bella', image: '/images/Girlfriend2.jpg', tag: 'VIP ONLY', tagColor: 'dark', specialty: '專長：出席晚宴', price: '$1,500 / hr' },
-  { id: 3, category: 'men', name: '陽光型男 - Mark', image: '/images/Boyfriend1.jpg', tag: 'POPULAR', tagColor: 'danger', specialty: '專長：健身、戶外', price: '$800 / hr' },
-  { id: 4, category: 'accessories', name: '週末桌遊局', image: '/images/Girlfriend4.jpg', tag: 'GROUP', tagColor: 'secondary', specialty: '地點：台北大安', price: '$300 / 人' },
-  { id: 5, category: 'women', name: '鄰家女孩 - 萱萱', image: '/images/Girlfriend5.jpg', tag: 'NEW', tagColor: 'secondary', specialty: '專長：逛街、聊天', price: '$500 / hr' },
-  { id: 6, category: 'men', name: '潮流帥哥 - Jay', image: '/images/Boyfriend2.jpg', tag: 'HOT', tagColor: 'danger', specialty: '專長：穿搭、攝影', price: '$900 / hr' },
-  { id: 7, category: 'limited', name: '一日男友體驗', image: '/images/Girlfriend6.jpg', tag: 'EXCLUSIVE', tagColor: 'danger', specialty: '全套約會行程', price: '$3,000 / day' },
-  { id: 8, category: 'accessories', name: '電影鑑賞團', image: '/images/Girlfriend7.jpg', tag: 'POPULAR', tagColor: 'danger', specialty: '信義威秀影城', price: '費用自付' }
+  { id: 1, category: 'women', name: '氣質女神 - 小雅', image: '/images/Girl5.jpg', tag: 'NEW ARRIVAL', tagColor: 'danger', specialty: '專長：看展、下午茶', price: '$600 / hr' },
+  { id: 2, category: 'limited', name: '高冷御姐 - Bella', image: '/images/Girl6.jpg', tag: 'VIP ONLY', tagColor: 'dark', specialty: '專長：出席晚宴', price: '$1,500 / hr' },
+  { id: 3, category: 'men', name: '帥氣霸總 - Mark', image: '/images/Boy2.jpg', tag: 'POPULAR', tagColor: 'danger', specialty: '專長：健身、戶外', price: '$800 / hr' },
+  { id: 4, category: 'accessories', name: '週末桌遊局', image: '/images/Group1.jpg', tag: 'GROUP', tagColor: 'secondary', specialty: '地點：台北大安', price: '$300 / 人' },
+  { id: 5, category: 'women', name: '鄰家女孩 - 萱萱', image: '/images/Girl7.jpg', tag: 'NEW', tagColor: 'secondary', specialty: '專長：逛街、聊天', price: '$500 / hr' },
+  { id: 6, category: 'men', name: '潮流帥哥 - Jay', image: '/images/Boy3.jpg', tag: 'HOT', tagColor: 'danger', specialty: '專長：穿搭、攝影', price: '$900 / hr' },
+  { id: 7, category: 'limited', name: '一日男友體驗', image: '/images/Boy4.jpg', tag: 'EXCLUSIVE', tagColor: 'danger', specialty: '全套約會行程', price: '$3,000 / day' },
+  { id: 8, category: 'accessories', name: '周末電影之夜', image: '/images/Group2.jpg', tag: 'POPULAR', tagColor: 'danger', specialty: '信義威秀影城', price: '費用自付' }
 ]
 
 const filteredMembers = computed(() => {
@@ -56,8 +56,9 @@ const reviews = [
 
 <template>
   <div id="home">
-    
-    <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar" style="margin: 20px; transition: all 0.3s ease-in-out;">
+
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar"
+      style="margin: 20px; transition: all 0.3s ease-in-out;">
       <div class="container-fluid">
         <a class="navbar-brand d-flex align-items-center fw-bold fs-3 ps-2" href="#home">
           <i class="bi bi-heart-fill me-2" style="color: var(--bs-primary)"></i>
@@ -82,11 +83,13 @@ const reviews = [
       </div>
     </nav>
 
-    <section class="hero-section d-flex align-items-center position-relative overflow-hidden" style="min-height: 100vh; padding-top: 100px;">
+    <section class="hero-section d-flex align-items-center position-relative overflow-hidden"
+      style="min-height: 100vh; padding-top: 100px;">
       <div class="container position-relative z-2">
         <div class="row align-items-center">
           <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start">
-            <span class="badge bg-white text-gradient border border-white rounded-pill px-3 py-2 mb-3 fw-bold shadow-sm">
+            <span
+              class="badge bg-white text-gradient border border-white rounded-pill px-3 py-2 mb-3 fw-bold shadow-sm">
               ✨ Find Your Perfect Match
             </span>
             <h1 class="display-3 fw-bolder lh-1 mb-4" style="color: var(--text-main);">
@@ -119,7 +122,7 @@ const reviews = [
 
           <div class="col-lg-6">
             <div id="heroCarousel" class="carousel slide carousel-fade rounded-4 overflow-hidden"
-                 style="border: 4px solid rgba(255,255,255,0.4);" data-bs-ride="carousel">
+              style="border: 4px solid rgba(255,255,255,0.4);" data-bs-ride="carousel">
               <div class="carousel-indicators">
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
@@ -127,13 +130,16 @@ const reviews = [
               </div>
               <div class="carousel-inner">
                 <div class="carousel-item active" data-bs-interval="4000">
-                  <img src="/images/Girlfriend1.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;" alt="Model">
+                  <img src="/images/Girl1.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;"
+                    alt="Model">
                 </div>
                 <div class="carousel-item" data-bs-interval="4000">
-                  <img src="/images/Girlfriend2.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;" alt="Model">
+                  <img src="/images/Girl2.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;"
+                    alt="Model">
                 </div>
                 <div class="carousel-item" data-bs-interval="4000">
-                  <img src="/images/Girlfriend3.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;" alt="Model">
+                  <img src="/images/Girl3.jpg" class="d-block w-100 object-fit-cover" style="height: 600px;"
+                    alt="Model">
                 </div>
               </div>
             </div>
@@ -149,24 +155,23 @@ const reviews = [
           <p class="text-muted">發現您感興趣的對象與活動</p>
 
           <div class="d-flex justify-content-center flex-wrap gap-3 mt-4">
-            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'all' }" @click="setFilter('all')">全部</button>
-            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'women' }" @click="setFilter('women')">出租女友</button>
-            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'men' }" @click="setFilter('men')">出租男友</button>
-            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'accessories' }" @click="setFilter('accessories')">揪團活動</button>
-            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'limited' }" @click="setFilter('limited')">限定企劃</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'all' }"
+              @click="setFilter('all')">全部</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'women' }"
+              @click="setFilter('women')">出租女友</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'men' }"
+              @click="setFilter('men')">出租男友</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'accessories' }"
+              @click="setFilter('accessories')">揪團活動</button>
+            <button class="btn btn-outline-light rounded-pill" :class="{ active: currentFilter === 'limited' }"
+              @click="setFilter('limited')">限定企劃</button>
           </div>
         </div>
 
         <div class="row g-4 fade-in-up" :key="currentFilter">
           <div v-for="member in filteredMembers" :key="member.id" class="col-md-6 col-lg-3">
-            <MemberCard 
-              :image="member.image"
-              :name="member.name"
-              :tag="member.tag"
-              :tag-color="member.tagColor"
-              :specialty="member.specialty"
-              :price="member.price"
-            />
+            <MemberCard :image="member.image" :name="member.name" :tag="member.tag" :tag-color="member.tagColor"
+              :specialty="member.specialty" :price="member.price" />
           </div>
         </div>
       </div>
@@ -186,7 +191,9 @@ const reviews = [
               <div class="row g-3 mb-5">
                 <div class="col-4">
                   <div class="card h-100 p-3 text-center align-items-center border-0">
-                    <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3" style="width:50px;height:50px; color: white;">
+                    <div
+                      class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3"
+                      style="width:50px;height:50px; color: white;">
                       <i class="bi bi-shield-check fs-4"></i>
                     </div>
                     <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">嚴格審核</h6>
@@ -194,7 +201,9 @@ const reviews = [
                 </div>
                 <div class="col-4">
                   <div class="card h-100 p-3 text-center align-items-center border-0">
-                    <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3" style="width:50px;height:50px; color: white;">
+                    <div
+                      class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3"
+                      style="width:50px;height:50px; color: white;">
                       <i class="bi bi-lock-fill fs-4"></i>
                     </div>
                     <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">安全隱私</h6>
@@ -202,7 +211,9 @@ const reviews = [
                 </div>
                 <div class="col-4">
                   <div class="card h-100 p-3 text-center align-items-center border-0">
-                    <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3" style="width:50px;height:50px; color: white;">
+                    <div
+                      class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm mb-3"
+                      style="width:50px;height:50px; color: white;">
                       <i class="bi bi-stars fs-4"></i>
                     </div>
                     <h6 class="fw-bold mb-1" style="font-size: 0.9rem;">精準配對</h6>
@@ -216,12 +227,16 @@ const reviews = [
           <div class="col-lg-6 order-lg-2 order-1">
             <div class="row g-3">
               <div class="col-8">
-                <img src="/images/Boyfriend4.jpg" class="w-100 h-100 object-fit-cover rounded-4 shadow-sm border border-white" style="min-height: 400px;" alt="Social Life">
+                <img src="/images/Couple.jpg"
+                  class="w-100 h-100 object-fit-cover rounded-4 shadow-sm border border-white"
+                  style="min-height: 400px;" alt="Social Life">
               </div>
               <div class="col-4">
                 <div class="vstack gap-3 h-100">
-                  <img src="/images/Girlfriend4.jpg" class="w-100 h-50 object-fit-cover rounded-4 shadow-sm border border-white" alt="Dating">
-                  <img src="/images/Girlfriend5.jpg" class="w-100 h-50 object-fit-cover rounded-4 shadow-sm border border-white" alt="Party">
+                  <img src="/images/Boy1.jpg"
+                    class="w-100 h-50 object-fit-cover rounded-4 shadow-sm border border-white" alt="Dating">
+                  <img src="/images/Girl4.jpg"
+                    class="w-100 h-50 object-fit-cover rounded-4 shadow-sm border border-white" alt="Party">
                 </div>
               </div>
             </div>
@@ -235,12 +250,7 @@ const reviews = [
           </div>
           <div class="row g-4">
             <div v-for="item in reviews" :key="item.id" class="col-md-4">
-              <ReviewCard 
-                :review="item.review"
-                :name="item.name"
-                :job="item.job"
-                :avatar="item.avatar"
-              />
+              <ReviewCard :review="item.review" :name="item.name" :job="item.job" :avatar="item.avatar" />
             </div>
           </div>
         </div>
@@ -291,7 +301,9 @@ const reviews = [
             <div class="card p-4 p-lg-5 h-100 justify-content-center">
               <div class="vstack gap-5">
                 <div class="d-flex align-items-start gap-4">
-                  <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width:50px;height:50px; color:white;">
+                  <div
+                    class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                    style="width:50px;height:50px; color:white;">
                     <i class="bi bi-geo-alt-fill fs-5"></i>
                   </div>
                   <div>
@@ -302,7 +314,9 @@ const reviews = [
                   </div>
                 </div>
                 <div class="d-flex align-items-start gap-4">
-                  <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width:50px;height:50px; color:white;">
+                  <div
+                    class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                    style="width:50px;height:50px; color:white;">
                     <i class="bi bi-telephone-fill fs-5"></i>
                   </div>
                   <div>
@@ -313,7 +327,9 @@ const reviews = [
                   </div>
                 </div>
                 <div class="d-flex align-items-start gap-4">
-                  <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width:50px;height:50px; color:white;">
+                  <div
+                    class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                    style="width:50px;height:50px; color:white;">
                     <i class="bi bi-envelope-fill fs-5"></i>
                   </div>
                   <div>
@@ -331,7 +347,8 @@ const reviews = [
           <div class="col-12">
             <div class="card overflow-hidden p-0">
               <div style="height: 350px;">
-                <iframe src="https://maps.google.com/maps?q=Taipei&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                <iframe src="https://maps.google.com/maps?q=Taipei&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%"
+                  height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
               </div>
             </div>
           </div>

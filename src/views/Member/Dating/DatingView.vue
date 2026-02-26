@@ -81,16 +81,17 @@ async function nextPerson(isLiked) {
 
 <template>
   <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 70vh;">
-    
+
     <!-- 初始畫面 -->
     <div v-if="!showCard && !message" class="text-center fade-in-up">
-      <div class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-lg mx-auto mb-4" 
-           style="width: 120px; height: 120px; color: white;">
+      <div
+        class="icon-circle bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-lg mx-auto mb-4"
+        style="width: 120px; height: 120px; color: white;">
         <i class="bi bi-fire display-3"></i>
       </div>
       <h2 class="fw-bold text-gradient mb-3">準備好開始配對了嗎？</h2>
       <p class="text-muted mb-4">點擊下方按鈕開始尋找你的理想對象</p>
-      
+
       <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm" @click="startMatch">
         <i class="bi bi-search-heart me-2"></i> 開始配對
       </button>
@@ -98,25 +99,23 @@ async function nextPerson(isLiked) {
 
     <!-- 顯示訊息 -->
     <div v-else-if="message" class="text-center fade-in-up">
-      <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border" 
-           style="width: 100px; height: 100px; color: var(--text-muted);">
+      <div
+        class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border"
+        style="width: 100px; height: 100px; color: var(--text-muted);">
         <i class="bi bi-emoji-frown display-4"></i>
       </div>
       <h3 class="fw-bold text-gradient mb-3">{{ message }}</h3>
       <p class="text-muted">請稍後再嘗試！</p>
-      
-      <button class="btn btn-outline-secondary rounded-pill mt-3 btn-sm" @click="matchCount = 0; currentIndex = 0; message = ''">
+
+      <button class="btn btn-outline-secondary rounded-pill mt-3 btn-sm"
+        @click="matchCount = 0; currentIndex = 0; message = ''">
         重新測試 (開發用)
       </button>
     </div>
 
     <!-- 顯示候選人卡片 -->
     <div v-else-if="showCard && person.length" class="card-wrapper fade-in-up w-100 d-flex justify-content-center">
-      <ProfileCard 
-        :person="person[currentIndex]" 
-        @like="nextPerson(true)" 
-        @reject="nextPerson(false)" 
-      />
+      <ProfileCard :person="person[currentIndex]" @like="nextPerson(true)" @reject="nextPerson(false)" />
     </div>
 
   </div>

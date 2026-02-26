@@ -75,16 +75,16 @@ onMounted(fetchServices);
 <template>
   <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
     <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1440px;">
-      
-      <button @click="goBackToRent" 
-              class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
-              title="返回租賃列表">
+
+      <button @click="goBackToRent" class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn"
+        title="返回租賃列表">
         <i class="bi bi-arrow-left"></i>
       </button>
 
-      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto" style="max-width: 1300px; min-height: 650px;">
+      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
+        style="max-width: 1300px; min-height: 650px;">
         <div class="row g-0 h-100">
-          
+
           <!-- 左側標題 -->
           <div class="col-lg-4 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end">
             <div class="mb-3">
@@ -119,13 +119,8 @@ onMounted(fetchServices);
 
                     <!-- 可調整時數 -->
                     <label class="fw-bold small text-muted mb-1">選擇時數</label>
-                    <el-input-number 
-                      v-model="s.selectedHour" 
-                      :min="1" 
-                      :max="rent ? rent.hours : s.hour" 
-                      size="small" 
-                      class="mb-2"
-                    /> <!-- ✅ 自閉合 -->
+                    <el-input-number v-model="s.selectedHour" :min="1" :max="rent ? rent.hours : s.hour" size="small"
+                      class="mb-2" /> <!-- ✅ 自閉合 -->
 
                     <!-- 計算金額 -->
                     <p class="mb-3">
@@ -133,8 +128,7 @@ onMounted(fetchServices);
                       NT$ {{ (s.price / s.hour * s.selectedHour).toLocaleString() }}
                     </p>
 
-                    <button class="btn btn-primary mt-auto rounded-pill fw-bold"
-                            @click="addServiceToCart(s)">
+                    <button class="btn btn-primary mt-auto rounded-pill fw-bold" @click="addServiceToCart(s)">
                       加入購物車
                     </button>
                   </div>

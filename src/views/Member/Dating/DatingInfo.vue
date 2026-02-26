@@ -62,19 +62,14 @@ onMounted(() => {
 
 <template>
   <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
-    <div
-      v-if="person && !isEditing"
-      class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
-      style="max-width: 1300px; height: 650px"
-    >
+    <div v-if="person && !isEditing" class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
+      style="max-width: 1300px; height: 650px">
       <div class="row g-0 h-100">
         <div class="col-lg-4 h-100 position-relative">
           <img :src="person.avatar" class="w-100 h-100 object-fit-cover" :alt="person.name" />
         </div>
 
-        <div
-          class="col-lg-4 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end border-light-subtle"
-        >
+        <div class="col-lg-4 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end border-light-subtle">
           <div class="d-flex align-items-end mb-3">
             <h1 class="fw-bolder mb-0 me-3 text-dark display-5">{{ person.name }}</h1>
             <span class="fs-3 text-muted">{{ person.age }}歲</span>
@@ -92,8 +87,7 @@ onMounted(() => {
           <div class="row g-3 mb-4">
             <div class="col-6">
               <div
-                class="bg-white border border-light-subtle shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center text-center h-100 transition-all"
-              >
+                class="bg-white border border-light-subtle shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center text-center h-100 transition-all">
                 <i class="bi bi-person-hearts fs-4 text-success"></i>
                 <h4 class="fw-bolder mb-0 text-dark">{{ person.matches }}</h4>
                 <span class="small text-muted fw-bold mt-1">配對成功</span>
@@ -102,8 +96,7 @@ onMounted(() => {
 
             <div class="col-6">
               <div
-                class="bg-white border border-light-subtle shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center text-center h-100 transition-all"
-              >
+                class="bg-white border border-light-subtle shadow-sm rounded-4 p-3 d-flex flex-column align-items-center justify-content-center text-center h-100 transition-all">
                 <i class="bi bi-heart-fill fs-4 text-danger"></i>
                 <h4 class="fw-bolder mb-0 text-dark">{{ person.likes }}</h4>
                 <span class="small text-muted fw-bold mt-1">收到喜歡</span>
@@ -125,11 +118,8 @@ onMounted(() => {
               <i class="bi bi-stars me-2 text-warning"></i>興趣愛好
             </h5>
             <div class="d-flex flex-wrap gap-2">
-              <span
-                v-for="hobbyId in person.hobbies"
-                :key="hobbyId"
-                class="badge bg-white text-dark border border-light-subtle rounded-pill fw-normal px-3 py-2 fs-6 shadow-sm"
-              >
+              <span v-for="hobbyId in person.hobbies" :key="hobbyId"
+                class="badge bg-white text-dark border border-light-subtle rounded-pill fw-normal px-3 py-2 fs-6 shadow-sm">
                 {{ hobbyMap[hobbyId] }}
               </span>
             </div>
@@ -164,10 +154,7 @@ onMounted(() => {
           </div>
 
           <div class="mt-auto text-end">
-            <button
-              @click="isEditing = true"
-              class="btn btn-primary rounded-pill w-100 fw-bold shadow fs-5"
-            >
+            <button @click="isEditing = true" class="btn btn-primary rounded-pill w-100 fw-bold shadow fs-5">
               <i class="bi bi-pencil-square me-2"></i>編輯個人資料
             </button>
           </div>
@@ -175,12 +162,8 @@ onMounted(() => {
       </div>
     </div>
 
-    <DatingEdit
-      v-else-if="person && isEditing"
-      :initial-data="person"
-      @save="updateProfile"
-      @cancel="isEditing = false"
-    />
+    <DatingEdit v-else-if="person && isEditing" :initial-data="person" @save="updateProfile"
+      @cancel="isEditing = false" />
 
     <div v-else class="text-center p-5">
       <span class="spinner-border text-primary"></span>
@@ -202,9 +185,11 @@ onMounted(() => {
   .card {
     height: auto !important;
   }
+
   .col-lg-4 {
     height: auto !important;
   }
+
   .col-lg-4 img {
     height: 400px;
   }

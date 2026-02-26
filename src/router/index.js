@@ -46,10 +46,10 @@ const router = createRouter({
       component: () => import('../views/OAuth/VerifyEmailView.vue'),
     },
     // ★★★★★★★ 設定各自路由 ★★★★★★★
-{
+    {
       path: '/member',
       component: () => import('../layout/MemberLayout.vue'), // 會員後台外框
-      redirect: '/member/dating', 
+      redirect: '/member/dating/info',
       meta: { requiresAuth: true },
       children: [
         // --- 交友配對 (Dating) ---
@@ -78,7 +78,7 @@ const router = createRouter({
         { path: 'security', name: 'member-security', component: () => import('../views/Member/SecurityView.vue') }
       ]
     }
-    
+
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

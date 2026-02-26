@@ -11,13 +11,13 @@ const LIST_ROUTE_NAME = "member-group";
 
 const form = ref({
   title: "",
-  categoryId: null, 
+  categoryId: null,
   description: "",
   startAt: "",
   endAt: "",
   location: "",
   need: 8,
-  imageFile: null,   
+  imageFile: null,
   imagePreview: "",
 });
 
@@ -43,9 +43,9 @@ function getUserIdFallback() {
       if (u?.userId) return Number(u.userId);
       if (u?.id) return Number(u.id);
     }
-  } catch {}
+  } catch { }
 
-  return 1; 
+  return 1;
 }
 
 const CITY_DISTRICTS = {
@@ -152,7 +152,7 @@ const errors = computed(() => {
     return e;
   } catch (err) {
     console.error("errors computed failed:", err);
-    return {}; 
+    return {};
   }
 });
 
@@ -193,29 +193,29 @@ async function submit() {
   try {
     const f = form.value;
 
-const uid = getUserIdFallback();
-const cid = Number(f.categoryId);
-const cname = getCategoryNameById(cid) || "temp";
+    const uid = getUserIdFallback();
+    const cid = Number(f.categoryId);
+    const cname = getCategoryNameById(cid) || "temp";
 
-const fd = new FormData();
-fd.append("userId", String(uid));
-fd.append("categoryId", String(cid));
-fd.append("title", f.title.trim());
-fd.append("description", f.description.trim());
-fd.append("eventDate", f.startAt.split("T")[0]);
-fd.append("startAt", ensureSeconds(f.startAt));
-fd.append("endAt", ensureSeconds(f.endAt));
-fd.append("maxPeople", String(Number(f.need) || 1));
-fd.append("location", f.location.trim());
-fd.append("status", "1");
+    const fd = new FormData();
+    fd.append("userId", String(uid));
+    fd.append("categoryId", String(cid));
+    fd.append("title", f.title.trim());
+    fd.append("description", f.description.trim());
+    fd.append("eventDate", f.startAt.split("T")[0]);
+    fd.append("startAt", ensureSeconds(f.startAt));
+    fd.append("endAt", ensureSeconds(f.endAt));
+    fd.append("maxPeople", String(Number(f.need) || 1));
+    fd.append("location", f.location.trim());
+    fd.append("status", "1");
 
-if (f.imageFile) {
-  fd.append("image", f.imageFile);
-}
+    if (f.imageFile) {
+      fd.append("image", f.imageFile);
+    }
 
-await axios.post("/Activity", fd, {
-  headers: { "Content-Type": "multipart/form-data" },
-});
+    await axios.post("/Activity", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
     window.alert("建立成功！");
     router.push({ name: LIST_ROUTE_NAME });
@@ -254,21 +254,21 @@ onMounted(() => {
         <i class="bi bi-arrow-left"></i>
       </button>
 
-      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto bg-white" style="max-width: 1300px; --glass-bg: rgba(255, 255, 255, 0.5);">
+      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto bg-white"
+        style="max-width: 1300px; --glass-bg: rgba(255, 255, 255, 0.5);">
         <div class="row g-0 h-100">
           <div class="col-lg-4 bg-light p-4 p-xl-5 border-end border-light-subtle position-relative">
             <div class="position-sticky">
               <h5 class="fw-bold text-dark mb-4"><i class="bi bi-eye text-primary me-2"></i>即時預覽</h5>
 
               <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
-                <div
-                  class="position-relative"
-                  style="height: 240px; background: #e9ecef; transition: all 0.3s;"
-                  :class="{ 'border border-2 border-danger': touched && errors.image }"
-                >
-                  <img v-if="form.imagePreview" :src="form.imagePreview" class="w-100 h-100 object-fit-cover opacity-75" alt="Preview" />
+                <div class="position-relative" style="height: 240px; background: #e9ecef; transition: all 0.3s;"
+                  :class="{ 'border border-2 border-danger': touched && errors.image }">
+                  <img v-if="form.imagePreview" :src="form.imagePreview" class="w-100 h-100 object-fit-cover opacity-75"
+                    alt="Preview" />
 
-                  <div v-else class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                  <div v-else
+                    class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
                     <i class="bi bi-image display-4 text-black-50 opacity-25 mb-2"></i>
                   </div>
 
@@ -280,17 +280,16 @@ onMounted(() => {
                   </div>
 
                   <div class="position-absolute top-0 start-0 p-3 z-1 d-flex gap-2 flex-wrap">
-                    <span
-                      class="badge rounded-pill px-3 py-1 shadow-sm text-white fw-normal"
-                      style="background-color: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25);"
-                    >
+                    <span class="badge rounded-pill px-3 py-1 shadow-sm text-white fw-normal"
+                      style="background-color: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25);">
                       {{
                         categories.find((c) => c.categoryId === form.categoryId)?.categoryName || "未選擇"
                       }}
                     </span>
                   </div>
 
-                  <div v-if="touched && errors.image" class="position-absolute bottom-0 w-100 bg-danger text-white text-center py-1 fw-bold small z-2">
+                  <div v-if="touched && errors.image"
+                    class="position-absolute bottom-0 w-100 bg-danger text-white text-center py-1 fw-bold small z-2">
                     <i class="bi bi-exclamation-circle me-1"></i>{{ errors.image }}
                   </div>
                 </div>
@@ -309,14 +308,13 @@ onMounted(() => {
                     </div>
                   </div>
 
-                  <p
-                    class="text-muted small mb-0 lh-lg"
-                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line;"
-                  >
+                  <p class="text-muted small mb-0 lh-lg"
+                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line;">
                     {{ form.description.trim() || "（活動詳細說明將顯示於此...）" }}
                   </p>
 
-                  <div class="mt-3 pt-3 border-top border-light-subtle d-flex justify-content-between align-items-center">
+                  <div
+                    class="mt-3 pt-3 border-top border-light-subtle d-flex justify-content-between align-items-center">
                     <span class="text-muted small fw-bold">名額上限</span>
                     <span class="text-primary fw-bolder fs-6">{{ Number(form.need) || 0 }} 人</span>
                   </div>
@@ -335,7 +333,8 @@ onMounted(() => {
                 <div class="col-md-8">
                   <label class="form-label fw-bold text-muted small ms-1">活動標題</label>
                   <div class="input-group-custom mb-1">
-                    <input v-model="form.title" class="form-control" :class="{ 'is-invalid': touched && errors.title }" placeholder="例如：一起吃拉麵（新宿）" />
+                    <input v-model="form.title" class="form-control" :class="{ 'is-invalid': touched && errors.title }"
+                      placeholder="例如：一起吃拉麵（新宿）" />
                     <i class="bi bi-card-heading"></i>
                   </div>
                   <div v-if="touched && errors.title" class="text-danger small ms-2 fw-bold">{{ errors.title }}</div>
@@ -344,18 +343,22 @@ onMounted(() => {
                 <div class="col-md-4">
                   <label class="form-label fw-bold text-muted small ms-1">活動類型</label>
                   <div class="input-group-custom mb-1" :class="{ 'has-error': touched && errors.category }">
-                    <el-select v-model="form.categoryId" size="large" style="width: 100%;" :loading="categoryLoading" placeholder="請選擇">
-                      <el-option v-for="c in categories" :key="c.categoryId" :label="c.categoryName" :value="c.categoryId" />
+                    <el-select v-model="form.categoryId" size="large" style="width: 100%;" :loading="categoryLoading"
+                      placeholder="請選擇">
+                      <el-option v-for="c in categories" :key="c.categoryId" :label="c.categoryName"
+                        :value="c.categoryId" />
                     </el-select>
                     <i class="bi bi-tag"></i>
                   </div>
-                  <div v-if="touched && errors.category" class="text-danger small ms-2 fw-bold">{{ errors.category }}</div>
+                  <div v-if="touched && errors.category" class="text-danger small ms-2 fw-bold">{{ errors.category }}
+                  </div>
                 </div>
 
                 <div class="col-md-4">
                   <label class="form-label fw-bold text-muted small ms-1">縣市</label>
                   <div class="input-group-custom mb-1" :class="{ 'has-error': touched && errors.location }">
-                    <el-select v-model="selectedCity" size="large" placeholder="請選擇" style="width: 100%;" @change="onCityChange">
+                    <el-select v-model="selectedCity" size="large" placeholder="請選擇" style="width: 100%;"
+                      @change="onCityChange">
                       <el-option v-for="c in cityOptions" :key="c" :label="c" :value="c" />
                     </el-select>
                     <i class="bi bi-map"></i>
@@ -365,14 +368,8 @@ onMounted(() => {
                 <div class="col-md-4">
                   <label class="form-label fw-bold text-muted small ms-1">行政區</label>
                   <div class="input-group-custom mb-1" :class="{ 'has-error': touched && errors.location }">
-                    <el-select
-                      v-model="selectedDistrict"
-                      size="large"
-                      :placeholder="selectedCity ? '請選擇' : '先選縣市'"
-                      style="width: 100%;"
-                      :disabled="!selectedCity"
-                      @change="onDistrictChange"
-                    >
+                    <el-select v-model="selectedDistrict" size="large" :placeholder="selectedCity ? '請選擇' : '先選縣市'"
+                      style="width: 100%;" :disabled="!selectedCity" @change="onDistrictChange">
                       <el-option v-for="d in districtOptions" :key="d" :label="d" :value="d" />
                     </el-select>
                     <i class="bi bi-geo-alt"></i>
@@ -382,7 +379,8 @@ onMounted(() => {
                 <div class="col-md-4">
                   <label class="form-label fw-bold text-muted small ms-1">名額上限</label>
                   <div class="input-group-custom mb-1">
-                    <input v-model.number="form.need" type="number" min="1" class="form-control" :class="{ 'is-invalid': touched && errors.need }" />
+                    <input v-model.number="form.need" type="number" min="1" class="form-control"
+                      :class="{ 'is-invalid': touched && errors.need }" />
                     <i class="bi bi-people"></i>
                   </div>
                 </div>
@@ -395,32 +393,19 @@ onMounted(() => {
                 <div class="col-md-6">
                   <label class="form-label fw-bold text-muted small ms-1">開始時間</label>
                   <div class="input-group-custom mb-1" :class="{ 'has-error': touched && errors.startAt }">
-                    <el-date-picker
-                      v-model="form.startAt"
-                      type="datetime"
-                      placeholder="選擇開始時間"
-                      format="YYYY/MM/DD HH:mm"
-                      value-format="YYYY-MM-DDTHH:mm"
-                      size="large"
-                      style="width: 100%;"
-                    />
+                    <el-date-picker v-model="form.startAt" type="datetime" placeholder="選擇開始時間"
+                      format="YYYY/MM/DD HH:mm" value-format="YYYY-MM-DDTHH:mm" size="large" style="width: 100%;" />
                     <i class="bi bi-clock"></i>
                   </div>
-                  <div v-if="touched && errors.startAt" class="text-danger small ms-2 fw-bold">{{ errors.startAt }}</div>
+                  <div v-if="touched && errors.startAt" class="text-danger small ms-2 fw-bold">{{ errors.startAt }}
+                  </div>
                 </div>
 
                 <div class="col-md-6">
                   <label class="form-label fw-bold text-muted small ms-1">結束時間</label>
                   <div class="input-group-custom mb-1" :class="{ 'has-error': touched && errors.endAt }">
-                    <el-date-picker
-                      v-model="form.endAt"
-                      type="datetime"
-                      placeholder="選擇結束時間"
-                      format="YYYY/MM/DD HH:mm"
-                      value-format="YYYY-MM-DDTHH:mm"
-                      size="large"
-                      style="width: 100%;"
-                    />
+                    <el-date-picker v-model="form.endAt" type="datetime" placeholder="選擇結束時間" format="YYYY/MM/DD HH:mm"
+                      value-format="YYYY-MM-DDTHH:mm" size="large" style="width: 100%;" />
                     <i class="bi bi-clock-history"></i>
                   </div>
                   <div v-if="touched && errors.endAt" class="text-danger small ms-2 fw-bold">{{ errors.endAt }}</div>
@@ -429,24 +414,25 @@ onMounted(() => {
                 <div class="col-12">
                   <label class="form-label fw-bold text-muted small ms-1">活動詳細敘述</label>
                   <div class="input-group-custom mb-1">
-                    <textarea
-                      v-model="form.description"
-                      class="form-control py-3"
-                      :class="{ 'is-invalid': touched && errors.description }"
-                      rows="6"
+                    <textarea v-model="form.description" class="form-control py-3"
+                      :class="{ 'is-invalid': touched && errors.description }" rows="6"
                       placeholder="請填寫集合地點、注意事項、費用、是否歡迎新手、需要自備什麼... 等詳細資訊"
-                      style="padding-left: 48px !important; border-radius: 12px; resize: none;"
-                    ></textarea>
+                      style="padding-left: 48px !important; border-radius: 12px; resize: none;"></textarea>
                     <i class="bi bi-card-text" style="top: 24px;"></i>
                   </div>
-                  <div v-if="touched && errors.description" class="text-danger small ms-2 fw-bold">{{ errors.description }}</div>
+                  <div v-if="touched && errors.description" class="text-danger small ms-2 fw-bold">{{ errors.description
+                    }}</div>
                 </div>
               </div>
 
-              <div class="mt-auto pt-4 border-top border-light-subtle d-flex gap-3 justify-content-end align-items-center">
-                <span v-if="touched && !isValid" class="text-danger fw-bold small me-auto"><i class="bi bi-exclamation-triangle-fill me-1"></i>請先修正表單錯誤</span>
+              <div
+                class="mt-auto pt-4 border-top border-light-subtle d-flex gap-3 justify-content-end align-items-center">
+                <span v-if="touched && !isValid" class="text-danger fw-bold small me-auto"><i
+                    class="bi bi-exclamation-triangle-fill me-1"></i>請先修正表單錯誤</span>
 
-                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold border border-light-subtle shadow-sm" @click="goBack">取消</button>
+                <button type="button"
+                  class="btn btn-light rounded-pill px-4 fw-bold border border-light-subtle shadow-sm"
+                  @click="goBack">取消</button>
                 <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" :disabled="isSaving">
                   {{ isSaving ? "建立中..." : "建立活動" }} <i class="bi bi-check-circle ms-1" v-if="!isSaving"></i>
                 </button>

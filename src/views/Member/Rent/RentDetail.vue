@@ -107,8 +107,8 @@ function addExtra() {
     alert("請先建立租賃預約！");
     return;
   }
-  router.push({ 
-    name: "member-rent-add", 
+  router.push({
+    name: "member-rent-add",
     query: { parentId: rent.id }   // ✅ 帶上租人的 id
   });
 }
@@ -121,13 +121,12 @@ function goBack() {
 <template>
   <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
     <div class="position-relative d-flex justify-content-center w-100" style="max-width: 1440px;">
-      <button @click="goBack" 
-              class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" 
-              title="返回列表">
+      <button @click="goBack" class="btn btn-light shadow-sm btn-circle btn-circle-md custom-back-btn" title="返回列表">
         <i class="bi bi-arrow-left"></i>
       </button>
 
-      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto" style="max-width: 1300px; height: 650px;">
+      <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
+        style="max-width: 1300px; height: 650px;">
         <div class="row g-0 h-100">
           <div class="col-lg-4 h-100 position-relative">
             <img :src="image" :alt="name" class="w-100 h-100 object-fit-cover" style="object-position: center;" />
@@ -137,10 +136,10 @@ function goBack() {
             <div class="mb-3">
               <span class="badge bg-danger rounded-pill px-3 py-1 shadow-sm">專屬陪伴</span>
             </div>
-            
+
             <h2 class="fw-bolder text-dark mb-4 display-6">{{ name }}</h2>
             <p class="text-muted lh-lg mb-4 flex-grow-1">{{ description }}</p>
-            
+
             <div class="mt-auto p-4 bg-light rounded-4 border ">
               <p class="text-muted small fw-bold mb-1">租賃費率</p>
               <h4 class="text-gradient fw-bold mb-0">{{ price }}</h4>
@@ -153,16 +152,9 @@ function goBack() {
             <div class="mb-3">
               <label class="form-label fw-bold text-muted small ms-1">開始時間</label>
               <div class="input-group-custom mb-0">
-                <el-date-picker 
-                  v-model="startDate" 
-                  type="datetime" 
-                  placeholder="選擇開始時間" 
-                  format="YYYY/MM/DD HH:mm" 
-                  value-format="YYYY-MM-DDTHH:mm" 
-                  size="large" 
-                  style="width: 100%;" 
-                  :disabled-date="disabledStartDate"
-                />
+                <el-date-picker v-model="startDate" type="datetime" placeholder="選擇開始時間" format="YYYY/MM/DD HH:mm"
+                  value-format="YYYY-MM-DDTHH:mm" size="large" style="width: 100%;"
+                  :disabled-date="disabledStartDate" />
                 <i class="bi bi-clock"></i>
               </div>
             </div>
@@ -170,16 +162,8 @@ function goBack() {
             <div class="mb-4">
               <label class="form-label fw-bold text-muted small ms-1">結束時間</label>
               <div class="input-group-custom mb-0">
-                <el-date-picker 
-                  v-model="endDate" 
-                  type="datetime" 
-                  placeholder="選擇結束時間" 
-                  format="YYYY/MM/DD HH:mm" 
-                  value-format="YYYY-MM-DDTHH:mm" 
-                  size="large" 
-                  style="width: 100%;" 
-                  :disabled-date="disabledEndDate"
-                />
+                <el-date-picker v-model="endDate" type="datetime" placeholder="選擇結束時間" format="YYYY/MM/DD HH:mm"
+                  value-format="YYYY-MM-DDTHH:mm" size="large" style="width: 100%;" :disabled-date="disabledEndDate" />
                 <i class="bi bi-clock-history"></i>
               </div>
             </div>
@@ -197,10 +181,14 @@ function goBack() {
 
             <div class="mt-auto d-flex flex-column gap-3">
               <div class="d-flex gap-2">
-                <button class="btn btn-light rounded-pill flex-fill text-nowrap shadow-sm fw-bold border border-light-subtle" @click="addToCart">加入購物車</button>
-                <button class="btn btn-warning rounded-pill flex-fill text-nowrap shadow-sm fw-bold" @click="addExtra">加購</button>
+                <button
+                  class="btn btn-light rounded-pill flex-fill text-nowrap shadow-sm fw-bold border border-light-subtle"
+                  @click="addToCart">加入購物車</button>
+                <button class="btn btn-warning rounded-pill flex-fill text-nowrap shadow-sm fw-bold"
+                  @click="addExtra">加購</button>
               </div>
-              <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold" @click="goToPayment">立即結帳</button>
+              <button class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm fw-bold"
+                @click="goToPayment">立即結帳</button>
             </div>
           </div>
         </div>
@@ -216,7 +204,8 @@ function goBack() {
   border-radius: 12px;
   box-shadow: 0 0 0 1px rgba(200, 200, 200, 0.6) inset;
   background-color: #fff;
-  height: 48px; /* 強制對齊原本的高度 */
+  height: 48px;
+  /* 強制對齊原本的高度 */
 }
 
 :deep(.el-date-editor .el-input__wrapper.is-focus) {
@@ -227,7 +216,7 @@ function goBack() {
 .custom-back-btn {
   position: absolute !important;
   left: 0px !important;
-  top: 0px; 
+  top: 0px;
   z-index: 1050;
 }
 
@@ -239,9 +228,17 @@ function goBack() {
 }
 
 @media (max-width: 991.98px) {
-  .card { height: auto !important; }
-  .col-lg-4 { height: auto !important; }
-  .col-lg-4 img { height: 400px; }
+  .card {
+    height: auto !important;
+  }
+
+  .col-lg-4 {
+    height: auto !important;
+  }
+
+  .col-lg-4 img {
+    height: 400px;
+  }
 }
 
 @media (max-width: 767.98px) {

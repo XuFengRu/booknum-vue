@@ -1,7 +1,3 @@
-<script setup>
-// 這是一個純外框元件，不需要太多邏輯
-</script>
-
 <template>
     <div class="login-page">
         <main class="container">
@@ -10,10 +6,13 @@
                     <div class="card card-login">
                         <div class="row g-0" style="min-height: 600px;">
 
-                            <div class="col-lg-5 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 position-relative dating-bg-animated">
-                                
-                                <div class="circle-deco" style="width: 200px; height: 200px; top: -50px; left: -50px;"></div>
-                                <div class="circle-deco" style="width: 300px; height: 300px; bottom: -80px; right: -80px;"></div>
+                            <div
+                                class="col-lg-5 d-none d-lg-flex flex-column justify-content-center align-items-center text-white p-5 position-relative dating-bg-animated">
+
+                                <div class="circle-deco" style="width: 200px; height: 200px; top: -50px; left: -50px;">
+                                </div>
+                                <div class="circle-deco"
+                                    style="width: 300px; height: 300px; bottom: -80px; right: -80px;"></div>
 
                                 <slot name="left-side"></slot>
                             </div>
@@ -31,7 +30,3 @@
         </main>
     </div>
 </template>
-
-<style scoped>
-
-</style>
