@@ -64,7 +64,6 @@ const router = createRouter({
 
         // --- 揪團活動 (Group) ---
         { path: 'group', name: 'member-group', component: () => import('../views/Member/Group/GroupView.vue') },
-        { path: 'group/my', name: 'member-group-my', component: () => import('../views/Member/Group/ActivityMy.vue') },
         { path: 'group/create', name: 'member-group-create', component: () => import('../views/Member/Group/ActivityNew.vue') },
         { path: 'group/:id', name: 'member-group-detail', component: () => import('../views/Member/Group/ActivityDetail.vue') },
 
