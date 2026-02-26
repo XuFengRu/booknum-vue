@@ -84,7 +84,7 @@ async function submitForm() {
     !form.value.intro ||
     !form.value.avatar
   ) {
-    alert('請填寫必填欄位！（相片、姓名、職業、現居地、自我介紹）')
+    alert('請填寫必填欄位！（相片、姓名、職業、所在地、自我介紹）')
     return
   }
 
@@ -162,7 +162,7 @@ async function submitForm() {
         </div>
 
         <div class="mb-3">
-          <label class="form-label fw-bold text-muted small">現居地</label>
+          <label class="form-label fw-bold text-muted small">所在地</label>
           <el-select v-model="form.location" placeholder="請選擇" size="large" style="width: 100%">
             <el-option v-for="city in cities" :key="city" :label="city" :value="city" />
           </el-select>
