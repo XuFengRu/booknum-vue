@@ -20,7 +20,9 @@ function openProfile(index) {
   selectedUser.value = index + (currentPage.value - 1) * pageSize
 }
 
-const currentUserId = 6 // 改成目前登入者的 ID
+// ✅ 改成動態抓登入者的 userId
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+const currentUserId = storedUser?.userId
 
 async function fetchUsers() {
   try {
@@ -78,7 +80,6 @@ async function handleReject(person) {
 
 onMounted(fetchUsers)
 </script>
-
 <template>
   <div class="w-100 fade-in-up">
     <template v-if="selectedUser === null">

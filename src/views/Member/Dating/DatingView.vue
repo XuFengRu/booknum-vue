@@ -3,16 +3,15 @@ import ProfileCard from '@/components/datingCard.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 
-const person = ref([
-  // API 抓資料
-])
+const person = ref([]) // API 抓資料
 const currentIndex = ref(0)
 const showCard = ref(false)
 const matchCount = ref(0)
 const message = ref('')
 
-// 模擬目前登入使用者 ID
-const userId = 6
+// ✅ 改成動態抓登入者的 userId
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+const userId = storedUser?.userId
 
 // 候選人
 async function Candidate() {
@@ -54,14 +53,12 @@ async function nextPerson(isLiked) {
     const candidate = person.value[currentIndex.value]
 
     try {
-      const res = await axios.post("/match/interact", {
+      await axios.post("/match/interact", {
         likerUserId: userId,
         likedUserId: candidate.userId,
         isLiked: isLiked,
         score: candidate.probability
       })
-
-
     } catch (err) {
       console.error("互動紀錄失敗:", err)
       if (err.response?.data?.message) {

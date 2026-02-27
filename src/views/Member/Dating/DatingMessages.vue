@@ -8,7 +8,10 @@ const conversations = ref([])
 const selectedChat = ref(null)
 const isMobile = ref(false)
 const connection = ref(null)
-const userId = 6
+
+// ✅ 改成動態抓登入者的 userId
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+const userId = storedUser?.userId
 
 function checkMobile() {
   isMobile.value = window.innerWidth <= 992
@@ -25,7 +28,6 @@ function formatMessageTime(sendAt) {
   if (isSameDay) {
     return msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   } else if (diffDays === 1 || msgDate.getDate() !== now.getDate()) {
-    //不管是否滿 24 小時，只要日期不同就顯示「昨天」
     return '昨天'
   } else if (diffDays < 7) {
     return `${diffDays}天前`
@@ -87,12 +89,12 @@ onMounted(async () => {
     otherUserId: c.otherUserId,
     messages: c.lastMessage
       ? [
-        {
-          chatId: c.lastMessageId,
-          text: c.lastMessage,
-          sendAt: c.lastTime,
-        },
-      ]
+          {
+            chatId: c.lastMessageId,
+            text: c.lastMessage,
+            sendAt: c.lastTime,
+          },
+        ]
       : [],
     unreadCount: c.unreadCount,
   }))

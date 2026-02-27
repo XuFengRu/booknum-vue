@@ -5,8 +5,6 @@ import DatingEdit from '@/components/datingEdit.vue'
 
 const isEditing = ref(false)
 const person = ref(undefined) // undefined: 載入中, null: 沒資料
-
-// 興趣 ID -> 名稱
 const hobbyMap = ref({})
 
 async function loadProfile(userId) {
@@ -17,7 +15,6 @@ async function loadProfile(userId) {
     ])
 
     const data = profileRes.data
-
     if (!data || Object.keys(data).length === 0) {
       person.value = null
       return
@@ -30,7 +27,7 @@ async function loadProfile(userId) {
 
     person.value = {
       userId: data.userId,
-      nickname: data.nickname,   // ✅ 改成 nickname
+      nickname: data.nickname,
       age: data.age,
       location: data.currentCity,
       job: data.job,
@@ -57,7 +54,16 @@ function updateProfile(newData) {
 }
 
 onMounted(() => {
-  loadProfile(13)
+  // 從 localStorage 或 sessionStorage 取出登入同學的 userId
+  const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+  const userId = storedUser?.userId   // ✅ 這裡就是你後端加的 UserId
+
+  if (userId) {
+    loadProfile(userId)
+  } else {
+    console.warn('沒有找到登入使用者的 userId')
+    person.value = null
+  }
 })
 </script>
 
@@ -177,34 +183,42 @@ onMounted(() => {
     </div>
 
     <!-- 編輯模式 -->
-  <DatingEdit
-  v-else-if="person && isEditing"
-  :initial-data="person"
-  @save="() => { 
-    updateProfile()
-    $emit('save')   // 再往上冒泡一次
-  }"
-  @cancel="() => {
-    isEditing = false
-    if (!person.nickname) person = null
-  }"
-/>
+    <DatingEdit
+      v-else-if="person && isEditing"
+      :initial-data="person"
+      @save="
+        () => {
+          updateProfile()
+          $emit('save') // 再往上冒泡一次
+        }
+      "
+      @cancel="
+        () => {
+          isEditing = false
+          if (!person.nickname) person = null
+        }
+      "
+    />
 
     <!-- 沒資料 -->
-    <div v-else-if="person === null" 
-     class="d-flex flex-column justify-content-center align-items-center text-center p-5" 
-     style="min-height: 400px;">
-  <h4 class="mb-3 text-gradient mb-4">
-    你還沒有交友資料，快去開始你的心動之旅吧！
-  </h4>
-  <button
-    @click="() => { person = { userId: 13 }; isEditing = true }"
-    class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
-  >
-    <i class="bi bi-pencil-square me-2"></i>開始編輯
-  </button>
-</div>
-
+    <div
+      v-else-if="person === null"
+      class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+      style="min-height: 400px"
+    >
+      <h4 class="mb-3 text-gradient mb-4">你還沒有交友資料，快去開始你的心動之旅吧！</h4>
+      <button
+        @click="
+          () => {
+            person = { userId: 13 }
+            isEditing = true
+          }
+        "
+        class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
+      >
+        <i class="bi bi-pencil-square me-2"></i>開始編輯
+      </button>
+    </div>
 
     <!-- 載入中 -->
     <div v-else class="text-center p-5">

@@ -45,11 +45,16 @@ onMounted(async () => {
 // 訂閱 API 呼叫
 const subscribe = async (plan) => {
   try {
+    // 取出登入使用者的 userId
+    const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+    const userId = storedUser?.userId   // ✅ 後端回傳的 UserId
+
     const res = await axios.post('https://localhost:7091/api/MatchPremium/subscribe', {
-      userId: 6, // TODO: 改成實際登入使用者 ID
+      userId: userId,   // ✅ 改成動態抓
       methodId: plan.id,
       price: plan.price,
     })
+
     const endDate = new Date(res.data.endAt)
     const formatted = new Intl.DateTimeFormat('zh-TW', {
       year: 'numeric',

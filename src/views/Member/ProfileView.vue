@@ -6,7 +6,11 @@ import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 // 準備取得 JWT Token 的輔助函式
-const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token');
+const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token')
+
+// ✅ 抓登入者的 userId
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+const userId = storedUser?.userId
 
 const formData = ref({
   name: '',
@@ -18,24 +22,33 @@ const formData = ref({
   lastIp: ''
 })
 
-const isPremium = ref(true)
-const premiumExpiryDate = ref('2026-12-31')
+// ✅ Premium 狀態改成動態
+const isPremium = ref(false)
+const premiumExpiryDate = ref('')
 const isSubmitting = ref(false)
 
-// 畫面載入時：自動抓取會員資料
+// 畫面載入時：自動抓取會員資料 + Premium 狀態
 onMounted(async () => {
   try {
     const response = await axios.get('/Member/Profile', {
-      headers: { Authorization: `Bearer ${getToken()}` } // 帶上 JWT 鑰匙
+      headers: { Authorization: `Bearer ${getToken()}` }
     })
     formData.value = response.data
+
+    // Premium 狀態
+    const premiumRes = await axios.get(`https://localhost:7091/api/MatchPremium/isActive/${userId}`)
+    isPremium.value = premiumRes.data === true
+
+    // Premium 到期日（假設後端有提供 expiry API）
+    const expiryRes = await axios.get(`https://localhost:7091/api/MatchPremium/expiry/${userId}`)
+    premiumExpiryDate.value = expiryRes.data?.endAt || '尚未訂閱'
   } catch (error) {
     console.error("無法取得會員資料", error)
     Swal.fire({ icon: 'error', title: '讀取失敗', text: '無法取得個人資料，請重新登入' })
   }
 })
 
-// 儲存變更
+// 儲存變更（保持不動）
 const handleSave = async () => {
   if (isSubmitting.value) return
   isSubmitting.value = true
@@ -49,21 +62,18 @@ const handleSave = async () => {
       gender: formData.value.gender,
       birthday: formData.value.birthday
     }, {
-      headers: { Authorization: `Bearer ${getToken()}` } // 一樣要帶上鑰匙
+      headers: { Authorization: `Bearer ${getToken()}` }
     })
 
-    // 更新 Storage 裡的名字，讓右上角的名稱跟著變
-    const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+    const userStr = localStorage.getItem('user') || sessionStorage.getItem('user')
     if (userStr) {
-      let userObj = JSON.parse(userStr);
-      userObj.name = formData.value.name;
-      if (localStorage.getItem('user')) localStorage.setItem('user', JSON.stringify(userObj));
-      if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(userObj));
+      let userObj = JSON.parse(userStr)
+      userObj.name = formData.value.name
+      if (localStorage.getItem('user')) localStorage.setItem('user', JSON.stringify(userObj))
+      if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(userObj))
     }
 
     Swal.fire({ icon: 'success', title: '儲存成功', text: '個人資料已更新', confirmButtonColor: '#0d6efd' })
-
-    // 強制重新整理頁面以更新 Layout 的名字 (或可搭配 Vuex/Pinia，這裡用重整最簡單)
     setTimeout(() => location.reload(), 1500)
   } catch (error) {
     Swal.fire({ icon: 'error', title: '儲存失敗', text: '資料更新失敗，請稍後再試' })

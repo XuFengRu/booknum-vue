@@ -5,7 +5,10 @@ import axios from 'axios'
 const props = defineProps({ chat: Object })
 const newMessage = ref('')
 const messagesContainer = ref(null)
-const userId = 6
+
+// ✅ 改成動態抓登入者的 userId
+const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+const userId = storedUser?.userId
 
 function formatMessageTime(sendAt) {
   const msgDate = new Date(sendAt)
@@ -29,7 +32,7 @@ async function sendMessage() {
     try {
       await axios.post('https://localhost:7091/api/MatchChat', {
         matchedId: props.chat.id,
-        senderId: userId,
+        senderId: userId,                // ✅ 使用動態 userId
         receiverId: props.chat.otherUserId,
         message: newMessage.value.trim(),
       })
