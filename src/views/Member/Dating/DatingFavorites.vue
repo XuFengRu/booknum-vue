@@ -41,7 +41,7 @@ onMounted(async () => {
   try {
     // 從 localStorage 或 sessionStorage 取出登入使用者的 userId
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-    const userId = storedUser?.userId   // ✅ 後端回傳的 UserId
+    const userId = storedUser?.id
 
     const res = await axios.get(`https://localhost:7091/api/MatchLikes/ILike/${userId}`)
     users.value = res.data.candidates.map(c => ({

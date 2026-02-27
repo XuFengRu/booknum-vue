@@ -47,7 +47,7 @@ const subscribe = async (plan) => {
   try {
     // 取出登入使用者的 userId
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-    const userId = storedUser?.userId   // ✅ 後端回傳的 UserId
+    const userId = storedUser?.id  
 
     const res = await axios.post('https://localhost:7091/api/MatchPremium/subscribe', {
       userId: userId,   // ✅ 改成動態抓

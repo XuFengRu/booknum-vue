@@ -9,9 +9,9 @@ const selectedChat = ref(null)
 const isMobile = ref(false)
 const connection = ref(null)
 
-// ✅ 改成動態抓登入者的 userId
+
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-const userId = storedUser?.userId
+const userId = storedUser?.id
 
 function checkMobile() {
   isMobile.value = window.innerWidth <= 992

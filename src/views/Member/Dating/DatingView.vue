@@ -9,9 +9,9 @@ const showCard = ref(false)
 const matchCount = ref(0)
 const message = ref('')
 
-// ✅ 改成動態抓登入者的 userId
+
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-const userId = storedUser?.userId
+const userId = storedUser?.id
 
 // 候選人
 async function Candidate() {

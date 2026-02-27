@@ -56,7 +56,7 @@ function updateProfile(newData) {
 onMounted(() => {
   // 從 localStorage 或 sessionStorage 取出登入同學的 userId
   const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-  const userId = storedUser?.userId   // ✅ 這裡就是你後端加的 UserId
+  const userId = storedUser?.id   
 
   if (userId) {
     loadProfile(userId)

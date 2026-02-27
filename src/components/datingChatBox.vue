@@ -6,9 +6,9 @@ const props = defineProps({ chat: Object })
 const newMessage = ref('')
 const messagesContainer = ref(null)
 
-// ✅ 改成動態抓登入者的 userId
+
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-const userId = storedUser?.userId
+const userId = storedUser?.id
 
 function formatMessageTime(sendAt) {
   const msgDate = new Date(sendAt)

@@ -10,7 +10,7 @@ const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('
 
 // ✅ 抓登入者的 userId
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-const userId = storedUser?.userId
+const userId = storedUser?.id
 
 const formData = ref({
   name: '',

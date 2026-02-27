@@ -22,7 +22,7 @@ function openProfile(index) {
 
 // ✅ 改成動態抓登入者的 userId
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-const currentUserId = storedUser?.userId
+const currentUserId = storedUser?.id
 
 async function fetchUsers() {
   try {
