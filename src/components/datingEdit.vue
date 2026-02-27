@@ -116,21 +116,27 @@ async function submitForm() {
     Cities: form.value.preference.cities,
   }
 
-  try {
-    if (props.initialData && props.initialData.nickname) {
-      // 更新
-      await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-      alert('更新成功！')
-    } else {
-      // 新增
-      await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-      alert('建立成功！')
-    }
-    emit('save', form.value)
-  } catch (err) {
-    console.error('提交失敗:', err.response?.data || err)
-    alert(err.response?.data || '提交失敗，請稍後再試')
+ try {
+  if (props.initialData && props.initialData.nickname) {
+    await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+    alert('更新成功！')
+  } else {
+    await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+    alert('建立成功！')
   }
+
+  // ✅ 更新 localStorage
+  const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+  storedUser.hasInfo = true
+  localStorage.setItem('user', JSON.stringify(storedUser))
+
+  // ✅ 通知父層 (layout.vue) 更新
+  emit('save', form.value)
+} catch (err) {
+  console.error('提交失敗:', err.response?.data || err)
+  alert(err.response?.data || '提交失敗，請稍後再試')
+}
+
 }
 </script>
 

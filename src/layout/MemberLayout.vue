@@ -128,6 +128,11 @@ onMounted(async () => {
     }
   })
 })
+const refreshUserInfo = () => {
+  const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+  hasInfo.value = storedUser.hasInfo || false
+}
+
 
 </script>
 
@@ -228,7 +233,7 @@ onMounted(async () => {
       </header>
 
       <div class="fade-in-up">
-        <RouterView />
+        <RouterView @save="refreshUserInfo" />
       </div>
       <DatingSuccessModal ref="successModal" />
     </main>
