@@ -38,7 +38,7 @@ const cities = [
 const hobbyOptions = ref([])
 
 const form = ref({
-  name: '',
+  nickname: '',
   location: '',
   job: '',
   avatar: '',
@@ -50,9 +50,19 @@ const form = ref({
 onMounted(async () => {
   form.value = JSON.parse(JSON.stringify(props.initialData))
 
+  // ✅ 確保 preference 一定存在
+  if (!form.value.preference) {
+    form.value.preference = { gender: '不拘', ageRange: [18, 70], cities: [] }
+  }
+
+  // ✅ 確保 hobbies 一定是陣列
+  if (!Array.isArray(form.value.hobbies)) {
+    form.value.hobbies = []
+  }
+
   try {
     const res = await axios.get('https://localhost:7091/api/matchinfo/hobbies')
-    hobbyOptions.value = res.data // [{ hobbyId, hobbyName }]
+    hobbyOptions.value = res.data
   } catch (err) {
     console.error('載入興趣清單失敗:', err)
   }
@@ -78,7 +88,7 @@ async function handleFileUpload(event) {
 }
 async function submitForm() {
   if (
-    !form.value.name ||
+    !form.value.nickname ||
     !form.value.location ||
     !form.value.job ||
     !form.value.intro ||
@@ -88,36 +98,38 @@ async function submitForm() {
     return
   }
 
+  const dto = {
+    Nickname: form.value.nickname,
+    Bio: form.value.intro,
+    CurrentCity: form.value.location,
+    Photo: form.value.avatar,
+    Job: form.value.job,
+    Hobbies: form.value.hobbies.map((id) => ({ HobbyId: id })),
+    GenderPrefer:
+      form.value.preference.gender === '不拘'
+        ? null
+        : form.value.preference.gender === '男性'
+          ? 1
+          : 0,
+    AgeMin: form.value.preference.ageRange[0],
+    AgeMax: form.value.preference.ageRange[1],
+    Cities: form.value.preference.cities,
+  }
+
   try {
-    const dto = {
-      Nickname: form.value.name,
-      Bio: form.value.intro,
-      CurrentCity: form.value.location,
-      Photo: form.value.avatar,
-      Job: form.value.job,
-
-      // 傳 HobbyId
-      Hobbies: form.value.hobbies.map((id) => ({ HobbyId: id })),
-
-      GenderPrefer:
-        form.value.preference.gender === '不拘'
-          ? null
-          : form.value.preference.gender === '男性'
-            ? 1
-            : 0,
-
-      AgeMin: form.value.preference.ageRange[0],
-      AgeMax: form.value.preference.ageRange[1],
-      Cities: form.value.preference.cities,
+    if (props.initialData && props.initialData.nickname) {
+      // 更新
+      await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+      alert('更新成功！')
+    } else {
+      // 新增
+      await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+      alert('建立成功！')
     }
-
-    await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-
-    alert('更新成功！')
     emit('save', form.value)
   } catch (err) {
-    console.error('更新失敗:', err)
-    alert('更新失敗，請稍後再試')
+    console.error('提交失敗:', err.response?.data || err)
+    alert(err.response?.data || '提交失敗，請稍後再試')
   }
 }
 </script>
@@ -143,7 +155,7 @@ async function submitForm() {
 
         <div class="mb-3">
           <label class="form-label fw-bold text-muted small">姓名 / 綽號</label>
-          <input v-model="form.name" type="text" class="form-control" placeholder="輸入名稱" />
+          <input v-model="form.nickname" type="text" class="form-control" placeholder="輸入名稱" />
         </div>
 
         <div class="mb-3">
