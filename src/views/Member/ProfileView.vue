@@ -4,11 +4,11 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
+import { useRouter } from 'vue-router'
 
 // 準備取得 JWT Token 的輔助函式
 const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token')
 
-// ✅ 抓登入者的 userId
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
 const userId = storedUser?.id
 
@@ -19,34 +19,59 @@ const formData = ref({
   phone: '',
   email: '',
   lastLogin: '',
-  lastIp: ''
+  lastIp: '',
 })
 
 // ✅ Premium 狀態改成動態
 const isPremium = ref(false)
 const premiumExpiryDate = ref('')
 const isSubmitting = ref(false)
+const autoRenew = ref(false)
 
-// 畫面載入時：自動抓取會員資料 + Premium 狀態
 onMounted(async () => {
   try {
-    const response = await axios.get('/Member/Profile', {
-      headers: { Authorization: `Bearer ${getToken()}` }
-    })
-    formData.value = response.data
-
-    // Premium 狀態
     const premiumRes = await axios.get(`https://localhost:7091/api/MatchPremium/isActive/${userId}`)
     isPremium.value = premiumRes.data === true
 
-    // Premium 到期日（假設後端有提供 expiry API）
-    const expiryRes = await axios.get(`https://localhost:7091/api/MatchPremium/expiry/${userId}`)
-    premiumExpiryDate.value = expiryRes.data?.endAt || '尚未訂閱'
+    const expiryRes = await axios.get(`https://localhost:7091/api/MatchPremium/check/${userId}`)
+    if (expiryRes.data?.endAt) {
+      const endDate = new Date(expiryRes.data.endAt)
+      premiumExpiryDate.value = endDate.toLocaleString('zh-TW', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+      autoRenew.value = expiryRes.data.autoRenew === true
+    } else {
+      premiumExpiryDate.value = '尚未訂閱'
+      autoRenew.value = false
+    }
   } catch (error) {
-    console.error("無法取得會員資料", error)
-    Swal.fire({ icon: 'error', title: '讀取失敗', text: '無法取得個人資料，請重新登入' })
+    console.error('無法取得會員資料', error)
   }
 })
+
+// ✅ 新增取消訂閱方法
+const cancelPremium = async () => {
+  try {
+    await axios.post(`https://localhost:7091/api/MatchPremium/cancel`, userId, {
+      headers: { 'Content-Type': 'application/json' },
+    })
+    autoRenew.value = false
+    Swal.fire({ icon: 'success', title: '已取消訂閱', text: '您的自動續訂已關閉' })
+  } catch (error) {
+    console.error('取消訂閱失敗', error)
+    Swal.fire({ icon: 'error', title: '操作失敗', text: '取消訂閱失敗，請稍後再試' })
+  }
+}
+
+const router = useRouter()
+// 跳轉到 Premium 頁面
+const goPremiumPage = () => {
+  router.push({ name: 'member-bookpremium' })
+}
 
 // 儲存變更（保持不動）
 const handleSave = async () => {
@@ -54,16 +79,26 @@ const handleSave = async () => {
   isSubmitting.value = true
 
   try {
-    Swal.fire({ title: '儲存中...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } })
-
-    await axios.put('/Member/Profile', {
-      name: formData.value.name,
-      phone: formData.value.phone,
-      gender: formData.value.gender,
-      birthday: formData.value.birthday
-    }, {
-      headers: { Authorization: `Bearer ${getToken()}` }
+    Swal.fire({
+      title: '儲存中...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading()
+      },
     })
+
+    await axios.put(
+      '/Member/Profile',
+      {
+        name: formData.value.name,
+        phone: formData.value.phone,
+        gender: formData.value.gender,
+        birthday: formData.value.birthday,
+      },
+      {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      },
+    )
 
     const userStr = localStorage.getItem('user') || sessionStorage.getItem('user')
     if (userStr) {
@@ -73,7 +108,12 @@ const handleSave = async () => {
       if (sessionStorage.getItem('user')) sessionStorage.setItem('user', JSON.stringify(userObj))
     }
 
-    Swal.fire({ icon: 'success', title: '儲存成功', text: '個人資料已更新', confirmButtonColor: '#0d6efd' })
+    Swal.fire({
+      icon: 'success',
+      title: '儲存成功',
+      text: '個人資料已更新',
+      confirmButtonColor: '#0d6efd',
+    })
     setTimeout(() => location.reload(), 1500)
   } catch (error) {
     Swal.fire({ icon: 'error', title: '儲存失敗', text: '資料更新失敗，請稍後再試' })
@@ -85,10 +125,14 @@ const handleSave = async () => {
 
 <template>
   <div class="w-100 fade-in-up d-flex justify-content-center pb-4">
-    <div class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
-      style="max-width: 1300px; height: 650px">
+    <div
+      class="card overflow-hidden border-0 shadow-lg rounded-5 w-100 mx-auto"
+      style="max-width: 1300px; height: 650px"
+    >
       <div class="row g-0 h-100">
-        <div class="col-lg-6 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end border-light-subtle">
+        <div
+          class="col-lg-6 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end border-light-subtle"
+        >
           <div class="mb-4 pb-3 border-bottom border-light-subtle">
             <h3 class="fw-bolder mb-0 text-gradient">
               <i class="bi bi-person-vcard me-2"></i>個人資料
@@ -101,21 +145,36 @@ const handleSave = async () => {
             <div class="col-md-6">
               <label class="form-label fw-bold text-muted small ms-1">真實姓名</label>
               <div class="input-group-custom mb-0">
-                <input type="text" v-model="formData.name" class="form-control" placeholder="您的真實姓名" />
+                <input
+                  type="text"
+                  v-model="formData.name"
+                  class="form-control"
+                  placeholder="您的真實姓名"
+                />
                 <i class="bi bi-person"></i>
               </div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-bold text-muted small ms-1">手機號碼</label>
               <div class="input-group-custom mb-0">
-                <input type="tel" v-model="formData.phone" class="form-control" placeholder="09xxxxxxxx" />
+                <input
+                  type="tel"
+                  v-model="formData.phone"
+                  class="form-control"
+                  placeholder="09xxxxxxxx"
+                />
                 <i class="bi bi-phone"></i>
               </div>
             </div>
             <div class="col-md-6">
               <label class="form-label fw-bold text-muted small ms-1">性別</label>
               <div class="input-group-custom mb-0">
-                <el-select v-model="formData.gender" placeholder="請選擇" size="large" style="width: 100%">
+                <el-select
+                  v-model="formData.gender"
+                  placeholder="請選擇"
+                  size="large"
+                  style="width: 100%"
+                >
                   <el-option label="男性" value="M" />
                   <el-option label="女性" value="F" />
                   <el-option label="不拘" value="N" />
@@ -126,16 +185,26 @@ const handleSave = async () => {
             <div class="col-md-6">
               <label class="form-label fw-bold text-muted small ms-1">生日</label>
               <div class="input-group-custom mb-0">
-                <el-date-picker v-model="formData.birthday" type="date" placeholder="選擇生日" format="YYYY/MM/DD"
-                  value-format="YYYY-MM-DD" size="large" style="width: 100%" />
+                <el-date-picker
+                  v-model="formData.birthday"
+                  type="date"
+                  placeholder="選擇生日"
+                  format="YYYY/MM/DD"
+                  value-format="YYYY-MM-DD"
+                  size="large"
+                  style="width: 100%"
+                />
                 <i class="bi bi-calendar-event"></i>
               </div>
             </div>
           </div>
 
           <div class="d-flex gap-3 mt-auto pt-4 border-top border-light-subtle">
-            <button @click="handleSave" :disabled="isSubmitting"
-              class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm">
+            <button
+              @click="handleSave"
+              :disabled="isSubmitting"
+              class="btn btn-primary rounded-pill flex-fill text-nowrap shadow-sm"
+            >
               {{ isSubmitting ? '儲存中...' : '儲存變更' }}
             </button>
           </div>
@@ -147,17 +216,24 @@ const handleSave = async () => {
           </h5>
           <!-- 訂閱管理區塊 -->
           <div
-            class="bg-white rounded-4 p-4 border border-light-subtle shadow-sm mb-4 position-relative overflow-hidden">
+            class="bg-white rounded-4 p-4 border border-light-subtle shadow-sm mb-4 position-relative overflow-hidden"
+          >
             <div class="position-absolute top-0 end-0 p-3 opacity-25">
               <i class="bi bi-stars display-1 text-warning"></i>
             </div>
             <div class="position-relative z-1">
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="fw-bolder text-dark mb-0">BookPremium</h5>
-                <span v-if="isPremium" class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill shadow-sm">
+                <span
+                  v-if="isPremium"
+                  class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill shadow-sm"
+                >
                   <i class="bi bi-check-circle-fill me-1"></i>啟用中
                 </span>
-                <span v-else class="badge bg-secondary text-white fw-bold px-3 py-1 rounded-pill shadow-sm">
+                <span
+                  v-else
+                  class="badge bg-secondary text-white fw-bold px-3 py-1 rounded-pill shadow-sm"
+                >
                   尚未訂閱
                 </span>
               </div>
@@ -166,12 +242,19 @@ const handleSave = async () => {
                 <span class="text-dark fw-bold fs-6">{{ premiumExpiryDate }}</span>
               </div>
               <div class="d-flex gap-3">
-                <button class="btn btn-warning rounded-pill flex-fill fw-bold text-dark shadow-sm"
-                  @click="goPremiumPage">
+                <button
+                  class="btn btn-warning rounded-pill flex-fill fw-bold text-dark shadow-sm"
+                  @click="goPremiumPage"
+                >
                   <i class="bi bi-arrow-repeat me-1"></i> {{ isPremium ? '立即續訂' : '立即升級' }}
                 </button>
-                <button v-if="isPremium" class="btn btn-light border text-danger rounded-pill px-4 fw-bold"
-                  @click="cancelPremium">
+
+                <!-- 只有在 isPremium 為 true 時才顯示取消訂閱按鈕 -->
+                <button
+                  v-if="isPremium"
+                  class="btn btn-light border text-danger rounded-pill px-4 fw-bold"
+                  @click="cancelPremium"
+                >
                   {{ autoRenew ? '解除訂閱' : '已取消訂閱' }}
                 </button>
               </div>
@@ -195,7 +278,8 @@ const handleSave = async () => {
                 <small class="text-muted fw-bold">驗證狀態</small>
               </div>
               <span
-                class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-1 shadow-sm">
+                class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-1 shadow-sm"
+              >
                 <i class="bi bi-check-circle-fill me-1"></i> 已驗證
               </span>
             </div>

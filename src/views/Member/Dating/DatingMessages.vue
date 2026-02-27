@@ -49,18 +49,27 @@ onMounted(async () => {
   await connection.value.start()
   await connection.value.invoke('JoinUser', userId.toString())
 
-  connection.value.on('ReceiveMessage', (message) => {
-    const chat = conversations.value.find((c) => c.id === message.matchedId)
-    if (chat) {
-      chat.messages.push({
-        chatId: message.chatId,
-        from: message.senderId === userId ? '我' : chat.name,
-        text: message.message,
-        sendAt: message.sendAt,
-      })
-      if (message.receiverId === userId) chat.unreadCount = message.unreadCount
+connection.value.on('ReceiveMessage', (message) => {
+  const chat = conversations.value.find((c) => c.id === message.matchedId)
+  if (chat) {
+    chat.messages.push({
+      chatId: message.chatId,
+      from: message.senderId === userId ? '我' : chat.name,
+      text: message.message,
+      sendAt: message.sendAt,
+    })
+
+    // ✅ 修正未讀數邏輯
+    if (message.receiverId === userId) {
+      // 如果目前沒有打開這個聊天室 → 未讀數 +1
+      if (!selectedChat.value || selectedChat.value.id !== chat.id) {
+        chat.unreadCount = (chat.unreadCount || 0) + 1
+      }
     }
-  })
+  }
+})
+
+
 
   connection.value.on('ResetUnread', (data) => {
     const chat = conversations.value.find((c) => c.id === data.roomId)
@@ -71,15 +80,16 @@ onMounted(async () => {
     conversations.value = conversations.value.filter((c) => c.id !== data.roomId)
   })
 
-  connection.value.on('ChatRoomCreated', (data) => {
-    conversations.value.push({
-      id: data.roomId,
-      name: data.otherUserNickname,
-      avatar: data.otherUserPhoto || '/images/default-avatar.png',
-      messages: [],
-      unreadCount: 0,
-    })
+connection.value.on('ChatRoomCreated', (data) => {
+  conversations.value.unshift({
+    id: data.roomId,
+    name: data.otherUserNickname || '未知用戶',
+    avatar: data.otherUserPhoto || '/images/default-avatar.png',
+    otherUserId: data.otherUserId,
+    messages: [],
+    unreadCount: 0,
   })
+})
 
   const res = await axios.get(`https://localhost:7091/api/MatchChat/list/${userId}`)
   conversations.value = res.data.map((c) => ({
@@ -100,9 +110,10 @@ onMounted(async () => {
   }))
 })
 
+
 function openChat(chat) {
   selectedChat.value = chat
-  chat.unreadCount = 0
+  chat.unreadCount = 0   // ✅ 進入聊天室時清零
   connection.value.invoke('JoinRoom', chat.id.toString())
 
   axios.get(`https://localhost:7091/api/MatchChat/${chat.id}?userId=${userId}`).then((res) => {
@@ -114,6 +125,7 @@ function openChat(chat) {
     }))
   })
 }
+
 
 function backToList() {
   selectedChat.value = null

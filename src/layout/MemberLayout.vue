@@ -106,9 +106,8 @@ const currentMenu = computed(() => {
 
 const isActiveService = (path) => route.path.includes(path)
 
-// 模擬目前登入使用者 ID
-const userId = 6
-const successModal = ref(null)
+// 從 Storage 讀取登入者的 userId
+const userId = storedUser?.id
 
 onMounted(async () => {
   // 建立 SignalR 連線
@@ -118,11 +117,10 @@ onMounted(async () => {
     .build()
 
   await connection.start()
-  await connection.invoke('JoinUser', userId.toString())
+  await connection.invoke('JoinUser', userId.toString())  // ✅ 改成動態 userId
 
   // 監聽配對成功事件
   connection.on('ChatRoomCreated', (data) => {
-    // 呼叫 DatingSuccessModal 的 show 方法
     if (successModal.value) {
       successModal.value.show()
     }
