@@ -182,7 +182,7 @@ onMounted(() => {
   :initial-data="person"
   @save="() => { 
     updateProfile()
-    $emit('save')   // ✅ 再往上冒泡一次
+    $emit('save')   // 再往上冒泡一次
   }"
   @cancel="() => {
     isEditing = false
@@ -191,20 +191,20 @@ onMounted(() => {
 />
 
     <!-- 沒資料 -->
-    <div v-else-if="person === null" class="text-center p-5">
-      <h4 class="mb-3 text-gradient mb-4">你還沒有交友資料，快去編輯開始你的心動之旅吧！</h4><br>
-      <button
-        @click="
-          () => {
-            person = { userId: 13 }
-            isEditing = true
-          }
-        "
-        class="btn btn-primary rounded-pill shadow fs-5 px-4 py-2 "
-      >
-        <i class="bi bi-pencil-square me-2"></i>開始編輯
-      </button>
-    </div>
+    <div v-else-if="person === null" 
+     class="d-flex flex-column justify-content-center align-items-center text-center p-5" 
+     style="min-height: 400px;">
+  <h4 class="mb-3 text-gradient mb-4">
+    你還沒有交友資料，快去開始你的心動之旅吧！
+  </h4>
+  <button
+    @click="() => { person = { userId: 13 }; isEditing = true }"
+    class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
+  >
+    <i class="bi bi-pencil-square me-2"></i>開始編輯
+  </button>
+</div>
+
 
     <!-- 載入中 -->
     <div v-else class="text-center p-5">
