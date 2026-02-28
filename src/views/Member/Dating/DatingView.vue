@@ -103,11 +103,6 @@ async function nextPerson(isLiked) {
       </div>
       <h3 class="fw-bold text-gradient mb-3">{{ message }}</h3>
       <p class="text-muted">請稍後再嘗試！</p>
-
-      <button class="btn btn-outline-secondary rounded-pill mt-3 btn-sm"
-        @click="matchCount = 0; currentIndex = 0; message = ''">
-        重新測試 (開發用)
-      </button>
     </div>
 
     <!-- 顯示候選人卡片 -->
