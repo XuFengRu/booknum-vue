@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { usedatingRead } from '@/stores/datingRead'
 import Swal from 'sweetalert2'
@@ -108,6 +108,7 @@ const isActiveService = (path) => route.path.includes(path)
 
 // 從 Storage 讀取登入者的 userId
 const userId = storedUser?.id
+const successModal = ref(null)
 
 onMounted(async () => {
   // 建立 SignalR 連線
@@ -120,12 +121,15 @@ onMounted(async () => {
   await connection.invoke('JoinUser', userId.toString())  // ✅ 改成動態 userId
 
   // 監聽配對成功事件
-  connection.on('ChatRoomCreated', (data) => {
-    if (successModal.value) {
-      successModal.value.show()
-    }
+  nextTick(() => {
+    connection.on('ChatRoomCreated', (data) => {
+      if (successModal.value && typeof successModal.value.show === 'function') {
+        successModal.value.show()
+      }
+    })
   })
 })
+
 const refreshUserInfo = () => {
   const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
   hasInfo.value = storedUser.hasInfo || false
