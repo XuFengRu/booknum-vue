@@ -1,20 +1,28 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 const plans = ref([])
+const route = useRoute()
 
 onMounted(async () => {
   try {
-    const res = await axios.get('https://localhost:7091/api/MatchPremium/plans')
-    const data = res.data
+    // 建立商品並取得 productId
+    const productRes = await axios.post('https://localhost:7091/api/PayPal/create-product')
+    const productId = productRes.data.productId
 
-    // 以第一個方案的週費作為基準
+    // 建立方案
+    const plansRes = await axios.post('https://localhost:7091/api/PayPal/create-plans', productId, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const data = plansRes.data
+
+    // 折扣計算邏輯保持不變
     const basePlan = data[0]
     const baseWeeks = Math.round(basePlan.durationDay / 7)
     const baseWeekly = Math.round(basePlan.price / baseWeeks)
 
-    // 先算出所有方案的折扣
     const discounts = data.map((p, idx) => {
       const weeks = Math.round(p.durationDay / 7)
       const weekly = Math.round(p.price / weeks)
@@ -40,31 +48,44 @@ onMounted(async () => {
   } catch (err) {
     console.error('載入方案失敗:', err)
   }
+
+// ✅ 檢查付款結果 (return_url)
+const status = route.query.status
+const subscriptionId = route.query.subscription_id  // PayPal return_url 會帶 subscription_id
+
+if (status === 'success' && subscriptionId) {
+  try {
+    const res = await axios.post('https://localhost:7091/api/PayPal/confirm-subscription', subscriptionId, {
+      headers: { 'Content-Type': 'application/json' }
+    })
+    if (res.data.success) {
+      alert('付款成功！您的會員已升級 🎉')
+    } else {
+      alert('付款成功，但會員尚未啟用：' + res.data.message)
+    }
+  } catch (err) {
+    console.error('確認訂閱失敗:', err)
+    alert('付款成功，但確認訂閱失敗')
+  }
+} else if (status === 'cancel') {
+  alert('付款已取消')
+}
+
 })
 
 // 訂閱 API 呼叫
 const subscribe = async (plan) => {
   try {
-    // 取出登入使用者的 userId
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
     const userId = storedUser?.id  
 
-    const res = await axios.post('https://localhost:7091/api/MatchPremium/subscribe', {
-      userId: userId,   // ✅ 改成動態抓
-      methodId: plan.id,
-      price: plan.price,
+    const res = await axios.post('https://localhost:7091/api/PayPal/create-subscription', {
+      UserId: userId,
+      MethodId: plan.id
     })
 
-    const endDate = new Date(res.data.endAt)
-    const formatted = new Intl.DateTimeFormat('zh-TW', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(endDate)
-
-    alert('訂閱成功！到期日：' + formatted)
+    const approveLink = res.data.approveLink
+    window.location.href = approveLink
   } catch (err) {
     console.error('訂閱失敗:', err)
     alert('訂閱失敗，請稍後再試')
