@@ -59,7 +59,7 @@ connection.value.on('ReceiveMessage', (message) => {
       sendAt: message.sendAt,
     })
 
-    // ✅ 修正未讀數邏輯
+    //未讀數邏輯
     if (message.receiverId === userId) {
       // 如果目前沒有打開這個聊天室 → 未讀數 +1
       if (!selectedChat.value || selectedChat.value.id !== chat.id) {
@@ -113,7 +113,7 @@ connection.value.on('ChatRoomCreated', (data) => {
 
 function openChat(chat) {
   selectedChat.value = chat
-  chat.unreadCount = 0   // ✅ 進入聊天室時清零
+  chat.unreadCount = 0   //進入聊天室時清零
   connection.value.invoke('JoinRoom', chat.id.toString())
 
   axios.get(`https://localhost:7091/api/MatchChat/${chat.id}?userId=${userId}`).then((res) => {

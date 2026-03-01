@@ -20,7 +20,7 @@ function openProfile(index) {
   selectedUser.value = index + (currentPage.value - 1) * pageSize
 }
 
-// ✅ 改成動態抓登入者的 userId
+//抓登入者的 userId
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
 const currentUserId = storedUser?.id
 

@@ -49,7 +49,7 @@ onMounted(async () => {
     console.error('載入方案失敗:', err)
   }
 
-  // ✅ 檢查付款結果 (return_url)
+  //檢查付款結果 (return_url)
   const status = route.query.status
   const subscriptionId = route.query.subscription_id // PayPal return_url 會帶 subscription_id
 

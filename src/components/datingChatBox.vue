@@ -32,7 +32,7 @@ async function sendMessage() {
     try {
       await axios.post('https://localhost:7091/api/MatchChat', {
         matchedId: props.chat.id,
-        senderId: userId,                // ✅ 使用動態 userId
+        senderId: userId,                // 動態 userId
         receiverId: props.chat.otherUserId,
         message: newMessage.value.trim(),
       })
