@@ -89,18 +89,6 @@ onMounted(fetchUsers)
           目前有
           <span class="fw-bolder text-primary fs-5 mx-1">{{ users.length }}</span> 個人對你心跳加速
         </p>
-
-        <div class="position-absolute top-0 end-0" style="z-index: 10">
-          <div
-            class="form-check form-switch bg-white rounded-pill shadow-sm px-3 py-2 border d-inline-flex align-items-center gap-2 transition-all hover-shadow">
-            <label class="form-check-label small fw-bold text-muted mb-0 d-none d-md-flex align-items-center"
-              for="premiumToggle" style="cursor: pointer">
-              <i class="bi bi-eye-fill me-2 text-primary opacity-75"></i> 預覽 Premium 視角
-            </label>
-            <input class="form-check-input m-0 fs-5" type="checkbox" role="switch" id="premiumToggle"
-              v-model="isPremium" style="cursor: pointer" title="預覽 Premium" />
-          </div>
-        </div>
       </div>
 
       <div v-if="users.length === 0" class="text-center py-5 my-5 fade-in-up">
