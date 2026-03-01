@@ -71,10 +71,13 @@ connection.value.on('ReceiveMessage', (message) => {
 
 
 
-  connection.value.on('ResetUnread', (data) => {
+connection.value.on('ResetUnread', (data) => {
+  // 只在聊天室打開時才同步未讀數，避免列表閃動
+  if (selectedChat.value && selectedChat.value.id === data.roomId) {
     const chat = conversations.value.find((c) => c.id === data.roomId)
     if (chat) chat.unreadCount = data.unreadCount
-  })
+  }
+})
 
   connection.value.on('UnMatched', (data) => {
     conversations.value = conversations.value.filter((c) => c.id !== data.roomId)
@@ -92,22 +95,27 @@ connection.value.on('ChatRoomCreated', (data) => {
 })
 
   const res = await axios.get(`https://localhost:7091/api/MatchChat/list/${userId}`)
-  conversations.value = res.data.map((c) => ({
-    id: c.roomId,
-    name: c.otherUserNickname,
-    avatar: c.otherUserPhoto,
-    otherUserId: c.otherUserId,
-    messages: c.lastMessage
-      ? [
-          {
-            chatId: c.lastMessageId,
-            text: c.lastMessage,
-            sendAt: c.lastTime,
-          },
-        ]
-      : [],
-    unreadCount: c.unreadCount,
-  }))
+conversations.value = res.data.map((c) => ({
+  id: c.roomId,
+  name: c.otherUserNickname,
+  avatar: c.otherUserPhoto,
+  otherUserId: c.otherUserId,
+  messages: c.lastMessage
+    ? [
+        {
+          chatId: c.lastMessageId,
+          text: c.lastMessage,
+          sendAt: c.lastTime,
+        },
+      ]
+    : [],
+  unreadCount: c.unreadCount,
+}))
+
+// ✅ 預先加入所有房間，確保列表也能即時更新
+conversations.value.forEach(chat => {
+  connection.value.invoke('JoinRoom', chat.id.toString())
+})
 })
 
 
