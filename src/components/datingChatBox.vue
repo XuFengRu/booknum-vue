@@ -1,11 +1,10 @@
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onMounted } from 'vue'
 import axios from 'axios'
 
 const props = defineProps({ chat: Object })
 const newMessage = ref('')
 const messagesContainer = ref(null)
-
 
 const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
 const userId = storedUser?.id
@@ -32,7 +31,7 @@ async function sendMessage() {
     try {
       await axios.post('https://localhost:7091/api/MatchChat', {
         matchedId: props.chat.id,
-        senderId: userId,                // 動態 userId
+        senderId: userId,
         receiverId: props.chat.otherUserId,
         message: newMessage.value.trim(),
       })
@@ -43,6 +42,23 @@ async function sendMessage() {
   }
 }
 
+/* 🔹 新增：更新已讀狀態 */
+async function updateReadStatus() {
+  if (props.chat.messages.length > 0) {
+    const lastMsg = props.chat.messages[props.chat.messages.length - 1]
+    try {
+      await axios.post('https://localhost:7091/api/MatchChat/read/reset', {
+        roomId: props.chat.id,
+        userId: userId,
+        lastReadMessageId: lastMsg.chatId, // 後端需要 ChatId
+      })
+    } catch (err) {
+      console.error('更新已讀失敗:', err)
+    }
+  }
+}
+
+/* 🔹 修改：watch 內加上 updateReadStatus */
 watch(
   () => props.chat.messages.length,
   async () => {
@@ -50,10 +66,17 @@ watch(
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
     }
+    updateReadStatus()
   },
   { immediate: true },
 )
+
+/* 🔹 新增：mounted 時呼叫一次，確保進聊天室就更新已讀 */
+onMounted(() => {
+  updateReadStatus()
+})
 </script>
+
 
 <template>
   <div class="d-flex flex-column h-100 w-100 overflow-hidden">
