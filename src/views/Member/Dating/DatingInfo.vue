@@ -183,22 +183,18 @@ onMounted(() => {
     </div>
 
     <!-- 編輯模式 -->
-    <DatingEdit
-      v-else-if="person && isEditing"
-      :initial-data="person"
-      @save="
-        () => {
-          updateProfile()
-          $emit('save') // 再往上冒泡一次
-        }
-      "
-      @cancel="
-        () => {
-          isEditing = false
-          if (!person.nickname) person = null
-        }
-      "
-    />
+   <DatingEdit
+  v-else-if="person && isEditing"
+  :initial-data="person"
+  @save="(newData) => {
+    updateProfile(newData)
+    $emit('save') // 再往上冒泡一次
+  }"
+  @cancel="() => {
+    isEditing = false
+    if (!person.nickname) person = null
+  }"
+/>
 
     <!-- 沒資料 -->
     <div

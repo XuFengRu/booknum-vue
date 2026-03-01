@@ -14,7 +14,7 @@ onMounted(async () => {
 
     // 建立方案
     const plansRes = await axios.post('https://localhost:7091/api/PayPal/create-plans', productId, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     })
     const data = plansRes.data
 
@@ -49,39 +49,45 @@ onMounted(async () => {
     console.error('載入方案失敗:', err)
   }
 
-// ✅ 檢查付款結果 (return_url)
-const status = route.query.status
-const subscriptionId = route.query.subscription_id  // PayPal return_url 會帶 subscription_id
+  // ✅ 檢查付款結果 (return_url)
+  const status = route.query.status
+  const subscriptionId = route.query.subscription_id // PayPal return_url 會帶 subscription_id
 
-if (status === 'success' && subscriptionId) {
-  try {
-    const res = await axios.post('https://localhost:7091/api/PayPal/confirm-subscription', subscriptionId, {
-      headers: { 'Content-Type': 'application/json' }
-    })
-    if (res.data.success) {
-      alert('付款成功！您的會員已升級 🎉')
-    } else {
-      alert('付款成功，但會員尚未啟用：' + res.data.message)
+  if (status === 'success' && subscriptionId) {
+    try {
+      const res = await axios.post(
+        'https://localhost:7091/api/PayPal/confirm-subscription',
+        subscriptionId,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+      if (res.data.success) {
+        const expiry = new Date(res.data.expiryTime)
+        // 使用台灣在地格式，顯示「2026/03/08 下午02:48」
+        const formatted = expiry.toLocaleString('zh-TW', { hour12: true })
+        alert(`付款成功！你的會員已升級成功，到期時間：${formatted}！`)
+      } else {
+        alert('付款成功，但會員尚未啟用：' + res.data.message)
+      }
+    } catch (err) {
+      console.error('確認訂閱失敗:', err)
+      alert('付款成功，但確認訂閱失敗')
     }
-  } catch (err) {
-    console.error('確認訂閱失敗:', err)
-    alert('付款成功，但確認訂閱失敗')
+  } else if (status === 'cancel') {
+    alert('付款已取消')
   }
-} else if (status === 'cancel') {
-  alert('付款已取消')
-}
-
 })
 
 // 訂閱 API 呼叫
 const subscribe = async (plan) => {
   try {
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-    const userId = storedUser?.id  
+    const userId = storedUser?.id
 
     const res = await axios.post('https://localhost:7091/api/PayPal/create-subscription', {
       UserId: userId,
-      MethodId: plan.id
+      MethodId: plan.id,
     })
 
     const approveLink = res.data.approveLink
@@ -94,12 +100,17 @@ const subscribe = async (plan) => {
 </script>
 
 <template>
-  <div class="d-flex flex-column justify-content-center align-items-center w-100 fade-in-up" style="min-height: 75vh">
+  <div
+    class="d-flex flex-column justify-content-center align-items-center w-100 fade-in-up"
+    style="min-height: 75vh"
+  >
     <div class="w-100" style="max-width: 1000px">
       <!-- 頂部標題 -->
       <div class="text-center mb-5">
-        <div class="bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-lg mx-auto mb-4"
-          style="width: 80px; height: 80px">
+        <div
+          class="bg-gradient rounded-circle d-flex align-items-center justify-content-center shadow-lg mx-auto mb-4"
+          style="width: 80px; height: 80px"
+        >
           <i class="bi bi-gem display-5 text-white"></i>
         </div>
         <h1 class="fw-bolder mb-2" style="letter-spacing: 1px">
@@ -112,9 +123,12 @@ const subscribe = async (plan) => {
       <div class="row justify-content-center g-3 mb-5">
         <div class="col-md-4">
           <div
-            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card">
-            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-              style="width: 55px; height: 55px; background-color: #fff3cd">
+            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card"
+          >
+            <div
+              class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+              style="width: 55px; height: 55px; background-color: #fff3cd"
+            >
               <i class="bi bi-fire fs-3 text-warning"></i>
             </div>
             <div>
@@ -125,9 +139,12 @@ const subscribe = async (plan) => {
         </div>
         <div class="col-md-4">
           <div
-            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card">
-            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-              style="width: 55px; height: 55px; background-color: #fff3cd">
+            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card"
+          >
+            <div
+              class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+              style="width: 55px; height: 55px; background-color: #fff3cd"
+            >
               <i class="bi bi-heart-fill fs-3 text-warning"></i>
             </div>
             <div>
@@ -138,9 +155,12 @@ const subscribe = async (plan) => {
         </div>
         <div class="col-md-4">
           <div
-            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card">
-            <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-              style="width: 55px; height: 55px; background-color: #fff3cd">
+            class="card solid-card border-0 shadow-sm rounded-4 p-3 h-100 d-flex flex-row align-items-center gap-3 feature-card"
+          >
+            <div
+              class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+              style="width: 55px; height: 55px; background-color: #fff3cd"
+            >
               <i class="bi bi-chat-dots-fill fs-3 text-warning"></i>
             </div>
             <div>
@@ -154,13 +174,18 @@ const subscribe = async (plan) => {
       <!-- 方案卡片 -->
       <div class="row justify-content-center g-4 align-items-center mb-4">
         <div v-for="plan in plans" :key="plan.id" class="col-md-4">
-          <div class="card h-100 rounded-5 position-relative text-center plan-card transition-all solid-card" :class="plan.label
-              ? 'border border-warning border-2 shadow-lg popular-card'
-              : 'border-0 shadow-sm'
-            ">
+          <div
+            class="card h-100 rounded-5 position-relative text-center plan-card transition-all solid-card"
+            :class="
+              plan.label
+                ? 'border border-warning border-2 shadow-lg popular-card'
+                : 'border-0 shadow-sm'
+            "
+          >
             <div v-if="plan.label" class="position-absolute top-0 start-50 translate-middle">
               <span
-                class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 border border-white border-2">
+                class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill shadow-sm fs-6 border border-white border-2"
+              >
                 <i class="bi bi-star-fill me-1"></i>{{ plan.label }}
               </span>
             </div>
@@ -174,16 +199,20 @@ const subscribe = async (plan) => {
                 <p class="text-muted small mb-3">（約 NT$ {{ plan.weekly }} / 週）</p>
 
                 <div style="min-height: 28px">
-                  <span v-if="plan.discount > 0"
-                    class="badge discount-badge text-white rounded-pill px-3 py-1 fs-6 shadow-sm">
+                  <span
+                    v-if="plan.discount > 0"
+                    class="badge discount-badge text-white rounded-pill px-3 py-1 fs-6 shadow-sm"
+                  >
                     省下 {{ plan.discount }}%
                   </span>
                 </div>
               </div>
 
               <div class="mt-4">
-                <button class="btn btn-warning w-100 rounded-pill fw-bold text-dark shadow-sm fs-5"
-                  @click="subscribe(plan)">
+                <button
+                  class="btn btn-warning w-100 rounded-pill fw-bold text-dark shadow-sm fs-5"
+                  @click="subscribe(plan)"
+                >
                   立即升級
                 </button>
               </div>

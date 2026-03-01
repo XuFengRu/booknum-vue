@@ -118,7 +118,7 @@ onMounted(async () => {
     .build()
 
   await connection.start()
-  await connection.invoke('JoinUser', userId.toString())  // ✅ 改成動態 userId
+  await connection.invoke('JoinUser', userId.toString())
 
   // 監聽配對成功事件
   nextTick(() => {
