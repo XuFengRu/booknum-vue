@@ -68,7 +68,7 @@ const sidebarMenus = computed(() => {
   const datingMenuItems = hasInfo.value
     ? [
       { name: '開始配對', icon: 'bi-fire', link: '/member/dating' },
-      { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes', badge: 3, badgeClass: 'bg-danger' },
+      { name: '誰喜歡我', icon: 'bi-heart', link: '/member/dating/likes', badge: 0, badgeClass: 'bg-danger' },
       { name: '心動對象', icon: 'bi-star', link: '/member/dating/favorites' },
       {
         name: '我的訊息',
