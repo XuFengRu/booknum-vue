@@ -18,33 +18,30 @@ onMounted(async () => {
     })
     const data = plansRes.data
 
-    // 折扣計算邏輯保持不變
-    const basePlan = data[0]
-    const baseWeeks = Math.round(basePlan.durationDay / 7)
-    const baseWeekly = Math.round(basePlan.price / baseWeeks)
+// 折扣計算邏輯保持不變
+const basePlan = data[0]
+const baseDaily = Math.round(basePlan.price / basePlan.durationDay)
 
-    const discounts = data.map((p, idx) => {
-      const weeks = Math.round(p.durationDay / 7)
-      const weekly = Math.round(p.price / weeks)
-      return idx === 0 ? 0 : Math.round((1 - weekly / baseWeekly) * 100)
-    })
-    const maxDiscount = Math.max(...discounts)
+const discounts = data.map((p, idx) => {
+  const daily = Math.round(p.price / p.durationDay)
+  return idx === 0 ? 0 : Math.round((1 - daily / baseDaily) * 100)
+})
 
-    plans.value = data.map((p, idx) => {
-      const weeks = Math.round(p.durationDay / 7)
-      const weekly = Math.round(p.price / weeks)
-      const discount = idx === 0 ? 0 : Math.round((1 - weekly / baseWeekly) * 100)
+const maxDiscount = Math.max(...discounts)
 
-      return {
-        id: p.methodId,
-        name: p.methodName,
-        weeks,
-        price: p.price,
-        weekly,
-        discount,
-        label: discount === maxDiscount && discount > 0 ? '最受歡迎' : '',
-      }
-    })
+plans.value = data.map((p, idx) => {
+  const daily = Math.round(p.price / p.durationDay)
+  const discount = idx === 0 ? 0 : Math.round((1 - daily / baseDaily) * 100)
+  return {
+    id: p.methodId,
+    name: p.methodName,
+    days: p.durationDay, // 改成顯示天數
+    price: p.price,
+    daily,
+    discount,
+    label: discount === maxDiscount && discount > 0 ? '最受歡迎' : '',
+  }
+})
   } catch (err) {
     console.error('載入方案失敗:', err)
   }
@@ -196,7 +193,7 @@ const subscribe = async (plan) => {
                 <h1 class="fw-bolder mb-1" :class="plan.label ? 'text-gold' : 'text-dark'">
                   NT$ {{ plan.price }}
                 </h1>
-                <p class="text-muted small mb-3">（約 NT$ {{ plan.weekly }} / 週）</p>
+                <p class="text-muted small mb-3">（約 NT$ {{ plan.daily }} / 週）</p>
 
                 <div style="min-height: 28px">
                   <span
