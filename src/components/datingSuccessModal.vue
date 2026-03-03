@@ -2,7 +2,12 @@
   <teleport to="body">
     <div v-if="visible" class="custom-backdrop">
       <div class="custom-modal">
-        <h5>配對成功！</h5>
+        <h4 class="text-danger ">
+          配對成功！<i class="bi bi-heart-fill me-2"></i>
+          <i class="bi bi-heart-fill me-2"></i>
+          <i class="bi bi-heart-fill me-2"></i>
+        </h4>
+
         <p>你有新的配對，快去聊天室開始聊天吧！</p>
         <button class="btn btn-primary" @click="close">知道了</button>
       </div>
@@ -41,8 +46,8 @@ defineExpose({ show, close })
 .custom-modal {
   background: white;
   padding: 20px;
-  border-radius: 8px;
-  height: 200px;
+  border-radius: 15px;
+  height: 250px;
   min-width: 300px;
   text-align: center;
   z-index: 10000;
@@ -50,4 +55,5 @@ defineExpose({ show, close })
   flex-direction: column;
   justify-content: space-between;
 }
+
 </style>

@@ -23,7 +23,7 @@ export const usedatingRead = defineStore('chat', {
           { from: '我', text: '完美！那就週末見囉，不見不散～', time: '11:10' },
           { from: '她', text: '不見不散✨ 到時候見！', time: '11:15' },
         ],
-        unreadCount: 4, // 模擬多則未讀
+        unreadCount: 0, // 模擬多則未讀
       },
       {
         id: 'aili',
@@ -42,7 +42,7 @@ export const usedatingRead = defineStore('chat', {
         messages: [
           { from: '她', text: '你昨天推薦的那家拉麵真的很好吃欸！湯頭超讚🍜', time: '09:15' },
         ],
-        unreadCount: 1,
+        unreadCount: 0,
       },
       {
         id: 'yazhu',
