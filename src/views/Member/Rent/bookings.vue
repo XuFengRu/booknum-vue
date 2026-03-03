@@ -7,10 +7,35 @@ defineOptions({
 });
 
 const bookings = ref([
-  { id: 1, name: "IU (李知恩)", description: "甜美溫柔，適合音樂與散步。", date: "2026-02-10 14:00", status: "已確認", image: "/images/Girlfriend7.jpg" },
-  { id: 2, name: "車銀優 (Cha Eun-woo)", description: "外型俊朗，適合約會與活動陪同。", date: "2026-02-12 19:30", status: "待付款", image: "/images/Boyfriend1.jpg" },
-  { id: 3, name: "Jennie Kim", description: "時尚自信，適合潮流約會。", date: "2026-02-15 16:00", status: "已完成", image: "/images/Girlfriend2.jpg" }
+  { 
+    id: 1, 
+    name: "雅涵", 
+    description: "氣質優雅，適合舞台與陪伴。", 
+    date: "2026-02-10 14:00", 
+    status: "已確認", 
+    image: "/images/Girlfriend6.jpg", 
+    price: "NT$ 1200 / 小時" 
+  },
+  { 
+    id: 2, 
+    name: "子睿", 
+    description: "外型俊朗，適合約會與活動陪同。", 
+    date: "2026-02-12 19:30", 
+    status: "待付款", 
+    image: "/images/Boyfriend1.jpg", 
+    price: "NT$ 800 / 小時" 
+  },
+  { 
+    id: 3, 
+    name: "承澤", 
+    description: "成熟穩重，適合正式場合與晚宴。", 
+    date: "2026-02-15 16:00", 
+    status: "已完成", 
+    image: "/images/Boyfriend4.jpg", 
+    price: "NT$ 1500 / 小時" 
+  }
 ]);
+
 
 const getStatusColor = (status) => {
   switch (status) {

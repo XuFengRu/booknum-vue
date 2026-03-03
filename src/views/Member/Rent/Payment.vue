@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
 defineOptions({
@@ -8,6 +8,7 @@ defineOptions({
 });
 
 const route = useRoute();
+const router = useRouter();
 
 const paymentMethods = ref([
   { name: "信用卡", description: "使用 VISA / MasterCard / JCB 付款", image: "/images/Card.png", requiresCard: true },
@@ -24,7 +25,6 @@ const orderNo = "ORDER_" + new Date().getTime().toString().slice(-8);
 const amountRaw = route.query.amount;
 let amount = 0;
 
-// 檢查 amountRaw 是否為有效數字
 if (amountRaw && !isNaN(Number(amountRaw))) {
   amount = parseInt(amountRaw, 10);
 } else {
@@ -40,7 +40,6 @@ try {
 }
 
 function selectMethod(method) {
-  console.log("選擇付款方式:", method.name);
   selectedMethod.value = method;
 }
 
@@ -67,9 +66,16 @@ async function submitPayment() {
 
     console.log("✅ 後端回傳 HTML form");
 
-    // 直接渲染 HTML，讓瀏覽器自動送出表單
-    const newWindow = window.open("", "_self");
+    // 🚩 先導向到 Return.vue 顯示付款成功
+    router.push({ 
+      name: "rent-return", 
+      query: { orderNo, amount, method: selectedMethod.value.name } 
+    });
+
+    // 🚩 同時另外開一個分頁，送出藍新金流表單
+    const newWindow = window.open("", "_blank");
     newWindow.document.write(res.data);
+
   } catch (err) {
     console.error("❌ 付款失敗:", err);
     alert("付款流程發生錯誤，請稍後再試");

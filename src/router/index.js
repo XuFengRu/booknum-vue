@@ -67,6 +67,7 @@ const router = createRouter({
         { path: 'rent/cart', name: 'member-rent-cart', component: () => import('../views/Member/Rent/cart.vue') },
         { path: 'rent/bookings', name: 'member-rent-bookings', component: () => import('../views/Member/Rent/bookings.vue') },
         { path: 'rent/:name', name: 'rent-detail', component: () => import('../views/Member/Rent/RentDetail.vue'), props: true },
+        { path: 'rent/return', name: 'rent-return', component: () => import('../views/Member/Rent/Return.vue') },
 
         // --- 揪團活動 (Group) ---
         { path: 'group', name: 'member-group', component: () => import('../views/Member/Group/GroupView.vue') },
