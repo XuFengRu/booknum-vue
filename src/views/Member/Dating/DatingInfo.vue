@@ -4,22 +4,22 @@ import axios from 'axios'
 import DatingEdit from '@/components/datingEdit.vue'
 
 const isEditing = ref(false)
-const person = ref(null)
-
-// 🔥 新增：興趣 ID -> 名稱 對照表
+const person = ref(undefined) // undefined: 載入中, null: 沒資料
 const hobbyMap = ref({})
 
 async function loadProfile(userId) {
   try {
-    // 同時抓 個人資料 + 興趣清單
     const [profileRes, hobbyRes] = await Promise.all([
       axios.get(`https://localhost:7091/api/matchinfo/${userId}`),
       axios.get('https://localhost:7091/api/matchinfo/hobbies'),
     ])
 
     const data = profileRes.data
+    if (!data || Object.keys(data).length === 0) {
+      person.value = null
+      return
+    }
 
-    // 🔥 建立 ID -> 名稱 對照表
     hobbyMap.value = hobbyRes.data.reduce((acc, h) => {
       acc[h.hobbyId] = h.hobbyName
       return acc
@@ -27,26 +27,24 @@ async function loadProfile(userId) {
 
     person.value = {
       userId: data.userId,
-      name: data.nickname,
+      nickname: data.nickname,
       age: data.age,
       location: data.currentCity,
       job: data.job,
       avatar: data.photo,
-
-      // 🔥 改成存 HobbyId
       hobbies: Array.isArray(data.hobbies) ? data.hobbies.map((h) => h.hobbyId) : [],
-
       intro: data.bio,
       matches: data.stats?.matches ?? 0,
       likes: data.stats?.likes ?? 0,
       preference: {
         gender: data.preferences?.gender ?? '不限',
-        ageRange: [data.preferences?.ageMin ?? 0, data.preferences?.ageMax ?? 0],
+        ageRange: [data.preferences?.ageMin ?? 18, data.preferences?.ageMax ?? 70],
         cities: data.preferences?.cities ?? [],
       },
     }
   } catch (err) {
     console.error('載入失敗:', err)
+    person.value = null
   }
 }
 
@@ -56,7 +54,16 @@ function updateProfile(newData) {
 }
 
 onMounted(() => {
-  loadProfile(11)
+  // 從 localStorage 或 sessionStorage 取出登入同學的 userId
+  const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
+  const userId = storedUser?.id   
+
+  if (userId) {
+    loadProfile(userId)
+  } else {
+    console.warn('沒有找到登入使用者的 userId')
+    person.value = null
+  }
 })
 </script>
 
@@ -69,14 +76,14 @@ onMounted(() => {
     >
       <div class="row g-0 h-100">
         <div class="col-lg-4 h-100 position-relative">
-          <img :src="person.avatar" class="w-100 h-100 object-fit-cover" :alt="person.name" />
+          <img :src="person.avatar" class="w-100 h-100 object-fit-cover" :alt="person.nickname" />
         </div>
 
         <div
           class="col-lg-4 h-100 p-4 p-xl-5 bg-white d-flex flex-column border-end border-light-subtle"
         >
           <div class="d-flex align-items-end mb-3">
-            <h1 class="fw-bolder mb-0 me-3 text-dark display-5">{{ person.name }}</h1>
+            <h1 class="fw-bolder mb-0 me-3 text-dark display-5">{{ person.nickname }}</h1>
             <span class="fs-3 text-muted">{{ person.age }}歲</span>
           </div>
 
@@ -175,13 +182,41 @@ onMounted(() => {
       </div>
     </div>
 
-    <DatingEdit
-      v-else-if="person && isEditing"
-      :initial-data="person"
-      @save="updateProfile"
-      @cancel="isEditing = false"
-    />
+    <!-- 編輯模式 -->
+   <DatingEdit
+  v-else-if="person && isEditing"
+  :initial-data="person"
+  @save="(newData) => {
+    updateProfile(newData)
+    $emit('save') // 再往上冒泡一次
+  }"
+  @cancel="() => {
+    isEditing = false
+    if (!person.nickname) person = null
+  }"
+/>
 
+    <!-- 沒資料 -->
+    <div
+      v-else-if="person === null"
+      class="d-flex flex-column justify-content-center align-items-center text-center p-5"
+      style="min-height: 400px"
+    >
+      <h4 class="mb-3 text-gradient mb-4">你還沒有交友資料，快去開始你的心動之旅吧！</h4>
+      <button
+        @click="
+          () => {
+            person = { userId: 13 }
+            isEditing = true
+          }
+        "
+        class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
+      >
+        <i class="bi bi-pencil-square me-2"></i>開始編輯
+      </button>
+    </div>
+
+    <!-- 載入中 -->
     <div v-else class="text-center p-5">
       <span class="spinner-border text-primary"></span>
       <p class="mt-3">載入中...</p>
@@ -192,7 +227,7 @@ onMounted(() => {
 <style scoped>
 .text-truncate-multiline {
   display: -webkit-box;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 7;
   -webkit-box-orient: vertical;
   overflow: hidden;
   white-space: pre-wrap;
@@ -202,9 +237,11 @@ onMounted(() => {
   .card {
     height: auto !important;
   }
+
   .col-lg-4 {
     height: auto !important;
   }
+
   .col-lg-4 img {
     height: 400px;
   }

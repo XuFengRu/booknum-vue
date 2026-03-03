@@ -1,27 +1,66 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router'
 import { ref } from 'vue'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import OAuthCard from '@/components/OAuthCard.vue'
 
 const router = useRouter()
 const email = ref('')
+const isSubmitting = ref(false) // 🌟 把防連點狀態移到前面宣告
 
-const handleReset = () => {
-    console.log(`正在發送信件給: ${email.value}`)
-    setTimeout(() => {
-        router.push('/forget-password/confirmation')
-    }, 1000)
+const handleReset = async () => {
+  // 1. 如果正在送出中，就不理會連續點擊
+  if (isSubmitting.value) return
+
+  // 2. 🌟 新增防呆：檢查 Email 格式
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email.value)) {
+    Swal.fire({ icon: 'warning', title: '格式錯誤', text: '請輸入有效的電子信箱格式', confirmButtonColor: '#f8c471' })
+    return
+  }
+
+  isSubmitting.value = true // 3. 檢查都通過後，鎖定按鈕
+
+  try {
+    const response = await axios.post('/Auth/ForgotPassword', {
+      email: email.value
+    })
+
+    await Swal.fire({
+      icon: 'success',
+      title: '信件已發送',
+      text: response.data.message || '請至信箱收信',
+      confirmButtonColor: '#0d6efd'
+    })
+
+    router.push({
+      path: '/forget-password/confirmation',
+      query: { email: email.value }
+    })
+  } catch (error) {
+    if (error.response && error.response.data) {
+      Swal.fire({ icon: 'error', title: '發送失敗', text: error.response.data.message })
+    } else {
+      Swal.fire({ icon: 'error', title: '系統錯誤', text: '系統忙碌中，請稍後再試' })
+    }
+  } finally {
+    isSubmitting.value = false // 4. 無論成功失敗，最後解除鎖定
+  }
 }
 </script>
+
 
 <template>
   <OAuthCard>
     <template #left-side>
       <i class="bi bi-key-fill floating-obj fs-3" style="left: 20%; animation-delay: 0s;"></i>
-      <i class="bi bi-unlock-fill floating-obj fs-1" style="left: 50%; animation-delay: 2s; animation-duration: 9s;"></i>
+      <i class="bi bi-unlock-fill floating-obj fs-1"
+        style="left: 50%; animation-delay: 2s; animation-duration: 9s;"></i>
 
       <div class="position-relative z-2 text-center">
-        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg" style="width: 90px; height: 90px;">
+        <div class="mb-4 d-inline-flex align-items-center justify-content-center bg-white rounded-circle shadow-lg"
+          style="width: 90px; height: 90px;">
           <i class="bi bi-shield-lock-fill fs-1" style="color: var(--bs-primary);"></i>
         </div>
         <h1 class="fs-1 fw-bolder mb-2">找回您的帳號</h1>
@@ -42,8 +81,11 @@ const handleReset = () => {
         </div>
 
         <div class="d-grid gap-3 mb-4">
-          <button type="submit" class="btn btn-primary fs-5 shadow-sm">
-            發送重設信 <i class="bi bi-send-fill ms-2"></i>
+          <button type="submit" class="btn btn-primary fs-5 shadow-sm" :disabled="isSubmitting">
+            <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
+            {{ isSubmitting ? '發送中...' : '發送重設信' }}
+            <i v-if="!isSubmitting" class="bi bi-send-fill ms-2"></i>
           </button>
         </div>
       </form>

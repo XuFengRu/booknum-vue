@@ -90,13 +90,13 @@ async function submitPayment() {
         <h5 class="fw-bold text-dark mb-4">1. 選擇付款方式</h5>
         <div class="d-flex flex-column gap-3">
           <div v-for="method in paymentMethods" :key="method.name"
-               class="card border-2 rounded-4 overflow-hidden transition-all bg-white"
-               :class="selectedMethod?.name === method.name ? 'border-primary shadow-sm' : 'border-light-subtle shadow-sm'"
-               style="cursor: pointer;"
-               @click="selectMethod(method)">
+            class="card border-2 rounded-4 overflow-hidden transition-all bg-white"
+            :class="selectedMethod?.name === method.name ? 'border-primary shadow-sm' : 'border-light-subtle shadow-sm'"
+            style="cursor: pointer;" @click="selectMethod(method)">
             <div class="card-body p-3 p-md-4 d-flex align-items-center gap-3">
-              <div class="bg-light rounded-3 d-flex align-items-center justify-content-center border border-light-subtle flex-shrink-0"
-                   style="width: 80px; height: 56px; padding: 6px;">
+              <div
+                class="bg-light rounded-3 d-flex align-items-center justify-content-center border border-light-subtle flex-shrink-0"
+                style="width: 80px; height: 56px; padding: 6px;">
                 <img :src="method.image" :alt="method.name" class="w-100 h-100" style="object-fit: contain;">
               </div>
               <div class="flex-grow-1">
@@ -117,7 +117,8 @@ async function submitPayment() {
       <!-- 右側付款表單 -->
       <div class="col-lg-7">
         <h5 class="fw-bold text-dark mb-4">2. 安全結帳資訊</h5>
-        <div class="card border-0 shadow-sm rounded-5 overflow-hidden w-100 fade-in-up bg-white" style="min-height: 400px;">
+        <div class="card border-0 shadow-sm rounded-5 overflow-hidden w-100 fade-in-up bg-white"
+          style="min-height: 400px;">
           <div class="card-body p-4 p-md-5 d-flex flex-column h-100">
             <form @submit.prevent="submitPayment" class="flex-grow-1 d-flex flex-column">
               <div class="row g-4 mb-4">
@@ -131,14 +132,16 @@ async function submitPayment() {
                 <div class="col-md-6">
                   <label class="form-label fw-bold text-muted small ms-1">電子信箱</label>
                   <div class="input-group-custom mb-0">
-                    <input type="email" v-model="form.email" class="form-control" placeholder="example@email.com" required />
+                    <input type="email" v-model="form.email" class="form-control" placeholder="example@email.com"
+                      required />
                     <i class="bi bi-envelope"></i>
                   </div>
                 </div>
                 <div v-if="selectedMethod.requiresCard" class="col-12">
                   <label class="form-label fw-bold text-muted small ms-1">信用卡號</label>
                   <div class="input-group-custom mb-0">
-                    <input type="text" v-model="form.cardNumber" class="form-control" placeholder="0000 0000 0000 0000" required />
+                    <input type="text" v-model="form.cardNumber" class="form-control" placeholder="0000 0000 0000 0000"
+                      required />
                     <i class="bi bi-credit-card"></i>
                   </div>
                 </div>

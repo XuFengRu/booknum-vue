@@ -13,6 +13,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@microsoft/signalr": "^10.0.0",
     "axios": "^1.13.5",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
@@ -20,7 +21,8 @@
     "pinia": "^3.0.4",
     "sweetalert2": "^11.26.20",
     "vue": "^3.5.27",
-    "vue-router": "^5.0.1"
+    "vue-router": "^5.0.1",
+    "vue3-google-login": "^2.0.37"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

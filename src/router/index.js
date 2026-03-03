@@ -36,15 +36,20 @@ const router = createRouter({
       component: () => import('../views/OAuth/RegisterView.vue'),
     },
     {
-      path: '/register/success',
+      path: '/register-success',
       name: 'register-success',
       component: () => import('../views/OAuth/RegisterSuccessView.vue'),
     },
+    {
+      path: '/verify-email',
+      name: 'verify-email',
+      component: () => import('../views/OAuth/VerifyEmailView.vue'),
+    },
     // ★★★★★★★ 設定各自路由 ★★★★★★★
-{
+    {
       path: '/member',
       component: () => import('../layout/MemberLayout.vue'), // 會員後台外框
-      redirect: '/member/dating', 
+      redirect: '/member/dating/info',
       meta: { requiresAuth: true },
       children: [
         // --- 交友配對 (Dating) ---
@@ -65,7 +70,6 @@ const router = createRouter({
 
         // --- 揪團活動 (Group) ---
         { path: 'group', name: 'member-group', component: () => import('../views/Member/Group/GroupView.vue') },
-        { path: 'group/my', name: 'member-group-my', component: () => import('../views/Member/Group/ActivityMy.vue') },
         { path: 'group/create', name: 'member-group-create', component: () => import('../views/Member/Group/ActivityNew.vue') },
         { path: 'group/:id', name: 'member-group-detail', component: () => import('../views/Member/Group/ActivityDetail.vue') },
 
@@ -74,7 +78,7 @@ const router = createRouter({
         { path: 'security', name: 'member-security', component: () => import('../views/Member/SecurityView.vue') }
       ]
     }
-    
+
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

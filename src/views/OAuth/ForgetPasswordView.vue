@@ -17,8 +17,10 @@ const handleReset = () => {
 <template>
     <OAuthCard>
         <template #left-side>
-            <i class="bi bi-key-fill floating-particle text-white opacity-50 display-1" style="left: 20%; animation-duration: 14s;"></i>
-            <i class="bi bi-unlock-fill floating-particle text-white opacity-25 h1" style="left: 70%; animation-duration: 18s; animation-delay: 2s;"></i>
+            <i class="bi bi-key-fill floating-particle text-white opacity-50 display-1"
+                style="left: 20%; animation-duration: 14s;"></i>
+            <i class="bi bi-unlock-fill floating-particle text-white opacity-25 h1"
+                style="left: 70%; animation-duration: 18s; animation-delay: 2s;"></i>
 
             <div class="position-relative z-2 text-center">
                 <i class="bi bi-shield-lock-fill display-3 mb-4 d-block opacity-75"></i>
@@ -35,11 +37,13 @@ const handleReset = () => {
         <form @submit.prevent="handleReset">
             <div class="input-icon-group mb-4">
                 <i class="bi bi-envelope"></i>
-                <input type="email" v-model="email" class="form-control rounded-pill" placeholder="請輸入 Email" required autofocus>
+                <input type="email" v-model="email" class="form-control rounded-pill" placeholder="請輸入 Email" required
+                    autofocus>
             </div>
 
             <div class="d-grid gap-3">
-                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm btn-pulse" style="border: none;">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm btn-pulse"
+                    style="border: none;">
                     發送重設信 <i class="bi bi-send-fill ms-2"></i>
                 </button>
             </div>

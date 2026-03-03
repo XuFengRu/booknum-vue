@@ -18,7 +18,7 @@ const handleResetSubmit = () => {
     }
 
     console.log('提交新密碼:', newPassword.value)
-    
+
     // 模擬成功後跳轉回登入頁
     router.push('/login')
 }
@@ -27,12 +27,12 @@ const handleResetSubmit = () => {
 <template>
     <OAuthCard>
         <template #left-side>
-            <i class="bi bi-shield-lock-fill floating-particle text-white opacity-50 display-1" 
-               style="left: 15%; animation-duration: 14s;"></i>
-            <i class="bi bi-key-fill floating-particle text-white opacity-25 h1" 
-               style="left: 80%; animation-duration: 16s; animation-delay: 0.5s;"></i>
-            <i class="bi bi-unlock-fill floating-particle text-white opacity-25 h2" 
-               style="left: 45%; animation-duration: 20s; animation-delay: 2s;"></i>
+            <i class="bi bi-shield-lock-fill floating-particle text-white opacity-50 display-1"
+                style="left: 15%; animation-duration: 14s;"></i>
+            <i class="bi bi-key-fill floating-particle text-white opacity-25 h1"
+                style="left: 80%; animation-duration: 16s; animation-delay: 0.5s;"></i>
+            <i class="bi bi-unlock-fill floating-particle text-white opacity-25 h2"
+                style="left: 45%; animation-duration: 20s; animation-delay: 2s;"></i>
 
             <div class="position-relative z-2 text-center">
                 <i class="bi bi-shield-check display-1 mb-4 d-block opacity-75"></i>
@@ -55,12 +55,8 @@ const handleResetSubmit = () => {
                 <label class="form-label small text-muted fw-bold ms-2">新密碼</label>
                 <div class="input-icon-group">
                     <i class="bi bi-key"></i>
-                    <input type="password" 
-                           v-model="newPassword" 
-                           class="form-control rounded-pill" 
-                           placeholder="請設定新密碼" 
-                           required 
-                           autofocus>
+                    <input type="password" v-model="newPassword" class="form-control rounded-pill" placeholder="請設定新密碼"
+                        required autofocus>
                 </div>
             </div>
 
@@ -68,16 +64,14 @@ const handleResetSubmit = () => {
                 <label class="form-label small text-muted fw-bold ms-2">確認新密碼</label>
                 <div class="input-icon-group">
                     <i class="bi bi-check-lg"></i>
-                    <input type="password" 
-                           v-model="confirmPassword" 
-                           class="form-control rounded-pill" 
-                           placeholder="再次輸入新密碼" 
-                           required>
+                    <input type="password" v-model="confirmPassword" class="form-control rounded-pill"
+                        placeholder="再次輸入新密碼" required>
                 </div>
             </div>
 
             <div class="d-grid mt-5">
-                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm btn-pulse" style="border: none;">
+                <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm btn-pulse"
+                    style="border: none;">
                     確認重設 <i class="bi bi-check-circle-fill ms-2"></i>
                 </button>
             </div>
@@ -85,5 +79,4 @@ const handleResetSubmit = () => {
     </OAuthCard>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

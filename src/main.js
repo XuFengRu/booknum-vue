@@ -10,6 +10,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'element-plus/dist/index.css'
 import './assets/common.css'
 import Swal from 'sweetalert2'
+import vue3GoogleLogin from 'vue3-google-login'
 
 axios.defaults.baseURL = 'https://localhost:7091/api'
 axios.interceptors.request.use(
@@ -60,6 +61,9 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+app.use(vue3GoogleLogin, {
+  clientId: '102326183599-j7vh2u7th1eribr4cc679aj3sra2019v.apps.googleusercontent.com'
+})
 app.use(ElementPlus)
 
 

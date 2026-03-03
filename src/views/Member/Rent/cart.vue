@@ -74,9 +74,8 @@ function goToPayment() {
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
               <div class="row g-0 align-items-center p-3 p-md-4 bg-white">
                 <div class="col-auto">
-                  <img :src="group.rent.image" :alt="group.rent.name"
-                       class="rounded-4 object-fit-cover shadow-sm"
-                       style="width: 110px; height: 110px; object-position: center;"/>
+                  <img :src="group.rent.image" :alt="group.rent.name" class="rounded-4 object-fit-cover shadow-sm"
+                    style="width: 110px; height: 110px; object-position: center;" />
                 </div>
                 <div class="col px-4 d-flex flex-column justify-content-center">
                   <h5 class="fw-bolder text-dark mb-2">{{ group.rent.name }}</h5>
@@ -88,8 +87,8 @@ function goToPayment() {
                   </span>
                 </div>
                 <div class="col-auto text-end ps-3 d-flex flex-column align-items-end justify-content-between h-100">
-                  <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0"
-                          title="刪除約會" @click="removeItem(group.rent.id)">
+                  <button class="btn btn-light btn-circle btn-circle-sm flex-shrink-0" title="刪除約會"
+                    @click="removeItem(group.rent.id)">
                     <i class="bi bi-trash-fill"></i>
                   </button>
                   <h5 class="fw-bolder text-gradient mb-0">
@@ -101,7 +100,7 @@ function goToPayment() {
 
             <!-- 該租人對應的加購方案 -->
             <div v-for="extra in group.extras" :key="extra.id"
-                 class="card border-0 shadow-sm rounded-4 overflow-hidden ms-5">
+              class="card border-0 shadow-sm rounded-4 overflow-hidden ms-5">
               <div class="row g-0 align-items-center p-3 p-md-4 bg-white">
                 <div class="col px-4 d-flex flex-column justify-content-center">
                   <h6 class="fw-bolder text-dark mb-2">{{ extra.name }}</h6>
@@ -143,12 +142,11 @@ function goToPayment() {
             <h3 class="fw-bolder text-primary mb-0">NT$ {{ totalPrice.toLocaleString() }}</h3>
           </div>
           <div class="d-flex flex-column gap-3 mt-4">
-            <button class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm py-2"
-                    @click="goToPayment">
+            <button class="btn btn-primary rounded-pill w-100 fw-bold shadow-sm py-2" @click="goToPayment">
               前往結帳
             </button>
             <button class="btn btn-light rounded-pill w-100 fw-bold text-danger border border-light-subtle py-2"
-                    @click="clearCart">
+              @click="clearCart">
               清空購物車
             </button>
           </div>
@@ -158,8 +156,9 @@ function goToPayment() {
 
     <!-- 空購物車 -->
     <div v-else class="text-center py-5 my-5 fade-in-up">
-      <div class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border"
-           style="width: 100px; height: 100px; color: var(--text-muted);">
+      <div
+        class="icon-circle bg-light rounded-circle d-flex align-items-center justify-content-center shadow-sm mx-auto mb-4 border"
+        style="width: 100px; height: 100px; color: var(--text-muted);">
         <i class="bi bi-cart-x display-4"></i>
       </div>
       <h3 class="fw-bolder text-dark mb-3">您的購物車是空的</h3>
