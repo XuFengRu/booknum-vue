@@ -6,15 +6,15 @@ import MemberCard from "@/components/MemberCard.vue";
 const router = useRouter();
 
 const rentItems = ref([
-  { name: "葉舒華 (Shuhua)", description: "(G)I-DLE 成員，氣質優雅，適合舞台與陪伴。", price: "NT$ 1499 / 小時", image: "/images/Girlfriend6.jpg" },
-  { name: "車銀優 (Cha Eun-woo)", description: "韓國藝人，外型俊朗，適合約會與活動陪同。", price: "NT$ 1599 / 小時", image: "/images/Boyfriend1.jpg" },
-  { name: "邁茲·米克森", description: "丹麥演員，成熟穩重，適合正式場合與晚宴。", price: "NT$ 1799 / 小時", image: "/images/Boyfriend4.jpg" },
-  { name: "J-hope (鄭號錫)", description: "BTS 成員，陽光活力，適合舞蹈與娛樂陪伴。", price: "NT$ 1699 / 小時", image: "/images/Boyfriend3.jpg" },
-  { name: "IU (李知恩)", description: "韓國歌手兼演員，甜美溫柔，適合音樂與散步。", price: "NT$ 1599 / 小時", image: "/images/Girlfriend7.jpg" },
-  { name: "Jennie Kim", description: "BLACKPINK 成員，時尚自信，適合潮流約會。", price: "NT$ 1699 / 小時", image: "/images/Girlfriend2.jpg" },
-  { name: "丁海寅 (Jung Hae-in)", description: "韓國演員，溫暖笑容，適合浪漫陪伴。", price: "NT$ 1499 / 小時", image: "/images/Boyfriend2.jpg" },
-  { name: "金珉奎 (Mingyu)", description: "SEVENTEEN 成員，帥氣高挑，適合活力約會。", price: "NT$ 1599 / 小時", image: "/images/Boyfriend5.jpg" },
-  { name: "Karina (柳智敏)", description: "aespa 隊長，冷豔魅力，適合舞台與時尚陪伴。", price: "NT$ 1699 / 小時", image: "/images/Girlfriend4.jpg" }
+{ name: "雅涵", description: "氣質優雅，適合舞台與陪伴。", price: "NT$ 1200 / 小時", image: "/images/Girlfriend6.jpg" },
+{ name: "子睿", description: "外型俊朗，適合約會與活動陪同。", price: "NT$ 800 / 小時", image: "/images/Boyfriend1.jpg" },
+{ name: "承澤", description: "成熟穩重，適合正式場合與晚宴。", price: "NT$ 1500 / 小時", image: "/images/Boyfriend4.jpg" },
+{ name: "昊陽", description: "陽光活力，適合舞蹈與娛樂陪伴。", price: "NT$ 700 / 小時", image: "/images/Boyfriend3.jpg" },
+{ name: "語彤", description: "甜美溫柔，適合音樂與散步。", price: "NT$ 900 / 小時", image: "/images/Girlfriend7.jpg" },
+{ name: "若琳", description: "時尚自信，適合潮流約會。", price: "NT$ 1100 / 小時", image: "/images/Girlfriend2.jpg" },
+{ name: "景澄", description: "溫暖笑容，適合浪漫陪伴。", price: "NT$ 600 / 小時", image: "/images/Boyfriend2.jpg" },
+{ name: "皓宇", description: "帥氣高挑，適合活力約會。", price: "NT$ 1000 / 小時", image: "/images/Boyfriend5.jpg" },
+{ name: "芷瑤", description: "冷豔魅力，適合舞台與時尚陪伴。", price: "NT$ 1300 / 小時", image: "/images/Girlfriend4.jpg" }
 ]);
 
 function openBooking(item) {
