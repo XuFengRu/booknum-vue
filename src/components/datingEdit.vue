@@ -3,7 +3,11 @@ import { ref, onMounted } from 'vue'
 import { ElSelect, ElOption, ElSlider } from 'element-plus'
 import 'element-plus/dist/index.css'
 import axios from 'axios'
+import PhotoErrorModal from './datingPhotoErrorModal.vue'
+import * as bootstrap from 'bootstrap'
 
+
+const photoErrorDialog = ref(false)
 const props = defineProps({
   initialData: { type: Object, required: true },
 })
@@ -83,7 +87,10 @@ async function handleFileUpload(event) {
     form.value.avatar = res.data.path  // ✅ 有人臉 → 保留
   } catch (err) {
     form.value.avatar = form.value.avatar             // ❌ 沒有人臉 → 清空
-    alert(err.response?.data || "照片上傳失敗")
+        // 🔹 照片驗證失敗 → 觸發彈窗
+    const modal = new bootstrap.Modal(document.getElementById('photoErrorModal'))
+    modal.show()
+
   }
 }
 async function submitForm() {
@@ -236,6 +243,7 @@ async function submitForm() {
       </div>
     </div>
   </div>
+    <PhotoErrorModal/>
 </template>
 
 <style scoped>
