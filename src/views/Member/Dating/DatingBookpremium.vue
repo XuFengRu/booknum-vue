@@ -2,9 +2,14 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
+import SubscribeSuccessModal from '@/components/datingSubscribeModal.vue'
+
 
 const plans = ref([])
 const route = useRoute()
+const modalRef = ref(null)
+const emit = defineEmits(['save'])
+
 
 onMounted(async () => {
   try {
@@ -61,9 +66,8 @@ plans.value = data.map((p, idx) => {
       )
       if (res.data.success) {
         const expiry = new Date(res.data.expiryTime)
-        // 使用台灣在地格式，顯示「2026/03/08 下午02:48」
         const formatted = expiry.toLocaleString('zh-TW', { hour12: true })
-        alert(`付款成功！你的會員已升級成功，到期時間：${formatted}！`)
+        modalRef.value.showModal(formatted)   // ✅ 改成呼叫 Modal
       } else {
         alert('付款成功，但會員尚未啟用：' + res.data.message)
       }
@@ -225,6 +229,7 @@ const subscribe = async (plan) => {
       </div>
     </div>
   </div>
+  <SubscribeSuccessModal ref="modalRef" />
 </template>
 
 <style scoped>
