@@ -81,6 +81,14 @@ connection.value.on('ResetUnread', (data) => {
 
   connection.value.on('UnMatched', (data) => {
     conversations.value = conversations.value.filter((c) => c.id !== data.roomId)
+
+      // 如果目前正在看這個聊天室 → 直接跳回列表
+  if (selectedChat.value && selectedChat.value.id === data.roomId) {
+    selectedChat.value = null
+    // 如果你希望整個頁面跳轉，就加這行：
+    window.location.href = '/member/dating/messages'
+  }
+
   })
 
 connection.value.on('ChatRoomCreated', (data) => {
