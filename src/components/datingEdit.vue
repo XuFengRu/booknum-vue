@@ -87,7 +87,7 @@ async function handleFileUpload(event) {
     form.value.avatar = res.data.path  // ✅ 有人臉 → 保留
   } catch (err) {
     form.value.avatar = form.value.avatar             // ❌ 沒有人臉 → 清空
-        // 🔹 照片驗證失敗 → 觸發彈窗
+    // 🔹 照片驗證失敗 → 觸發彈窗
     const modal = new bootstrap.Modal(document.getElementById('photoErrorModal'))
     modal.show()
 
@@ -126,10 +126,8 @@ async function submitForm() {
  try {
   if (props.initialData && props.initialData.nickname) {
     await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-    alert('更新成功！')
   } else {
     await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-    alert('建立成功！')
   }
 
   // ✅ 更新 localStorage
