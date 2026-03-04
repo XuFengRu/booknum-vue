@@ -213,7 +213,7 @@ async function submit() {
       fd.append("image", f.imageFile);
     }
 
-    await axios.post("/Activity", fd, {
+    await axios.post("/activities", fd, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
