@@ -1,3 +1,4 @@
+<!-- ✅ 活動列表頁（可同步版） -->
 <script setup>
 import { computed, onMounted, onActivated, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -8,10 +9,10 @@ const keyword = ref("");
 /** ===== API 設定 ===== */
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:7091";
 
-/** ===== 模擬登入使用者 ===== */
-const CURRENT_USER = { id: 83, name: "Arille.M" };
+/** ✅ 跟詳細頁統一 ===== 模擬登入使用者 ===== */
+const CURRENT_USER = { id: 1, name: "Arille.M" };
 
-/** ===== 本地暫存報名狀態 ===== */
+/** ===== 本地暫存報名狀態（跟詳細頁同一把 key）===== */
 const JOINED_KEY = `joined_activity_ids_user_${CURRENT_USER.id}_v1`;
 const joinedIds = ref(new Set());
 
@@ -96,29 +97,29 @@ function startedText(a) {
 /** ===== 取得活動 ===== */
 async function fetchActivities() {
   const categoryMap = await fetchCategoryMap();
-  const list = await fetchJson(`${API_BASE}/api/Activity`);
+  const list = await fetchJson(`${API_BASE}/api/activities`);
 
   activities.value = list.map((x) => {
     const id = Number(x.activityId ?? x.ActivityId);
 
     // ✅ 從後端各種可能欄位抓「主辦人/建立者」
-    const ownerId = Number(
-      x.ownerId ??
-      x.OwnerId ??
-      x.hostUserId ??
-      x.HostUserId ??
-      x.createdBy ??
-      x.CreatedBy ??
-      x.userId ??
-      x.UserId ??
-      0
-    );
+  const ownerId = Number(x.userId ?? x.UserId ?? 0);
 
-    const isJoinedByMe = joinedIds.value.has(id);
+    // ✅ isJoinedByMe 以 localStorage 為準（由詳細頁/列表頁 join 成功後寫入）
+const isJoinedByMe = joinedIds.value.has(id);
 
-    // ✅ 你目前報名是 localStorage，所以已報名至少顯示 1，避免 0/1 但顯示取消報名
-    const apiJoined = Number(x.joined ?? x.Joined ?? 0);
-    const joined = isJoinedByMe ? Math.max(1, apiJoined) : apiJoined;
+// ✅ 列表 API 可能沒有回正確人數，所以多抓幾種欄位 + 已報名至少顯示 1
+const apiJoined = Number(
+  x.joined ??
+  x.Joined ??
+  x.joinedCount ??
+  x.JoinedCount ??
+  x.joined_count ??
+  x.currentJoined ??
+  x.CurrentJoined ??
+  0
+);
+const joined = isJoinedByMe ? Math.max(1, apiJoined) : apiJoined;
 
     const startAtIso = x.startAt ?? x.StartAt ?? "";
     const endAtIso = x.endAt ?? x.EndAt ?? "";
@@ -184,21 +185,34 @@ function goDetail(id) {
   router.push({ name: "member-group-detail", params: { id } });
 }
 
-/** ===== 報名（前端暫存 + 畫面即時更新） ===== */
-function toggleJoin(a) {
+/** ✅ 報名/取消（改成打 API + 同步 localStorage + 即時更新 UI） */
+async function toggleJoin(a) {
   const id = Number(a.id);
 
-  // ✅ 新增：活動已開始 → 關閉報名/取消
+  // ✅ 活動已開始 → 關閉報名/取消
   if (isStarted(a)) return;
 
-  if (a.isJoinedByMe) {
-    const ok = window.confirm("確定要取消報名嗎？");
-    if (!ok) return;
+  try {
+    if (a.isJoinedByMe) {
+      const ok = window.confirm("確定要取消報名嗎？");
+      if (!ok) return;
 
-    a.isJoinedByMe = false;
-    joinedIds.value.delete(id);
-    a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
-  } else {
+      const res = await fetch(`${API_BASE}/api/activities/${id}/join?userId=${CURRENT_USER.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      // ✅ 即時更新畫面 + localStorage
+      a.isJoinedByMe = false;
+      joinedIds.value.delete(id);
+      saveJoinedIds();
+
+      // ✅ UI 人數先做 1 次即時扣（回到頁面時 refreshPage 會再以後端為準）
+      a.joined = Math.max(0, (Number(a.joined) || 0) - 1);
+
+      return;
+    }
+
     const ok = window.confirm("確定要報名這個活動嗎？");
     if (!ok) return;
 
@@ -207,12 +221,24 @@ function toggleJoin(a) {
 
     if (isFull(a)) return;
 
+    const res = await fetch(`${API_BASE}/api/activities/${id}/join?userId=${CURRENT_USER.id}`, {
+      method: "POST",
+    });
+
+    if (res.status === 409) return; // 已額滿
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    // ✅ 即時更新畫面 + localStorage
     a.isJoinedByMe = true;
     joinedIds.value.add(id);
-    a.joined = (Number(a.joined) || 0) + 1;
-  }
+    saveJoinedIds();
 
-  saveJoinedIds();
+    // ✅ UI 人數先做 1 次即時加（回到頁面時 refreshPage 會再以後端為準）
+    a.joined = (Number(a.joined) || 0) + 1;
+  } catch (err) {
+    console.error(err);
+    alert("操作失敗，請查看 Console / Network");
+  }
 }
 
 function toggleMine() {
@@ -276,10 +302,6 @@ function toggleMine() {
 
                   <span v-if="a.isJoinedByMe" class="badge bg-danger rounded-pill px-3 py-1 shadow-sm">
                     <i class="bi bi-check-circle-fill me-1"></i>已報名
-                  </span>
-
-                  <span v-if="isMyOwnActivity(a)" class="badge bg-dark rounded-pill px-3 py-1 shadow-sm">
-                    自己發布
                   </span>
 
                   <span v-if="isStarted(a)" class="badge bg-warning text-dark rounded-pill px-3 py-1 shadow-sm">
@@ -369,6 +391,7 @@ function toggleMine() {
 </template>
 
 <style scoped>
+/* ✅ 原樣不動 */
 .glass-shell {
   border-radius: 2rem;
   border: 1px solid rgba(255, 255, 255, .55);
