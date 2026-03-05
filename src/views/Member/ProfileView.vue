@@ -28,7 +28,43 @@ const premiumExpiryDate = ref('')
 const isSubmitting = ref(false)
 const autoRenew = ref(false)
 
+// ✅ 新增載入會員資料方法
+const fetchUserProfile = async () => {
+  try {
+    const response = await axios.get('/Member/Profile', {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    })
+    
+    const data = response.data
+    // 將後端回傳的資料綁定到 formData (依據你的後端實際回傳的欄位名稱微調)
+    formData.value.name = data.name || ''
+    formData.value.gender = data.gender || ''
+    // 確保日期格式符合 yyyy-MM-dd
+    formData.value.birthday = data.birthday ? data.birthday.split('T')[0] : '' 
+    formData.value.phone = data.phone || ''
+    formData.value.email = data.email || ''
+    
+    // 如果後端有提供這兩個欄位的話，也一起綁定
+    formData.value.lastLogin = data.lastLogin ? new Date(data.lastLogin).toLocaleString('zh-TW') : '無紀錄'
+    formData.value.lastIp = data.lastIp || '無紀錄'
+
+  } catch (error) {
+    console.error('無法載入會員資料', error)
+    Swal.fire({
+      icon: 'error',
+      title: '讀取失敗',
+      text: '無法獲取您的個人資料，請重新登入或稍後再試'
+    })
+  }
+}
+
 onMounted(async () => {
+  // 1. 載入基本個人資料
+  if (getToken()) {
+    await fetchUserProfile()
+  }
+
+  // 2. 載入訂閱狀態資料
   try {
     const premiumRes = await axios.get(`https://localhost:7091/api/MatchPremium/isActive/${userId}`)
     isPremium.value = premiumRes.data === true
@@ -49,7 +85,7 @@ onMounted(async () => {
       autoRenew.value = false
     }
   } catch (error) {
-    console.error('無法取得會員資料', error)
+    console.error('無法取得會員訂閱資料', error)
   }
 })
 

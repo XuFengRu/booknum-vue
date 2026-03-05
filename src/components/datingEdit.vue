@@ -4,8 +4,7 @@ import { ElSelect, ElOption, ElSlider } from 'element-plus'
 import 'element-plus/dist/index.css'
 import axios from 'axios'
 import PhotoErrorModal from './datingPhotoErrorModal.vue'
-import * as bootstrap from 'bootstrap'
-
+// 這裡不要 import bootstrap 了！
 
 const photoErrorDialog = ref(false)
 const props = defineProps({
@@ -13,29 +12,13 @@ const props = defineProps({
 })
 const emit = defineEmits(['save', 'cancel'])
 
+const photoErrorModalRef = ref(null)
+
 const cities = [
-  '基隆市',
-  '台北市',
-  '新北市',
-  '桃園市',
-  '新竹市',
-  '新竹縣',
-  '宜蘭縣',
-  '苗栗縣',
-  '台中市',
-  '彰化縣',
-  '南投縣',
-  '雲林縣',
-  '嘉義市',
-  '嘉義縣',
-  '台南市',
-  '高雄市',
-  '屏東縣',
-  '花蓮縣',
-  '台東縣',
-  '澎湖縣',
-  '金門縣',
-  '連江縣',
+  '基隆市', '台北市', '新北市', '桃園市', '新竹市', '新竹縣',
+  '宜蘭縣', '苗栗縣', '台中市', '彰化縣', '南投縣', '雲林縣',
+  '嘉義市', '嘉義縣', '台南市', '高雄市', '屏東縣', '花蓮縣',
+  '台東縣', '澎湖縣', '金門縣', '連江縣',
 ]
 
 // 興趣清單
@@ -87,12 +70,14 @@ async function handleFileUpload(event) {
     form.value.avatar = res.data.path  // ✅ 有人臉 → 保留
   } catch (err) {
     form.value.avatar = form.value.avatar             // ❌ 沒有人臉 → 清空
-    // 🔹 照片驗證失敗 → 觸發彈窗
-    const modal = new bootstrap.Modal(document.getElementById('photoErrorModal'))
-    modal.show()
-
+    
+    // 照片驗證失敗 → 改透過 Vue ref 呼叫子元件的 show() 方法
+    if (photoErrorModalRef.value && typeof photoErrorModalRef.value.show === 'function') {
+      photoErrorModalRef.value.show()
+    }
   }
 }
+
 async function submitForm() {
   if (
     !form.value.nickname ||
@@ -123,25 +108,24 @@ async function submitForm() {
     Cities: form.value.preference.cities,
   }
 
- try {
-  if (props.initialData && props.initialData.nickname) {
-    await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-  } else {
-    await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+  try {
+    if (props.initialData && props.initialData.nickname) {
+      await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+    } else {
+      await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
+    }
+
+    // ✅ 更新 localStorage
+    const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
+    storedUser.hasInfo = true
+    localStorage.setItem('user', JSON.stringify(storedUser))
+
+    // ✅ 通知父層 (layout.vue) 更新
+    emit('save', form.value)
+  } catch (err) {
+    console.error('提交失敗:', err.response?.data || err)
+    alert(err.response?.data || '提交失敗，請稍後再試')
   }
-
-  // ✅ 更新 localStorage
-  const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')
-  storedUser.hasInfo = true
-  localStorage.setItem('user', JSON.stringify(storedUser))
-
-  // ✅ 通知父層 (layout.vue) 更新
-  emit('save', form.value)
-} catch (err) {
-  console.error('提交失敗:', err.response?.data || err)
-  alert(err.response?.data || '提交失敗，請稍後再試')
-}
-
 }
 </script>
 
@@ -241,7 +225,8 @@ async function submitForm() {
       </div>
     </div>
   </div>
-    <PhotoErrorModal/>
+  
+  <PhotoErrorModal ref="photoErrorModalRef" />
 </template>
 
 <style scoped>

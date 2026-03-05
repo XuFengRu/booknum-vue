@@ -1,5 +1,7 @@
 <template>
   <teleport to="body">
+    <button ref="triggerBtn" class="d-none" data-bs-toggle="modal" data-bs-target="#photoErrorModal"></button>
+
     <div class="modal fade" id="photoErrorModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered photo-error-modal">
         <div class="modal-content">
@@ -25,7 +27,18 @@
 </template>
 
 <script setup>
-/* 這個檔案只負責顯示彈窗，不需要額外邏輯 */
+import { ref } from 'vue'
+
+// 綁定隱藏按鈕
+const triggerBtn = ref(null)
+
+// 建立 show 方法，透過程式模擬點擊隱藏按鈕來展開彈窗
+const show = () => {
+  if (triggerBtn.value) {
+    triggerBtn.value.click()
+  }
+}
+defineExpose({ show })
 </script>
 
 <style scoped>
