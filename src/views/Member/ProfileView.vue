@@ -79,10 +79,8 @@ onMounted(async () => {
         hour: '2-digit',
         minute: '2-digit',
       })
-      autoRenew.value = expiryRes.data.autoRenew === true
     } else {
       premiumExpiryDate.value = '尚未訂閱'
-      autoRenew.value = false
     }
   } catch (error) {
     console.error('無法取得會員訂閱資料', error)
