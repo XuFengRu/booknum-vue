@@ -4,7 +4,8 @@ import { ElSelect, ElOption, ElSlider } from 'element-plus'
 import 'element-plus/dist/index.css'
 import axios from 'axios'
 import PhotoErrorModal from './datingPhotoErrorModal.vue'
-// 這裡不要 import bootstrap 了！
+import Swal from 'sweetalert2'
+// 不要 import bootstrap
 
 const photoErrorDialog = ref(false)
 const props = defineProps({
@@ -86,7 +87,12 @@ async function submitForm() {
     !form.value.intro ||
     !form.value.avatar
   ) {
-    alert('請填寫必填欄位！（相片、姓名、職業、所在地、自我介紹）')
+    Swal.fire({
+      icon: 'warning',
+      title: '必填欄位未完成',
+      text: '相片、姓名、職業、所在地、自我介紹皆為必填欄位',
+      confirmButtonText: '確定'
+    })
     return
   }
 
