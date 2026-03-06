@@ -8,7 +8,7 @@ import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 const router = useRouter()
-const route = useRoute() // 抓取網址參數用
+const route = useRoute() 
 const isSubmitting = ref(false)
 
 const formData = ref({
@@ -26,16 +26,52 @@ onMounted(() => {
   if (route.query.name) formData.value.name = route.query.name
 })
 
+// 🌟 新增：Demo 自動填入功能
+const fillDemoData = (type) => {
+  // 先填入一組「完全正確」的預設資料
+  formData.value = {
+    email: 'testuser@gmail.com',
+    password: 'Password123',
+    confirmPassword: 'Password123',
+    name: '王小明',
+    phone: '0912345678',
+    gender: 'M',
+    birthday: '1995-05-15'
+  }
+
+  // 根據不同情境，故意把某個欄位改錯
+  switch (type) {
+    case 'emailError':
+      formData.value.email = 'wrongemail@format' // 錯誤的信箱
+      break
+    case 'weakPassword':
+      formData.value.password = '12345678' // 缺少英文
+      formData.value.confirmPassword = '12345678'
+      break
+    case 'mismatchPassword':
+      formData.value.confirmPassword = 'Password999' // 密碼不一致
+      break
+    case 'phoneError':
+      formData.value.phone = '091234567' // 錯誤的手機格式
+      break
+  }
+}
+
 const handleRegister = async () => {
   if (isSubmitting.value) return;
 
-  // 防呆：檢查兩次密碼是否一致
+  // 🌟 為了讓 Demo 效果更好，我們把 Email 檢查也加進來，統一用 Swal 提示
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(formData.value.email)) {
+    Swal.fire({ icon: 'warning', title: '信箱格式錯誤', text: '請輸入有效的電子信箱格式', confirmButtonColor: '#f8c471' })
+    return;
+  }
+
   if (formData.value.password !== formData.value.confirmPassword) {
     Swal.fire({ icon: 'warning', title: '密碼不一致', text: '請確認兩次輸入的密碼相同', confirmButtonColor: '#f8c471' })
     return;
   }
 
-  // 防呆：檢查密碼強度 (至少8碼，包含英文字母與數字)
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   if (!passwordRegex.test(formData.value.password)) {
     Swal.fire({
@@ -47,17 +83,15 @@ const handleRegister = async () => {
     return;
   }
 
-  // 防呆：檢查手機號碼格式 (台灣手機號碼 09 開頭，共 10 碼)
   const phoneRegex = /^09\d{8}$/;
   if (!phoneRegex.test(formData.value.phone)) {
-    Swal.fire({ icon: 'warning', title: '格式錯誤', text: '請輸入有效的手機號碼 (例如: 0912345678)' })
+    Swal.fire({ icon: 'warning', title: '手機格式錯誤', text: '請輸入有效的手機號碼 (例如: 0912345678)' })
     return;
   }
 
   isSubmitting.value = true;
 
   try {
-    // 送出 API 前，把不需要傳給後端的 confirmPassword 剔除
     const { confirmPassword, ...submitData } = formData.value;
     const response = await axios.post('/Auth/Register', submitData)
 
@@ -79,7 +113,6 @@ const handleRegister = async () => {
     isSubmitting.value = false;
   }
 }
-
 </script>
 
 <template>
@@ -105,6 +138,21 @@ const handleRegister = async () => {
       <div class="text-center text-lg-start mb-4">
         <h2 class="fw-bold text-gradient mb-2">建立新帳號</h2>
         <p class="text-muted small">請填寫以下資訊完成註冊</p>
+      </div>
+
+<div class="d-flex flex-wrap gap-2 mb-4 justify-content-lg-start justify-content-center">
+        <button type="button" @click="fillDemoData('emailError')" class="btn btn-sm btn-outline-danger rounded-pill shadow-sm">
+          <i class="bi bi-bug me-1"></i>信箱錯誤
+        </button>
+        <button type="button" @click="fillDemoData('weakPassword')" class="btn btn-sm btn-outline-warning rounded-pill shadow-sm">
+          <i class="bi bi-bug me-1"></i>密碼太弱
+        </button>
+        <button type="button" @click="fillDemoData('mismatchPassword')" class="btn btn-sm btn-outline-info rounded-pill shadow-sm">
+          <i class="bi bi-bug me-1"></i>密碼不一致
+        </button>
+        <button type="button" @click="fillDemoData('phoneError')" class="btn btn-sm btn-outline-secondary rounded-pill shadow-sm">
+          <i class="bi bi-bug me-1"></i>手機錯誤
+        </button>
       </div>
 
       <form @submit.prevent="handleRegister">

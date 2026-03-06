@@ -340,7 +340,7 @@ function toggleMine() {
                 </button>
 
                 <button class="btn rounded-pill px-4 fw-bold shadow-sm" :class="a.isJoinedByMe
-                    ? 'btn-outline-danger bg-white'
+                    ? 'btn-outline-danger bg-white text-danger'
                     : (isStarted(a) || isMyOwnActivity(a) || isFull(a))
                       ? 'btn-secondary text-white border-0 opacity-50'
                       : 'btn-primary'
