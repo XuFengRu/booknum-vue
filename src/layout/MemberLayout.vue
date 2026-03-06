@@ -87,7 +87,7 @@ const sidebarMenus = computed(() => {
     dating: datingMenuItems,
     rent: [
       { name: '尋找出租', icon: 'bi-search', link: '/member/rent' },
-      { name: '購物車', icon: 'bi-cart', link: '/member/rent/cart', badge: 2, badgeClass: 'bg-danger' },
+      { name: '購物車', icon: 'bi-cart', link: '/member/rent/cart' },
       { name: '付款資訊', icon: 'bi-credit-card', link: '/member/rent/payment' },
       { name: '我的預約', icon: 'bi-calendar-check', link: '/member/rent/bookings' },
     ],

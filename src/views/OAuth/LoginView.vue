@@ -218,9 +218,14 @@ const handleGoogleCallback = async (response) => {
             </div>
 
             <div class="d-flex justify-content-center gap-3 mb-4">
-                <GoogleLogin :callback="handleGoogleCallback" type="icon" shape="circle" />
+                <GoogleLogin :callback="handleGoogleCallback" type="icon" />
                 <!-- <button type="button" class="btn btn-social"><i class="bi bi-google text-danger"></i></button> -->
-                <button type="button" class="btn btn-social"><i class="bi bi-facebook text-primary"></i></button>
+                <!-- <button type="button" class="btn btn-social"><i class="bi bi-facebook text-primary"></i></button> -->
+                <button type="button" class="btn bg-white shadow-sm d-flex align-items-center justify-content-center"
+                    style="border: 1px solid #dadce0; color: #3c4043; border-radius: 4px; font-size: 14px; height: 40px; width: 200px;">
+                    <i class="bi bi-facebook me-2 fs-5" style="color: #1877F2;"></i>
+                    <span class="fw-medium" style="font-family: 'Roboto', sans-serif;">使用 Facebook 登入</span>
+                </button>
             </div>
         </form>
 
