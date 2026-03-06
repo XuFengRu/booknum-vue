@@ -96,6 +96,18 @@ async function submitForm() {
     return
   }
 
+   const userId = props.initialData?.userId
+
+  if (!userId) {
+    console.error("userId 不存在", props.initialData)
+    Swal.fire({
+      icon: 'error',
+      title: '系統錯誤',
+      text: '找不到使用者ID'
+    })
+    return
+  }
+
   const dto = {
     Nickname: form.value.nickname,
     Bio: form.value.intro,
@@ -115,11 +127,11 @@ async function submitForm() {
   }
 
   try {
-    if (props.initialData && props.initialData.nickname) {
-      await axios.put(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-    } else {
-      await axios.post(`https://localhost:7091/api/matchinfo/${props.initialData.userId}`, dto)
-    }
+   if (props.initialData && props.initialData.nickname) {
+  await axios.put(`https://localhost:7091/api/matchinfo/${userId}`, dto)
+} else {
+  await axios.post(`https://localhost:7091/api/matchinfo/${userId}`, dto)
+}
 
     // ✅ 更新 localStorage
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}')

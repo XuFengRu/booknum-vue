@@ -52,19 +52,23 @@ function updateProfile(newData) {
   person.value = { ...person.value, ...newData }
   isEditing.value = false
 }
-
+const userId = ref(null)
 onMounted(() => {
-  // 從 localStorage 或 sessionStorage 取出登入同學的 userId
   const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
-  const userId = storedUser?.id   
+  userId.value = storedUser?.id
 
-  if (userId) {
-    loadProfile(userId)
+  if (userId.value) {
+    loadProfile(userId.value)
   } else {
     console.warn('沒有找到登入使用者的 userId')
     person.value = null
   }
 })
+
+function startEdit() {
+  person.value = { userId: userId.value }
+  isEditing.value = true
+}
 </script>
 
 <template>
@@ -204,14 +208,10 @@ onMounted(() => {
     >
       <h4 class="mb-3 text-gradient mb-4">你還沒有交友資料，快去開始你的心動之旅吧！</h4>
       <button
-        @click="
-          () => {
-            person = { userId: 13 }
-            isEditing = true
-          }
-        "
-        class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
-      >
+  @click="startEdit"
+  class="btn btn-primary rounded-pill shadow fs-6 px-4 py-3"
+>
+
         <i class="bi bi-pencil-square me-2"></i>開始編輯
       </button>
     </div>
