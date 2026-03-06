@@ -91,7 +91,8 @@ const router = createRouter({
 
 // Navigation Guard
 router.beforeEach((to, from, next) => {
-  if (to.path.startsWith('/member')) {
+  const publicMemberRoutes = ['member-group-detail'];
+  if (to.path.startsWith('/member') && !publicMemberRoutes.includes(to.name)) {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!token) {
       Swal.fire({

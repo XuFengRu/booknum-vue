@@ -462,7 +462,7 @@ onMounted(fetchActivityDetail);
                   <button class="btn rounded-pill px-5 fw-bold shadow-sm flex-grow-1 text-nowrap" :class="isStarted(activity)
                       ? 'btn-secondary text-white border-0 opacity-50'
                       : (activity.isJoinedByMe
-                          ? 'btn-outline-danger bg-white'
+                          ? 'btn-outline-danger bg-white text-danger'
                           : ((isMyOwnActivity(activity) || isFull(activity))
                               ? 'btn-secondary text-white border-0 opacity-50'
                               : 'btn-primary'))
