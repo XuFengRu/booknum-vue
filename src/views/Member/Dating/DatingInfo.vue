@@ -51,6 +51,10 @@ async function loadProfile(userId) {
 function updateProfile(newData) {
   person.value = { ...person.value, ...newData }
   isEditing.value = false
+
+    // 再呼叫一次 API，把最新的 stats 和 age 拉回來
+  loadProfile(userId.value)
+
 }
 const userId = ref(null)
 onMounted(() => {

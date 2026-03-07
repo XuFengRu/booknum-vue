@@ -171,7 +171,7 @@ const refreshUserInfo = () => {
           <i class="bi bi-gem text-warning me-2"></i>
           <span class="fw-bold small text-dark">Premium</span>
         </div>
-        <p class="small text-muted mb-2 lh-sm">解鎖無限瀏覽與專屬徽章</p>
+        <p class="small text-muted mb-2 lh-sm">解鎖無限瀏覽與進階功能</p>
 
         <RouterLink :to="{ name: 'member-bookpremium' }" class="btn btn-warning w-100 rounded-pill fw-bold"
           style="padding: 8px 16px !important;">

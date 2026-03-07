@@ -14,11 +14,11 @@ const emit = defineEmits(['save'])
 onMounted(async () => {
   try {
     // 建立商品並取得 productId
-    const productRes = await axios.post('https://localhost:7091/api/PayPal/create-product')
+    const productRes = await axios.post('https://localhost:7091/api/MatchPayPal/create-product')
     const productId = productRes.data.productId
 
     // 建立方案
-    const plansRes = await axios.post('https://localhost:7091/api/PayPal/create-plans', productId, {
+    const plansRes = await axios.post('https://localhost:7091/api/MatchPayPal/create-plans', productId, {
       headers: { 'Content-Type': 'application/json' },
     })
     const data = plansRes.data
@@ -53,12 +53,12 @@ plans.value = data.map((p, idx) => {
 
   //檢查付款結果 (return_url)
   const status = route.query.status
-  const subscriptionId = route.query.subscription_id // PayPal return_url 會帶 subscription_id
+  const subscriptionId = route.query.subscription_id // MatchPayPal return_url 會帶 subscription_id
 
   if (status === 'success' && subscriptionId) {
     try {
       const res = await axios.post(
-        'https://localhost:7091/api/PayPal/confirm-subscription',
+        'https://localhost:7091/api/MatchPayPal/confirm-subscription',
         subscriptionId,
         {
           headers: { 'Content-Type': 'application/json' },
@@ -86,7 +86,7 @@ const subscribe = async (plan) => {
     const storedUser = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user'))
     const userId = storedUser?.id
 
-    const res = await axios.post('https://localhost:7091/api/PayPal/create-subscription', {
+    const res = await axios.post('https://localhost:7091/api/MatchPayPal/create-subscription', {
       UserId: userId,
       MethodId: plan.id,
     })
@@ -197,7 +197,7 @@ const subscribe = async (plan) => {
                 <h1 class="fw-bolder mb-1" :class="plan.label ? 'text-gold' : 'text-dark'">
                   NT$ {{ plan.price }}
                 </h1>
-                <p class="text-muted small mb-3">（約 NT$ {{ plan.daily }} / 週）</p>
+                <p class="text-muted small mb-3">（約 NT$ {{ plan.daily }} / 天）</p>
 
                 <div style="min-height: 28px">
                   <span
