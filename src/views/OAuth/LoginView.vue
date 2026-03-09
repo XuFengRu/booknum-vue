@@ -6,8 +6,9 @@ import OAuthCard from '@/components/OAuthCard.vue'
 import Swal from 'sweetalert2'
 import { GoogleLogin } from 'vue3-google-login'
 const router = useRouter()
-
-const email = ref('user7@test.com')
+// user7@test.com
+// 000
+const email = ref('')
 const password = ref('000')
 const rememberMe = ref(false)
 // 防連點狀態

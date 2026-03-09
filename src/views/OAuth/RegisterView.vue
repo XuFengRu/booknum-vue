@@ -8,7 +8,7 @@ import { ElSelect, ElOption, ElDatePicker } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 const router = useRouter()
-const route = useRoute() 
+const route = useRoute()
 const isSubmitting = ref(false)
 
 const formData = ref({
@@ -26,13 +26,13 @@ onMounted(() => {
   if (route.query.name) formData.value.name = route.query.name
 })
 
-// 🌟 新增：Demo 自動填入功能
+// 新增：Demo 自動填入功能
 const fillDemoData = (type) => {
   // 先填入一組「完全正確」的預設資料
   formData.value = {
-    email: 'testuser@gmail.com',
-    password: 'Password123',
-    confirmPassword: 'Password123',
+    email: 'khps0811@gmail.com',
+    password: 'qqqq1111',
+    confirmPassword: 'qqqq1111',
     name: '王小明',
     phone: '0912345678',
     gender: 'M',
