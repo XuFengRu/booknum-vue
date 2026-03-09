@@ -33,10 +33,10 @@ const fillDemoData = (type) => {
     email: 'khps0811@gmail.com',
     password: 'qqqq1111',
     confirmPassword: 'qqqq1111',
-    name: '王小明',
+    name: '許鳳茹',
     phone: '0912345678',
-    gender: 'M',
-    birthday: '1995-05-15'
+    gender: 'F',
+    birthday: '2000-08-31'
   }
 
   // 根據不同情境，故意把某個欄位改錯
