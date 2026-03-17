@@ -1,6 +1,10 @@
 # booknum-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+- 前端採用 Vue.js 框架開發，負責交友配對系統的整體前台介面與各子系統整合。
+- 使用 Element-Plus 元件庫，提升表單填寫體驗。
+- 透過 條件渲染 動態展示不同使用情境下的畫面內容。
+- 利用 props 在元件間傳遞資料，確保前端架構清晰、可維護。
+- 以CSS、BootStrap5優化界面及達到響應式網頁的效果。
 
 ## Recommended IDE Setup
 
